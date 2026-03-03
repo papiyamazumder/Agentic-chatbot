@@ -38,15 +38,16 @@ Extract the helpdesk action from the user query and return ONLY valid JSON.
 No explanation, no markdown, just raw JSON.
 
 Actions available:
-- create_ticket   → user wants to report a problem or request help
+- create_ticket   → user wants to report an explicitly stated IT problem or request specific help
 - check_status    → user wants to check a ticket's status (needs ticket number)
 - list_tickets    → user wants to see all/recent tickets
 - escalate        → user wants to escalate an existing ticket
 - update_ticket   → user wants to update/close a ticket
+- clarification_needed → user is just saying hello, asking a vague "help me" without an IT problem, or just chatting.
 
 JSON format:
 {
-  "action": "create_ticket|check_status|list_tickets|escalate|update_ticket",
+  "action": "create_ticket|check_status|list_tickets|escalate|update_ticket|clarification_needed",
   "short_description": "brief title of the issue",
   "description": "full description from query",
   "urgency": "1|2|3",
@@ -235,6 +236,13 @@ def run_helpdesk_agent(query: str, chat_history: list = None) -> dict:
                 "sources": [f"ServiceNow: {action} (awaiting details)"],
                 "agent":   "helpdesk"
             }
+
+    if action == "clarification_needed":
+        return {
+            "answer": "Hello! 🐾 How can I help you today? Please describe your IT issue or let me know what you need assistance with.",
+            "sources": ["ServiceNow: Awaiting details"],
+            "agent": "helpdesk"
+        }
 
     action_map = {
         "create_ticket": _handle_create_ticket,

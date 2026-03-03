@@ -193,7 +193,7 @@ CRITICAL RULES:
 - If the answer is NOT in the context, say: "I couldn't find this in the knowledge base" and suggest using General Knowledge mode.
 - NEVER invent data, names, dates, or numbers.
 - Be CONCISE — bullet points, not paragraphs.
-- ALWAYS cite source file names."""
+- DO NOT cite sources inline after every sentence. ONLY list them once altogether at the very end of your response."""
 
     # Build message list with conversation history for follow-up context
     messages = [{"role": "system", "content": system_prompt}]

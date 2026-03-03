@@ -160,10 +160,6 @@ def apply_custom_theme():
         }}
 
         /* Top-bar back button */
-        .top-back-btn {{
-            margin-top: -0.5rem !important;
-            margin-bottom: 0.8rem !important;
-        }}
         .top-back-btn div.stButton > button {{
             background: rgba(255,255,255,0.04) !important;
             border: 1px solid rgba(255,255,255,0.1) !important;
@@ -174,6 +170,7 @@ def apply_custom_theme():
             padding: 0.35rem 1rem !important;
             transition: all 0.25s ease !important;
             letter-spacing: 0.5px !important;
+            height: 42px !important;
         }}
         .top-back-btn div.stButton > button:hover {{
             background: rgba(217,30,91,0.12) !important;
@@ -183,28 +180,60 @@ def apply_custom_theme():
             box-shadow: 0 0 12px rgba(217,30,91,0.2) !important;
         }}
 
+        /* Login Form Submit Button - Pink */
+        div[data-testid="column"]:has(.login-marker) button[kind="secondaryFormSubmit"],
+        div[data-testid="column"]:has(.login-marker) .stFormSubmitButton > button {{
+            background: linear-gradient(135deg, #D91E5B 0%, #FF6B9D 100%) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+            padding: 0.65rem 2rem !important;
+            letter-spacing: 1px !important;
+            transition: all 0.3s ease !important;
+            box-shadow: 0 8px 25px rgba(217, 30, 91, 0.3) !important;
+        }}
+        div[data-testid="column"]:has(.login-marker) .stFormSubmitButton > button:hover {{
+            transform: translateY(-2px) !important;
+            box-shadow: 0 12px 35px rgba(217, 30, 91, 0.5) !important;
+        }}
+
         /* Pulsating Glow Animation */
         @keyframes pulsate-glow {{
             0% {{ box-shadow: 0 0 15px rgba(217, 30, 91, 0.2), 0 10px 40px rgba(0,0,0,0.8); border-color: rgba(217, 30, 91, 0.4); }}
             50% {{ box-shadow: 0 0 30px rgba(217, 30, 91, 0.5), 0 15px 50px rgba(0,0,0,0.9); border-color: rgba(217, 30, 91, 0.8); }}
             100% {{ box-shadow: 0 0 15px rgba(217, 30, 91, 0.2), 0 10px 40px rgba(0,0,0,0.8); border-color: rgba(217, 30, 91, 0.4); }}
         }}
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
+        .spinner-mini {{
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(217, 30, 91, 0.1);
+            border-top: 2px solid #D91E5B;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }}
 
         /* Enterprise Meow - Container Evolution */
         .meow-container {{
-            background: rgba(10, 10, 10, 0.75) !important;
-            backdrop-filter: blur(30px) !important;
-            border: 1px solid rgba(217, 30, 91, 0.4) !important;
+            background: rgba(15, 15, 20, 0.98) !important;
+            backdrop-filter: blur(40px) !important;
+            border: 2px solid rgba(217, 30, 91, 0.6) !important;
             border-radius: 28px !important;
             padding: 0 !important;
             overflow: hidden !important;
+            box-shadow: 0 15px 60px rgba(0,0,0,0.95), 0 0 30px rgba(217, 30, 91, 0.15) !important;
             animation: pulsate-glow 4s infinite ease-in-out;
             transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1) !important;
             transform-origin: bottom right !important;
         }}
         .meow-container:hover {{
-            transform: scale(1.02) !important;
-            box-shadow: 0 0 45px rgba(217, 30, 91, 0.6) !important;
+            transform: scale(1.01) !important;
+            box-shadow: 0 0 50px rgba(217, 30, 91, 0.4) !important;
         }}
 
         .meow-header {{
@@ -247,6 +276,24 @@ def apply_custom_theme():
             padding: 15px 20px !important;
             border-top: 1px solid rgba(255,255,255,0.08) !important;
         }}
+
+        /* Meow Submit Button — Pink Gradient (matches login) */
+        .meow-footer div.stButton > button {{
+            background: linear-gradient(135deg, #D91E5B 0%, #FF6B9D 100%) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 14px !important;
+            font-weight: 700 !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 0.5px !important;
+            box-shadow: 0 6px 20px rgba(217, 30, 91, 0.3) !important;
+            transition: all 0.3s ease !important;
+        }}
+        .meow-footer div.stButton > button:hover {{
+            transform: translateY(-2px) !important;
+            box-shadow: 0 10px 30px rgba(217, 30, 91, 0.5) !important;
+            background: linear-gradient(135deg, #FF2E7E 0%, #FF8FBB 100%) !important;
+        }}
         
         div[data-testid="column"] > div > div > div > button {{
             height: 45px !important;
@@ -274,9 +321,8 @@ def apply_custom_theme():
             background: radial-gradient(circle at center, rgba(217, 30, 91, 0.15) 0%, rgba(10, 10, 15, 0.7) 100%) !important;
             border: 2px solid rgba(255,255,255,0.2) !important; 
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important; 
-            float: right !important; 
-            margin-bottom: 12px !important;
             min-width: 120px !important;
+            height: 42px !important;
             opacity: 0.75 !important;
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1) !important;
         }}
@@ -388,18 +434,28 @@ def apply_custom_theme():
         /* KPI Specific Cards */
         .kpi-card-new {{
             background: linear-gradient(165deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+            backdrop-filter: blur(12px) !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
             border-radius: 24px !important;
-            padding: 1.5rem !important;
+            padding: 1.5rem 1.2rem !important;
             text-align: center !important;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
             cursor: pointer !important;
-            height: 100% !important;
+            min-height: 175px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
         }}
+
         .kpi-card-new:hover {{
-            transform: translateY(-8px) scale(1.02) !important;
+            transform: translateY(-6px) scale(1.03) !important;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.03) !important;
         }}
-        .kpi-label {{ font-size: 0.9rem !important; font-weight: 700 !important; color: white !important; margin: 0 !important; }}
+        .kpi-icon {{ font-size: 2.8rem !important; margin-bottom: 0.5rem !important; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)) !important; }}
+        .kpi-label {{ font-size: 0.95rem !important; font-weight: 700 !important; color: white !important; margin: 0 !important; letter-spacing: 0.3px !important; line-height: 1.3 !important; }}
 
         /* KPI Card Color Variants (Complementing Dark Background) */
         .kpi-clr-1 {{ background: linear-gradient(135deg, rgba(255, 69, 0, 0.12) 0%, rgba(255, 69, 0, 0.02) 100%) !important; border-color: rgba(255, 69, 0, 0.25) !important; }}
@@ -509,6 +565,23 @@ def apply_custom_theme():
         /* Nav button active */
         .nav-active {{ background: rgba(217,30,91,0.2) !important; border-left: 3px solid #D91E5B !important; }}
 
+        /* Top Nav Bar — force horizontal alignment across Streamlit columns */
+        .top-nav-bar [data-testid="stHorizontalBlock"] {{
+            align-items: center !important;
+        }}
+        .top-nav-bar [data-testid="stVerticalBlockBorderWrapper"],
+        .top-nav-bar [data-testid="column"] {{
+            display: flex !important;
+            align-items: center !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+        }}
+        .top-nav-bar .nav-placeholder {{
+            height: 42px !important;
+        }}
+
         h1, h2, h3, p, label {{ color: white !important; }}
     </style>
     """, unsafe_allow_html=True)
@@ -543,13 +616,14 @@ def _get_recent_history(n=5) -> list:
     return history
 
 
-def call_backend(query: str, agent_override: str = "auto") -> dict:
+def call_backend(query: str, agent_override: str = "auto", upload_only: bool = False) -> dict:
     try:
         resp = requests.post(f"{BACKEND_URL}/chat",
                              json={
                                  "query": query,
                                  "session_id": st.session_state.session_id,
                                  "agent_override": agent_override,
+                                 "upload_only": upload_only,
                                  "chat_history": _get_recent_history()
                              }, timeout=90)
         resp.raise_for_status()
@@ -698,16 +772,43 @@ def render_login():
             <p style="margin-bottom:1.5rem; opacity:0.4; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; text-align:center;">Secure Access Portal</p>
         """, unsafe_allow_html=True)
 
-        u = st.selectbox("Profile", options=["Select Identity", "admin", "manager", "resource"], label_visibility="collapsed", key="login_u")
-        p = st.text_input("Password", type="password", placeholder="••••••••", label_visibility="collapsed", key="login_p")
+        st.markdown('''
+            <style>
+                [data-testid="stForm"] button {
+                    background-color: #D91E5B !important;
+                    color: white !important;
+                    border: none !important;
+                    border-radius: 12px !important;
+                    font-weight: 700 !important;
+                    font-size: 1rem !important;
+                    padding: 0.5rem !important;
+                    letter-spacing: 1px !important;
+                    transition: all 0.3s ease !important;
+                    box-shadow: 0 8px 25px rgba(217, 30, 91, 0.3) !important;
+                }
+                [data-testid="stForm"] button:hover {
+                    transform: translateY(-2px) !important;
+                    box-shadow: 0 12px 35px rgba(217, 30, 91, 0.5) !important;
+                    background-color: #FF2E7E !important;
+                    color: white !important;
+                    border: none !important;
+                }
+            </style>
+        ''', unsafe_allow_html=True)
 
-        if st.button("Submit  →", width='stretch', key="login_submit"):
-            if u != "Select Identity" and USERS.get(u, {}).get("password") == p:
-                st.session_state.logged_in = True
-                st.session_state.username = u
-                st.rerun()
-            else:
-                st.error("Authentication Denied")
+        with st.form("login_form", clear_on_submit=False):
+            u = st.selectbox("Profile", options=["Select Identity", "admin", "manager", "resource"], label_visibility="collapsed")
+            p = st.text_input("Password", type="password", placeholder="••••••••", label_visibility="collapsed")
+            
+            submit = st.form_submit_button("Submit  →", use_container_width=True)
+            if submit:
+                if u != "Select Identity" and USERS.get(u, {}).get("password") == p:
+                    st.session_state.logged_in = True
+                    st.session_state.username = u
+                    st.session_state.chat_open = False  # Meow starts minimized
+                    st.rerun()
+                else:
+                    st.error("Authentication Denied")
 
         if st.button("Forgot Password?", type="secondary", width='stretch', key="login_forgot"):
             st.toast("Redirecting to helpdesk...")
@@ -771,33 +872,11 @@ def render_sidebar():
 # MEOW CHATBOT (appears on every page)
 # ================================================
 def render_meow():
-    # 🐱 Compact Bot Button (Bottom Right Floating)
-    st.markdown("""
-        <style>
-        .meow-trigger {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 9999;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .meow-trigger:hover {
-            transform: scale(1.2) rotate(5deg);
-        }
-        </style>
-    """, unsafe_allow_html=True)
-    
-    # Toggle button using a columns-based placement as a fallback if fixed CSS is tricky with Streamlit
-    welcome_col, btn_col = st.columns([5, 1.2])
-    with btn_col:
-        btn_label = "🐾 CLOSE" if st.session_state.chat_open else "🐱 BOT"
-        if st.button(btn_label, key="meow_circle_toggle", width='stretch'):
-            st.session_state.chat_open = not st.session_state.chat_open
-            st.rerun()
-
+    # The Meow toggle button is now rendered in the main nav bar (aligned with Back).
+    # This function only renders the chat body when open.
     if not st.session_state.chat_open:
         return
+
 
     # Expanded Meow Window
     st.markdown('<div class="meow-container">', unsafe_allow_html=True)
@@ -860,9 +939,27 @@ def render_meow():
     # Message Display
     height = 500 if st.session_state.chat_expanded else 280
     msg_box = st.container(height=height)
+    
     with msg_box:
-        if not st.session_state.messages:
+        pending_q = getattr(st.session_state, "pending_meow_query", None)
+        
+        # Render the pending query at the TOP for immediate feedback in newest-first mode
+        if pending_q:
+            st.markdown(f"""
+                <div class="msg-user">
+                    <div style="font-size:0.65rem; opacity:0.6; font-weight:900; margin-bottom:4px; text-transform:uppercase;">👤 user</div>
+                    <div style="font-size:0.9rem;">{pending_q}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; padding:10px; background:rgba(217,30,91,0.05); border-radius:12px; border:1px dashed rgba(217,30,91,0.2);">
+                    <div class="spinner-mini"></div>
+                    <span style="font-size:0.85rem; color:#D91E5B; font-weight:600; letter-spacing:1px;">🐾 Neural engine analyzing...</span>
+                </div>
+            """, unsafe_allow_html=True)
+
+        if not st.session_state.messages and not pending_q:
             st.markdown("""<div style="text-align:center; padding:40px 20px; opacity:0.4;"><div style="font-size:3.5rem; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(217,30,91,0.3));">🐱</div><p style="font-size:0.95rem; font-weight:600;">System Ready.<br>Interactive Meow awaiting commands.</p></div>""", unsafe_allow_html=True)
+            
+        # Render message history in newest-first order
         for i, msg in enumerate(reversed(st.session_state.messages)):
             cls = "msg-user" if msg["role"] == "user" else "msg-system"
             icon = "👤" if msg["role"] == "user" else "🐾"
@@ -873,7 +970,7 @@ def render_meow():
                 </div>
             """, unsafe_allow_html=True)
             
-            # Optional feedback mechanism on the latest assistant response
+            # Feedback only on the VERY latest (which is index 0 in reversed loop)
             if i == 0 and msg["role"] == "assistant":
                 f_col1, f_col2, _ = st.columns([1.2, 1.5, 4])
                 # Find the user query that preceded this response
@@ -904,24 +1001,58 @@ def render_meow():
                         )
                         st.toast("Noted. We'll adjust future responses. 🐾")
 
+
+
     # Input Bar Alignment: [Input] [Submit] [Trash]
     with st.container():
+        # Initialize the input box state if missing
+        if "meow_input_box" not in st.session_state:
+            st.session_state.meow_input_box = ""
+
+        # Callback function for both text_input and submit button
+        def submit_meow_query():
+            val = st.session_state.meow_input_box
+            if val and not selected_routing_label.endswith("🔒"):
+                st.session_state.pending_meow_query = val
+                st.session_state.pending_meow_agent = agent_override
+            st.session_state.meow_input_box = ""
+
         st.markdown('<div class="meow-footer">', unsafe_allow_html=True)
         c_in1, c_in2, c_in3 = st.columns([4.2, 0.8, 0.8])
+        
         with c_in1:
-            prompt = st.text_input("Ask Meow...", label_visibility="collapsed", placeholder="Enterprise command line...")
+            st.text_input("Ask Meow...", key="meow_input_box", label_visibility="collapsed", placeholder="Enterprise command line...", on_change=submit_meow_query)
         with c_in2:
             is_locked_agent = selected_routing_label.endswith("🔒")
-            if st.button("Submit →", key="meow_submit", width="stretch", disabled=is_locked_agent):
-                if prompt and not is_locked_agent:
-                    handle_query(prompt, agent_override=agent_override)
-                    st.rerun()
+            st.button("Submit →", key="meow_submit", width="stretch", disabled=is_locked_agent, on_click=submit_meow_query)
         with c_in3:
             if st.button("🗑️", key="meow_clear_trash", help="Clear Meow Chat", width="stretch"):
                 clear_meow_chat()
                 st.toast("Meow session cleared.")
                 st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
+
+        # Handle the pending query right here so the spinner aligns properly BELOW the submit box
+        if pending_q:
+            agent = st.session_state.pending_meow_agent
+            result = call_backend(pending_q, agent_override=agent)
+            
+            # Log to global history + Meow history
+            st.session_state.chat_history_log.append({"role": "user", "content": pending_q, "time": time.time()})
+            st.session_state.chat_history_log.append({"role": "assistant", "content": result["answer"], "time": time.time()})
+            
+            st.session_state.messages.append({"role": "user", "content": pending_q})
+            st.session_state.messages.append({
+                "role": "assistant", 
+                "content": result["answer"],
+                "agent_used": result.get("agent_used", ""), 
+                "sources": result.get("sources", [])
+            })
+            st.session_state.total_queries += 1
+            
+            del st.session_state.pending_meow_query
+            del st.session_state.pending_meow_agent
+            st.rerun()
 
     st.markdown('</div></div>', unsafe_allow_html=True)
 
@@ -1152,7 +1283,7 @@ def render_kpi_live():
     # Only show grid if no KPI is active, or show a minimized version?
     # Actually, keeping the grid stable means keeping it visible but manageable.
     
-    cols = st.columns(4) # 4 columns for a cleaner grid
+    cols = st.columns(4, gap="small") # dynamically compress space between columns on smaller displays
     for idx, (ic, title, query, cls) in enumerate(metrics):
         with cols[idx % 4]:
             is_active = st.session_state.active_kpi == title
@@ -1605,14 +1736,25 @@ if not st.session_state.logged_in:
 else:
     render_sidebar()
 
-    # Top-bar back button — single back button for the entire app
-    if st.session_state.current_page != "dashboard":
-        st.markdown('<div class="top-back-btn">', unsafe_allow_html=True)
-        if st.button("← Back", key="main_back_btn"):
-            go_back()
-        st.markdown('</div>', unsafe_allow_html=True)
+    # Top nav bar: Back button (left) + Meow toggle (right) — aligned on one row
+    st.markdown('<div class="top-nav-bar">', unsafe_allow_html=True)
+    nav_left, nav_spacer, nav_right = st.columns([1, 4, 1.2])
+    with nav_left:
+        if st.session_state.current_page != "dashboard":
+            st.markdown('<div class="top-back-btn">', unsafe_allow_html=True)
+            if st.button("← Back", key="main_back_btn"):
+                go_back()
+            st.markdown('</div>', unsafe_allow_html=True)
+        else:
+            st.markdown('<div class="nav-placeholder"></div>', unsafe_allow_html=True)
+    with nav_right:
+        btn_label = "🐾 CLOSE" if st.session_state.chat_open else "🐱 BOT"
+        if st.button(btn_label, key="meow_circle_toggle", width='stretch'):
+            st.session_state.chat_open = not st.session_state.chat_open
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # Meow toggle in top-right
+    # Render Meow chat body (the toggle is now above)
     render_meow()
 
     # Page routing
