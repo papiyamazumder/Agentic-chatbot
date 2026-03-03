@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPMG Chatbot — Full Workflow Phase 1 & 2</title>
+<style>
+  :root {
+    --bg: #07090f;
+    --s1: #0d1117;
+    --s2: #13191f;
+    --border: #1e2a38;
+    --blue: #38bdf8;
+    --purple: #a78bfa;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --pink: #f472b6;
+    --orange: #fb923c;
+    --teal: #2dd4bf;
+    --text: #cbd5e1;
+    --muted: #4b5563;
+    --white: #f8fafc;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    padding: 32px 20px 56px;
+  }
+  .wrap { max-width: 1260px; margin: 0 auto; }
+
+  /* ── TITLE ── */
+  .title-block { text-align:center; margin-bottom:36px; }
+  .title-block h1 { font-size:24px; font-weight:900; color:var(--white); letter-spacing:-0.5px; margin-bottom:5px; }
+  .title-block p { font-size:9.5px; color:var(--muted); letter-spacing:3px; text-transform:uppercase; }
+
+  /* ── TAB SWITCHER ── */
+  .tabs {
+    display:flex; gap:8px; justify-content:center; margin-bottom:28px;
+  }
+  .tab {
+    padding:9px 24px; border-radius:8px; border:1px solid var(--border);
+    font-size:11px; font-weight:700; cursor:pointer; letter-spacing:0.5px;
+    background:var(--s1); color:var(--muted); transition:all 0.2s;
+  }
+  .tab.active-p1 { background:rgba(56,189,248,0.1); border-color:rgba(56,189,248,0.4); color:var(--blue); }
+  .tab.active-p2 { background:rgba(167,139,250,0.1); border-color:rgba(167,139,250,0.4); color:var(--purple); }
+  .tab.active-diff { background:rgba(52,211,153,0.1); border-color:rgba(52,211,153,0.4); color:var(--green); }
+
+  /* ── PANELS ── */
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-size:8px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--muted); text-align:center; margin:10px 0 8px;
+  }
+
+  /* ── FLOW ARROW ── */
+  .flow-arrow {
+    display:flex; flex-direction:column; align-items:center;
+    padding:4px 0; gap:1px;
+  }
+  .fa-line { width:1px; height:16px; }
+  .fa-tip { font-size:13px; line-height:1; }
+  .fa-label { font-size:7.5px; color:var(--muted); letter-spacing:1px; text-align:center; margin-top:1px; }
+
+  /* ── CARD ── */
+  .card {
+    background:var(--s1); border:1px solid var(--border);
+    border-radius:12px; padding:14px 16px;
+    flex:1; min-width:0;
+  }
+  .card-row { display:flex; gap:10px; justify-content:center; align-items:stretch; }
+  .card-head { display:flex; align-items:flex-start; gap:9px; margin-bottom:8px; }
+  .emo { font-size:18px; flex-shrink:0; line-height:1.1; }
+  .ct { font-size:12px; font-weight:700; margin-bottom:2px; line-height:1.2; }
+  .cs { font-size:8px; opacity:0.65; letter-spacing:0.5px; }
+  .cb { font-size:9px; color:#64748b; line-height:1.6; margin-top:4px; }
+  .tag {
+    display:inline-block; font-size:7px; padding:2px 8px;
+    border-radius:20px; font-weight:700; text-transform:uppercase;
+    letter-spacing:0.8px; margin:4px 4px 0 0;
+  }
+
+  /* colours */
+  .bl  { border-color:rgba(56,189,248,0.3);  } .bl  .ct{color:var(--blue);}   .bl  .cs{color:var(--blue);}
+  .pu  { border-color:rgba(167,139,250,0.3); } .pu  .ct{color:var(--purple);} .pu  .cs{color:var(--purple);}
+  .gr  { border-color:rgba(52,211,153,0.3);  } .gr  .ct{color:var(--green);}  .gr  .cs{color:var(--green);}
+  .am  { border-color:rgba(251,191,36,0.3);  } .am  .ct{color:var(--amber);}  .am  .cs{color:var(--amber);}
+  .re  { border-color:rgba(248,113,113,0.3); } .re  .ct{color:var(--red);}    .re  .cs{color:var(--red);}
+  .pi  { border-color:rgba(244,114,182,0.3); } .pi  .ct{color:var(--pink);}   .pi  .cs{color:var(--pink);}
+  .or  { border-color:rgba(251,146,60,0.3);  } .or  .ct{color:var(--orange);} .or  .cs{color:var(--orange);}
+  .te  { border-color:rgba(45,212,191,0.3);  } .te  .ct{color:var(--teal);}   .te  .cs{color:var(--teal);}
+
+  .t-bl  { background:rgba(56,189,248,0.1);  color:var(--blue);   border:1px solid rgba(56,189,248,0.25); }
+  .t-pu  { background:rgba(167,139,250,0.1); color:var(--purple); border:1px solid rgba(167,139,250,0.25); }
+  .t-gr  { background:rgba(52,211,153,0.1);  color:var(--green);  border:1px solid rgba(52,211,153,0.25); }
+  .t-am  { background:rgba(251,191,36,0.1);  color:var(--amber);  border:1px solid rgba(251,191,36,0.25); }
+  .t-re  { background:rgba(248,113,113,0.1); color:var(--red);    border:1px solid rgba(248,113,113,0.25); }
+  .t-or  { background:rgba(251,146,60,0.1);  color:var(--orange); border:1px solid rgba(251,146,60,0.25); }
+  .t-te  { background:rgba(45,212,191,0.1);  color:var(--teal);   border:1px solid rgba(45,212,191,0.25); }
+
+  /* ── WIDE CARD ── */
+  .card-wide { max-width:100%; flex:unset; width:100%; display:flex; align-items:center; gap:14px; }
+  .card-wide .emo { font-size:22px; }
+  .card-wide .card-body-wrap { flex:1; }
+
+  /* ── DATA SOURCES ROW ── */
+  .ds-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+
+  /* ── AGENT GROUP ── */
+  .agent-col { flex:1; min-width:0; }
+  .agent-header {
+    border-radius:10px 10px 0 0; padding:9px 14px;
+    text-align:center; font-size:9px; font-weight:700;
+    text-transform:uppercase; letter-spacing:1.5px;
+  }
+  .agent-body {
+    border-radius:0 0 10px 10px; padding:12px;
+    background:var(--s1); border:1px solid var(--border); border-top:none;
+  }
+  .agent-step {
+    font-size:8.5px; color:#64748b; padding:5px 0;
+    border-bottom:1px solid var(--border); line-height:1.55;
+  }
+  .agent-step:last-child { border-bottom:none; padding-bottom:0; }
+  .agent-step strong { color:var(--text); display:block; font-size:9px; margin-bottom:1px; }
+
+  /* ── CODE DIFF BOX ── */
+  .diff-box {
+    background:var(--s2); border-radius:8px; padding:9px 12px;
+    margin-top:7px; font-family:'Courier New',monospace;
+    font-size:8px; line-height:1.8; border:1px solid var(--border);
+  }
+  .del { color:var(--red); }
+  .add { color:var(--green); }
+  .neu { color:#64748b; }
+
+  /* ── SECTION HR ── */
+  .sec-hr { border:none; border-top:1px solid var(--border); margin:20px 0 8px; position:relative; }
+  .sec-hr span {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:var(--bg); padding:0 12px; font-size:8px;
+    letter-spacing:3px; text-transform:uppercase; color:var(--muted); white-space:nowrap;
+  }
+
+  /* ── DIFF TABLE ── */
+  .diff-table { width:100%; border-collapse:collapse; font-size:9px; }
+  .diff-table th {
+    padding:8px 12px; text-align:left; font-size:8px;
+    text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid var(--border);
+  }
+  .diff-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .diff-table tr:last-child td { border-bottom:none; }
+  .diff-table .comp { color:var(--text); font-weight:600; }
+  .diff-table .p1val { color:#64748b; }
+  .diff-table .p2val { color:var(--blue); }
+  .diff-table .change-none { color:var(--green); font-size:8px; }
+  .diff-table .change-small { color:var(--amber); font-size:8px; }
+  .diff-table .change-infra { color:var(--orange); font-size:8px; }
+
+  /* ── SUMMARY ROW ── */
+  .summary-row {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px;
+  }
+  .summary-box {
+    border-radius:10px; padding:14px 16px; text-align:center;
+  }
+  .summary-box .big { font-size:28px; font-weight:900; margin-bottom:4px; }
+  .summary-box .label { font-size:8px; text-transform:uppercase; letter-spacing:2px; }
+
+  /* ── ROUTER BOX ── */
+  .router-box {
+    background:var(--s2); border-radius:12px; padding:14px;
+    border:1px solid rgba(167,139,250,0.25); margin:0 auto; max-width:600px;
+  }
+  .router-title { font-size:10px; font-weight:700; color:var(--purple); text-align:center; margin-bottom:10px; letter-spacing:1px; text-transform:uppercase; }
+  .router-rule {
+    display:flex; gap:8px; align-items:center; padding:6px 10px;
+    border-radius:7px; margin-bottom:6px; font-size:8.5px;
+  }
+  .router-rule:last-child { margin-bottom:0; }
+  .rr-keyword { font-family:'Courier New',monospace; flex:1.2; }
+  .rr-arrow { color:var(--muted); }
+  .rr-agent { font-weight:700; flex:1; }
+
+  /* footer */
+  .footer { text-align:center; margin-top:36px; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); padding-top:16px; border-top:1px solid var(--border); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title-block">
+    <h1>KPMG PMO Chatbot — Complete Workflow</h1>
+    <p>Frontend → Backend → Agents → Data Sources · Phase 1 vs Phase 2</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active-p1" onclick="show('p1')">⚙️ Phase 1 — Pure Python</div>
+    <div class="tab" onclick="show('p2')">☁️ Phase 2 — Azure</div>
+    <div class="tab" onclick="show('diff')">🔄 Phase 1 vs 2 — Diff</div>
+  </div>
+
+  <!-- ════════════════════════════════
+       PANEL 1 — PURE PYTHON
+  ════════════════════════════════ -->
+  <div class="panel active" id="p1">
+
+    <!-- DATA SOURCES -->
+    <div class="sec-label">Data Sources — Where Information Lives</div>
+    <div class="ds-row">
+      <div class="card bl">
+        <div class="card-head"><div class="emo">📂</div><div><div class="ct">SharePoint / Local Folder</div><div class="cs">Unstructured Docs</div></div></div>
+        <div class="cb">PDFs, Word, Excel, PPT files stored in local /data/raw_docs or mock SharePoint folder. Accessed via file path.</div>
+        <span class="tag t-bl">Local Filesystem</span>
+      </div>
+      <div class="card am">
+        <div class="card-head"><div class="emo">🗃️</div><div><div class="ct">MySQL Database</div><div class="cs">Structured KPI Data</div></div></div>
+        <div class="cb">KPI tables, project metrics, delivery data. Accessed directly with pymysql or SQLAlchemy.</div>
+        <span class="tag t-am">pymysql / SQLAlchemy</span>
+      </div>
+      <div class="card gr">
+        <div class="card-head"><div class="emo">🔗</div><div><div class="ct">Internal REST APIs</div><div class="cs">KPI Endpoints</div></div></div>
+        <div class="cb">HTTP endpoints that expose KPI data. Called via Python requests library with auth headers.</div>
+        <span class="tag t-gr">requests.get()</span>
+      </div>
+      <div class="card or">
+        <div class="card-head"><div class="emo">📊</div><div><div class="ct">Excel / CSV Files</div><div class="cs">Reports & Logs</div></div></div>
+        <div class="cb">Enterprise reports in Excel or CSV format. Loaded using pandas for processing.</div>
+        <span class="tag t-or">pandas.read_excel()</span>
+      </div>
+    </div>
+
+    <!-- INGESTION -->
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--border),var(--blue))"></div>
+      <div class="fa-tip" style="color:var(--blue)">↓</div>
+      <div class="fa-label">Ingestion pipeline runs once / scheduled</div>
+    </div>
+
+    <div class="sec-label">Ingestion Pipeline — Index Documents into Vector Store</div>
+    <div class="card-row">
+      <div class="card bl">
+        <div class="card-head"><div class="emo">📄</div><div><div class="ct">pdf_loader.py</div><div class="cs">Step 1 — Load</div></div></div>
+        <div class="cb">Reads all PDFs, Word, PPT files from the raw_docs folder using PyMuPDF and python-docx.</div>
+        <span class="tag t-bl">PyMuPDF · python-docx</span>
+      </div>
+      <div class="card pu">
+        <div class="card-head"><div class="emo">✂️</div><div><div class="ct">chunker.py</div><div class="cs">Step 2 — Split</div></div></div>
+        <div class="cb">Splits text into 500-char chunks with 100-char overlap using RecursiveCharacterTextSplitter.</div>
+        <span class="tag t-pu">LangChain Splitter</span>
+      </div>
+      <div class="card am">
+        <div class="card-head"><div class="emo">🧮</div><div><div class="ct">embedder.py</div><div class="cs">Step 3 — Embed</div></div></div>
+        <div class="cb">Calls OpenAI text-embedding-3-small API to convert each chunk into a 1536-dimension vector.</div>
+        <span class="tag t-am">OpenAI Embeddings API</span>
+      </div>
+      <div class="card gr">
+        <div class="card-head"><div class="emo">🗄️</div><div><div class="ct">vector_store.py</div><div class="cs">Step 4 — Save</div></div></div>
+        <div class="cb">Saves all vectors into a local FAISS index file. Metadata (text, source) saved as pickle file.</div>
+        <span class="tag t-gr">FAISS + pickle</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--border),var(--purple))"></div>
+      <div class="fa-tip" style="color:var(--purple)">↓</div>
+      <div class="fa-label">User opens browser</div>
+    </div>
+
+    <!-- FRONTEND -->
+    <div class="sec-label">Layer 1 — Frontend (User Interface)</div>
+    <div class="card-row">
+      <div class="card bl card-wide">
+        <div class="emo">🖥️</div>
+        <div class="card-body-wrap">
+          <div class="ct">Streamlit App — app.py</div>
+          <div class="cs">localhost:8501</div>
+          <div class="cb">User types a question in the chat input. Message stored in st.session_state. App sends HTTP POST to FastAPI backend at localhost:8000/chat. Displays response with agent label.</div>
+          <div><span class="tag t-bl">streamlit run frontend/app.py</span><span class="tag t-bl">requests.post("localhost:8000/chat")</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--blue),var(--purple))"></div>
+      <div class="fa-tip" style="color:var(--purple)">↓</div>
+      <div class="fa-label">HTTP POST /chat · {"query": "..."}</div>
+    </div>
+
+    <!-- BACKEND -->
+    <div class="sec-label">Layer 2 — FastAPI Backend</div>
+    <div class="card-row">
+      <div class="card pu card-wide">
+        <div class="emo">⚙️</div>
+        <div class="card-body-wrap">
+          <div class="ct">FastAPI — backend/main.py</div>
+          <div class="cs">localhost:8000 · uvicorn</div>
+          <div class="cb">Receives the user query at POST /chat endpoint. Validates with Pydantic model. Passes query to LangGraph. Returns structured JSON response with answer and agent_used field.</div>
+          <div><span class="tag t-pu">uvicorn backend.main:app --reload</span><span class="tag t-pu">Pydantic validation</span><span class="tag t-pu">Swagger at /docs</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--purple),var(--amber))"></div>
+      <div class="fa-tip" style="color:var(--amber)">↓</div>
+      <div class="fa-label">Passes query to LangGraph router</div>
+    </div>
+
+    <!-- ROUTER -->
+    <div class="sec-label">Layer 3 — LangGraph Router (router/graph.py)</div>
+    <div class="router-box">
+      <div class="router-title">🔀 LangGraph — Decides Which Agent Handles the Query</div>
+      <div class="router-rule" style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15);">
+        <div class="rr-keyword" style="color:var(--blue)">"document" / "SOP" / "report" / "PDF" / "what does"</div>
+        <div class="rr-arrow">→</div>
+        <div class="rr-agent" style="color:var(--blue)">🔍 Retrieval Agent</div>
+      </div>
+      <div class="router-rule" style="background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15);">
+        <div class="rr-keyword" style="color:var(--amber)">"KPI" / "metric" / "dashboard" / "performance" / "how many"</div>
+        <div class="rr-arrow">→</div>
+        <div class="rr-agent" style="color:var(--amber)">📊 API Agent</div>
+      </div>
+      <div class="router-rule" style="background:rgba(52,211,153,0.06); border:1px solid rgba(52,211,153,0.15);">
+        <div class="rr-keyword" style="color:var(--green)">"ticket" / "create" / "approve" / "email" / "notify" / "log"</div>
+        <div class="rr-arrow">→</div>
+        <div class="rr-agent" style="color:var(--green)">🔄 Workflow Agent</div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--amber),var(--green))"></div>
+      <div class="fa-tip" style="color:var(--green)">↓</div>
+      <div class="fa-label">Routed to the correct agent</div>
+    </div>
+
+    <!-- AGENTS -->
+    <div class="sec-label">Layer 4 — The 3 Agents</div>
+    <div class="card-row" style="align-items:flex-start;">
+
+      <div class="agent-col">
+        <div class="agent-header" style="background:rgba(56,189,248,0.1); color:var(--blue); border:1px solid rgba(56,189,248,0.3);">🔍 Retrieval Agent</div>
+        <div class="agent-body" style="border-color:rgba(56,189,248,0.2);">
+          <div class="agent-step"><strong>Input</strong>Any query about PDFs, SOPs, meeting notes, reports</div>
+          <div class="agent-step"><strong>Step 1 — Embed query</strong>Calls OpenAI text-embedding-3-small to vectorise the user's question</div>
+          <div class="agent-step"><strong>Step 2 — Search FAISS</strong>Finds top-5 most similar chunks from local FAISS index using cosine similarity</div>
+          <div class="agent-step"><strong>Step 3 — Build prompt</strong>Combines retrieved chunks as context + original question into a structured prompt</div>
+          <div class="agent-step"><strong>Step 4 — Call LLM</strong>GPT-4o generates answer using only the retrieved context</div>
+          <div class="agent-step"><strong>Output</strong>Natural language answer with source document names</div>
+          <span class="tag t-bl">FAISS search</span><span class="tag t-bl">OpenAI GPT-4o</span>
+        </div>
+      </div>
+
+      <div class="agent-col">
+        <div class="agent-header" style="background:rgba(251,191,36,0.1); color:var(--amber); border:1px solid rgba(251,191,36,0.3);">📊 API Agent</div>
+        <div class="agent-body" style="border-color:rgba(251,191,36,0.2);">
+          <div class="agent-step"><strong>Input</strong>Any query about KPIs, metrics, project performance, dashboards</div>
+          <div class="agent-step"><strong>Step 1 — Extract intent</strong>LLM reads the query and extracts which KPI or metric the user wants</div>
+          <div class="agent-step"><strong>Step 2 — Call REST API</strong>Python requests.get() calls the internal API endpoint for that KPI with auth token</div>
+          <div class="agent-step"><strong>Step 3 — Fallback to DB</strong>If API fails, SQLAlchemy queries MySQL directly for the metric</div>
+          <div class="agent-step"><strong>Step 4 — Format output</strong>LLM formats raw JSON/SQL result into executive-friendly Power BI-ready summary</div>
+          <div class="agent-step"><strong>Output</strong>Formatted KPI data ready for reporting</div>
+          <span class="tag t-am">REST API</span><span class="tag t-am">MySQL</span><span class="tag t-am">pandas</span>
+        </div>
+      </div>
+
+      <div class="agent-col">
+        <div class="agent-header" style="background:rgba(52,211,153,0.1); color:var(--green); border:1px solid rgba(52,211,153,0.3);">🔄 Workflow Agent</div>
+        <div class="agent-body" style="border-color:rgba(52,211,153,0.2);">
+          <div class="agent-step"><strong>Input</strong>Ticket creation, approval requests, email notifications, log updates</div>
+          <div class="agent-step"><strong>Step 1 — Classify action</strong>LLM reads query → returns JSON with action type and details</div>
+          <div class="agent-step"><strong>Step 2 — Execute action</strong>Python function runs: create_ticket / send_email / approve / update_log</div>
+          <div class="agent-step"><strong>Ticket creation</strong>Generates ticket ID, stores in in-memory dict / local JSON log</div>
+          <div class="agent-step"><strong>Email notification</strong>smtplib sends email directly from Python</div>
+          <div class="agent-step"><strong>Log update</strong>Appends entry to local system_logs list or text file</div>
+          <div class="agent-step"><strong>Output</strong>Confirmation message with action result</div>
+          <span class="tag t-gr">smtplib</span><span class="tag t-gr">local logs</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--green),var(--blue))"></div>
+      <div class="fa-tip" style="color:var(--blue)">↓</div>
+      <div class="fa-label">Response travels back up the stack</div>
+    </div>
+
+    <div class="sec-label">Response Flow — Back to User</div>
+    <div class="card-row">
+      <div class="card gr card-wide">
+        <div class="emo">↩️</div>
+        <div class="card-body-wrap">
+          <div class="ct">Agent → FastAPI → Streamlit → User</div>
+          <div class="cs">Full round trip complete</div>
+          <div class="cb">Agent returns string answer → FastAPI wraps in ChatResponse JSON → Streamlit receives JSON → displays answer in chat bubble with agent label badge. Entire round trip stored in st.session_state for conversation memory.</div>
+          <span class="tag t-gr">JSON response</span><span class="tag t-gr">Session memory</span><span class="tag t-gr">Agent label shown</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end p1 -->
+
+
+  <!-- ════════════════════════════════
+       PANEL 2 — AZURE
+  ════════════════════════════════ -->
+  <div class="panel" id="p2">
+
+    <!-- DATA SOURCES -->
+    <div class="sec-label">Data Sources — Enterprise Cloud Storage</div>
+    <div class="ds-row">
+      <div class="card bl">
+        <div class="card-head"><div class="emo">🗂️</div><div><div class="ct">SharePoint</div><div class="cs">Unstructured Docs</div></div></div>
+        <div class="cb">PDFs, Word, Excel, PPT in SharePoint libraries. Accessed via Microsoft Graph API with OAuth token.</div>
+        <span class="tag t-bl">MS Graph API</span>
+      </div>
+      <div class="card pu">
+        <div class="card-head"><div class="emo">☁️</div><div><div class="ct">Azure Blob Storage</div><div class="cs">File Repository</div></div></div>
+        <div class="cb">All uploaded documents stored in containers. Azure Functions ingestion pipeline reads from here on a schedule.</div>
+        <span class="tag t-pu">BlobServiceClient</span>
+      </div>
+      <div class="card am">
+        <div class="card-head"><div class="emo">🔗</div><div><div class="ct">Internal REST APIs</div><div class="cs">KPI Endpoints</div></div></div>
+        <div class="cb">Same internal REST APIs as Phase 1. Now called by an Azure Function instead of local Python script.</div>
+        <span class="tag t-am">Azure Functions trigger</span>
+      </div>
+      <div class="card gr">
+        <div class="card-head"><div class="emo">🗃️</div><div><div class="ct">Azure SQL / MySQL</div><div class="cs">Structured KPI Data</div></div></div>
+        <div class="cb">MySQL migrated to Azure Database for MySQL or Azure SQL. Same SQLAlchemy queries — just connection string changes.</div>
+        <span class="tag t-gr">Azure DB for MySQL</span>
+      </div>
+    </div>
+
+    <!-- INGESTION -->
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--border),var(--purple))"></div>
+      <div class="fa-tip" style="color:var(--purple)">↓</div>
+      <div class="fa-label">Azure Functions runs ingestion on schedule (nightly)</div>
+    </div>
+
+    <div class="sec-label">Ingestion Pipeline — Azure Functions (Scheduled, Serverless)</div>
+    <div class="card-row">
+      <div class="card pu">
+        <div class="card-head"><div class="emo">📄</div><div><div class="ct">Blob Trigger / Timer Trigger</div><div class="cs">Step 1 — Load from Blob</div></div></div>
+        <div class="cb">Azure Function triggered nightly OR when new file lands in Blob Storage. Reads files via BlobServiceClient.</div>
+        <span class="tag t-pu">Azure Functions</span><span class="tag t-pu">BlobServiceClient</span>
+      </div>
+      <div class="card bl">
+        <div class="card-head"><div class="emo">✂️</div><div><div class="ct">chunker.py (unchanged)</div><div class="cs">Step 2 — Split</div></div></div>
+        <div class="cb">Exact same chunking logic as Phase 1. RecursiveCharacterTextSplitter with same chunk_size and overlap.</div>
+        <span class="tag t-bl">No code change ✓</span>
+      </div>
+      <div class="card am">
+        <div class="card-head"><div class="emo">🧮</div><div><div class="ct">Azure OpenAI Embeddings</div><div class="cs">Step 3 — Embed</div></div></div>
+        <div class="cb">AzureOpenAI() client replaces OpenAI() client. Same embedding model. Data never leaves Azure tenant.</div>
+        <span class="tag t-am">AzureOpenAI()</span><span class="tag t-am">1 line change</span>
+      </div>
+      <div class="card gr">
+        <div class="card-head"><div class="emo">🔍</div><div><div class="ct">Azure AI Search Index</div><div class="cs">Step 4 — Save</div></div></div>
+        <div class="cb">SearchClient uploads vectors + metadata to managed Azure AI Search index. No more local .faiss files.</div>
+        <span class="tag t-gr">SearchClient.upload_documents()</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--border),var(--blue))"></div>
+      <div class="fa-tip" style="color:var(--blue)">↓</div>
+      <div class="fa-label">User opens browser — live Azure URL</div>
+    </div>
+
+    <!-- FRONTEND -->
+    <div class="sec-label">Layer 1 — Frontend (Azure App Service)</div>
+    <div class="card-row">
+      <div class="card bl card-wide">
+        <div class="emo">🖥️</div>
+        <div class="card-body-wrap">
+          <div class="ct">Streamlit App — app.py (same code)</div>
+          <div class="cs">https://kpmg-chatbot.azurewebsites.net</div>
+          <div class="cb">Deployed as Docker container on Azure App Service. HTTPS handled automatically. Only change: the FastAPI URL now points to Azure instead of localhost. All UI logic, session state, chat history — unchanged.</div>
+          <div><span class="tag t-bl">Azure App Service</span><span class="tag t-bl">Docker container</span><span class="tag t-bl">1 URL change from Phase 1</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--blue),var(--purple))"></div>
+      <div class="fa-tip" style="color:var(--purple)">↓</div>
+      <div class="fa-label">HTTPS POST /chat · SSL auto-managed by Azure</div>
+    </div>
+
+    <!-- BACKEND -->
+    <div class="sec-label">Layer 2 — FastAPI Backend (Azure App Service)</div>
+    <div class="card-row">
+      <div class="card pu card-wide">
+        <div class="emo">⚙️</div>
+        <div class="card-body-wrap">
+          <div class="ct">FastAPI — backend/main.py (same code)</div>
+          <div class="cs">https://kpmg-api.azurewebsites.net · Azure App Service</div>
+          <div class="cb">Identical FastAPI code deployed as Docker container. Azure App Service runs it 24/7 with auto-scaling. Secrets fetched from Azure Key Vault via DefaultAzureCredential instead of .env. GitHub Actions deploys new version on every push to main.</div>
+          <div><span class="tag t-pu">Azure App Service</span><span class="tag t-pu">Key Vault secrets</span><span class="tag t-pu">GitHub Actions CI/CD</span><span class="tag t-pu">Auto-scale</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--purple),var(--amber))"></div>
+      <div class="fa-tip" style="color:var(--amber)">↓</div>
+      <div class="fa-label">LangGraph routing — unchanged from Phase 1</div>
+    </div>
+
+    <!-- ROUTER -->
+    <div class="sec-label">Layer 3 — LangGraph Router (router/graph.py — unchanged)</div>
+    <div class="router-box">
+      <div class="router-title">🔀 Same routing logic — zero code change from Phase 1</div>
+      <div class="router-rule" style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15);">
+        <div class="rr-keyword" style="color:var(--blue)">"document" / "SOP" / "report" / "PDF" / "what does"</div>
+        <div class="rr-arrow">→</div>
+        <div class="rr-agent" style="color:var(--blue)">🔍 Retrieval Agent</div>
+      </div>
+      <div class="router-rule" style="background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.15);">
+        <div class="rr-keyword" style="color:var(--amber)">"KPI" / "metric" / "dashboard" / "performance" / "how many"</div>
+        <div class="rr-arrow">→</div>
+        <div class="rr-agent" style="color:var(--amber)">📊 API Agent</div>
+      </div>
+      <div class="router-rule" style="background:rgba(52,211,153,0.06); border:1px solid rgba(52,211,153,0.15);">
+        <div class="rr-keyword" style="color:var(--green)">"ticket" / "create" / "approve" / "email" / "notify" / "log"</div>
+        <div class="rr-arrow">→</div>
+        <div class="rr-agent" style="color:var(--green)">🔄 Workflow Agent</div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--amber),var(--green))"></div>
+      <div class="fa-tip" style="color:var(--green)">↓</div>
+    </div>
+
+    <!-- AGENTS PHASE 2 -->
+    <div class="sec-label">Layer 4 — The 3 Agents (What Changes in Phase 2)</div>
+    <div class="card-row" style="align-items:flex-start;">
+
+      <div class="agent-col">
+        <div class="agent-header" style="background:rgba(56,189,248,0.1); color:var(--blue); border:1px solid rgba(56,189,248,0.3);">🔍 Retrieval Agent</div>
+        <div class="agent-body" style="border-color:rgba(56,189,248,0.2);">
+          <div class="agent-step"><strong>Step 1 — Embed query</strong>AzureOpenAI() client — same model, same result. 1 line change.</div>
+          <div class="agent-step"><strong>Step 2 — Search Azure AI Search</strong>SearchClient with VectorizedQuery replaces FAISS search. Managed semantic ranking included.</div>
+          <div class="agent-step"><strong>Step 3 — Build prompt</strong>Identical prompt construction logic — unchanged.</div>
+          <div class="agent-step"><strong>Step 4 — Call LLM</strong>AzureOpenAI GPT-4o — data stays inside Azure tenant. Compliance ✓</div>
+          <div class="diff-box">
+            <span class="del">- search_faiss(query_embedding)</span><br>
+            <span class="add">+ SearchClient(endpoint, index, cred)</span><br>
+            <span class="add">+ VectorizedQuery(vector=query_vector)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-col">
+        <div class="agent-header" style="background:rgba(251,191,36,0.1); color:var(--amber); border:1px solid rgba(251,191,36,0.3);">📊 API Agent</div>
+        <div class="agent-body" style="border-color:rgba(251,191,36,0.2);">
+          <div class="agent-step"><strong>Step 1 — Extract intent</strong>Same LLM extraction prompt — unchanged.</div>
+          <div class="agent-step"><strong>Step 2 — Call via Azure Function</strong>Instead of direct API call, posts to Azure Function HTTP trigger URL. Function handles retry, auth, logging.</div>
+          <div class="agent-step"><strong>Step 3 — DB fallback</strong>Azure Database for MySQL via same SQLAlchemy query — only connection string changes.</div>
+          <div class="agent-step"><strong>Step 4 — Format output</strong>Same LLM formatting prompt — unchanged.</div>
+          <div class="diff-box">
+            <span class="del">- requests.get("internal-api/kpi/...")</span><br>
+            <span class="add">+ requests.post(AZURE_FUNCTION_URL,</span><br>
+            <span class="add">&nbsp;&nbsp;json={"metric": metric_name})</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="agent-col">
+        <div class="agent-header" style="background:rgba(52,211,153,0.1); color:var(--green); border:1px solid rgba(52,211,153,0.3);">🔄 Workflow Agent</div>
+        <div class="agent-body" style="border-color:rgba(52,211,153,0.2);">
+          <div class="agent-step"><strong>Step 1 — Classify action</strong>Same LLM classification prompt — unchanged.</div>
+          <div class="agent-step"><strong>Ticket creation</strong>POST to Logic App HTTP trigger → Logic App creates ticket in ITSM system automatically.</div>
+          <div class="agent-step"><strong>Email notification</strong>POST to Logic App → Logic App sends real Outlook/O365 email. No more smtplib.</div>
+          <div class="agent-step"><strong>Approval routing</strong>Logic App sends approval card to Teams/Outlook. Waits for response. Updates RAID log.</div>
+          <div class="agent-step"><strong>Log update</strong>Writes to Azure Table Storage or Cosmos DB instead of local file.</div>
+          <div class="diff-box">
+            <span class="del">- smtplib.send() / local_logs.append()</span><br>
+            <span class="add">+ requests.post(LOGIC_APP_URL,</span><br>
+            <span class="add">&nbsp;&nbsp;json={"action": action, "data": d})</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flow-arrow">
+      <div class="fa-line" style="background:linear-gradient(var(--green),var(--blue))"></div>
+      <div class="fa-tip" style="color:var(--blue)">↓</div>
+      <div class="fa-label">Response travels back · Monitored by Azure Monitor + Power BI</div>
+    </div>
+
+    <div class="sec-label">Response + Monitoring</div>
+    <div class="card-row">
+      <div class="card gr card-wide">
+        <div class="emo">📊</div>
+        <div class="card-body-wrap">
+          <div class="ct">Agent → FastAPI → Streamlit → User + Azure Monitor</div>
+          <div class="cs">Full round trip + observability</div>
+          <div class="cb">Same response flow as Phase 1. Additionally: structured logs sent to Azure Monitor. Power BI dashboard tracks agent usage, response quality, error rates, automation ROI. Key Vault rotates secrets automatically. App Insights shows latency per endpoint.</div>
+          <span class="tag t-gr">Azure Monitor</span><span class="tag t-gr">Power BI</span><span class="tag t-gr">App Insights</span><span class="tag t-gr">Key Vault auto-rotation</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end p2 -->
+
+
+  <!-- ════════════════════════════════
+       PANEL 3 — DIFF
+  ════════════════════════════════ -->
+  <div class="panel" id="diff">
+
+    <div class="sec-label" style="margin-top:0">Summary — What Changes, What Stays the Same</div>
+
+    <!-- SUMMARY BOXES -->
+    <div class="summary-row">
+      <div class="summary-box" style="background:rgba(52,211,153,0.07); border:1px solid rgba(52,211,153,0.2);">
+        <div class="big" style="color:var(--green)">7</div>
+        <div class="label" style="color:var(--green)">Files with zero code change</div>
+      </div>
+      <div class="summary-box" style="background:rgba(251,191,36,0.07); border:1px solid rgba(251,191,36,0.2);">
+        <div class="big" style="color:var(--amber)">4</div>
+        <div class="label" style="color:var(--amber)">Files with small SDK swaps</div>
+      </div>
+      <div class="summary-box" style="background:rgba(248,113,113,0.07); border:1px solid rgba(248,113,113,0.2);">
+        <div class="big" style="color:var(--red)">0</div>
+        <div class="label" style="color:var(--red)">Agent logic / prompt rewrites</div>
+      </div>
+    </div>
+
+    <div class="sec-hr" style="margin-top:24px;"><span>Component-by-Component Diff</span></div>
+
+    <div style="background:var(--s1); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-top:8px;">
+      <table class="diff-table">
+        <thead>
+          <tr style="background:var(--s2);">
+            <th style="color:var(--text); width:18%;">Component</th>
+            <th style="color:#64748b; width:28%;">⚙️ Phase 1 — Pure Python</th>
+            <th style="color:var(--blue); width:28%;">☁️ Phase 2 — Azure</th>
+            <th style="color:var(--text); width:14%;">Code Change?</th>
+            <th style="color:var(--text); width:12%;">Who Does It?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="comp">Streamlit UI</td><td class="p1val">localhost:8501 · app.py</td><td class="p2val">Azure App Service · same app.py</td><td class="change-small">1 URL change</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">FastAPI backend</td><td class="p1val">localhost:8000 · uvicorn</td><td class="p2val">Azure App Service · Docker</td><td class="change-none">No code change</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">LangGraph router</td><td class="p1val">router/graph.py local</td><td class="p2val">Same router/graph.py</td><td class="change-none">Zero change ✓</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">Retrieval Agent</td><td class="p1val">FAISS + OpenAI()</td><td class="p2val">Azure AI Search + AzureOpenAI()</td><td class="change-small">SearchClient swap</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">API Agent</td><td class="p1val">requests.get() to API</td><td class="p2val">requests.post() to Azure Function</td><td class="change-small">1 URL + method</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">Workflow Agent</td><td class="p1val">smtplib + local logs</td><td class="p2val">Logic App HTTP trigger</td><td class="change-small">1 requests.post()</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">Embedding client</td><td class="p1val">OpenAI(api_key=...)</td><td class="p2val">AzureOpenAI(endpoint, version)</td><td class="change-small">Client constructor</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">Chunking logic</td><td class="p1val">chunker.py local</td><td class="p2val">Same chunker.py in Azure Function</td><td class="change-none">Zero change ✓</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">Prompt templates</td><td class="p1val">Python f-strings</td><td class="p2val">Exact same f-strings</td><td class="change-none">Zero change ✓</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+          <tr><td class="comp">Vector store</td><td class="p1val">FAISS + .pkl on disk</td><td class="p2val">Azure AI Search managed index</td><td class="change-infra">Infrastructure swap</td><td style="color:var(--amber); font-size:8px;">AI Eng + Portal</td></tr>
+          <tr><td class="comp">Document storage</td><td class="p1val">Local /data/raw_docs</td><td class="p2val">Azure Blob Storage</td><td class="change-infra">BlobServiceClient</td><td style="color:var(--amber); font-size:8px;">AI Eng + Portal</td></tr>
+          <tr><td class="comp">Secrets</td><td class="p1val">.env + load_dotenv()</td><td class="p2val">Azure Key Vault + SecretClient</td><td class="change-infra">SecretClient fetch</td><td style="color:var(--amber); font-size:8px;">AI Eng + DevOps</td></tr>
+          <tr><td class="comp">Ingestion trigger</td><td class="p1val">python run_ingestion.py (manual)</td><td class="p2val">Azure Functions timer trigger (auto)</td><td class="change-infra">Timer config</td><td style="color:var(--amber); font-size:8px;">AI Eng + DevOps</td></tr>
+          <tr><td class="comp">Workflow engine</td><td class="p1val">Python functions in code</td><td class="p2val">Azure Logic Apps (portal)</td><td class="change-infra">Portal drag-drop</td><td style="color:#f472b6; font-size:8px;">Portal only</td></tr>
+          <tr><td class="comp">Database</td><td class="p1val">MySQL local / on-prem</td><td class="p2val">Azure DB for MySQL</td><td class="change-small">Connection string</td><td style="color:var(--amber); font-size:8px;">DevOps + Portal</td></tr>
+          <tr><td class="comp">Deployment</td><td class="p1val">uvicorn / streamlit run</td><td class="p2val">GitHub Actions → Azure App Service</td><td class="change-infra">deploy.yml</td><td style="color:var(--amber); font-size:8px;">AI Eng + DevOps</td></tr>
+          <tr><td class="comp">Monitoring</td><td class="p1val">print() + basic logging</td><td class="p2val">Azure Monitor + Power BI</td><td class="change-infra">Structured logger</td><td style="color:#f472b6; font-size:8px;">DevOps + Portal</td></tr>
+          <tr><td class="comp">SharePoint access</td><td class="p1val">Local folder simulation</td><td class="p2val">Microsoft Graph API</td><td class="change-infra">Graph SDK</td><td style="color:var(--blue); font-size:8px;">AI Engineer</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- COLOUR LEGEND for diff table -->
+    <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:16px;">
+      <div style="display:flex; align-items:center; gap:6px; font-size:8px; color:var(--green);">● Zero code change</div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:8px; color:var(--amber);">● Small change (1-3 lines)</div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:8px; color:var(--orange);">● Infrastructure swap (no logic change)</div>
+      <div style="display:flex; align-items:center; gap:6px; font-size:8px; color:var(--pink);">● Portal only — no Python code</div>
+    </div>
+
+    <!-- KEY INSIGHT -->
+    <div style="background:linear-gradient(135deg,rgba(56,189,248,0.05),rgba(167,139,250,0.05)); border:1px solid rgba(167,139,250,0.2); border-radius:12px; padding:18px 22px; margin-top:20px; text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:var(--white); margin-bottom:8px;">The Core Insight for Your Interview</div>
+      <div style="font-size:10px; color:#94a3b8; line-height:1.8; max-width:800px; margin:0 auto;">
+        Every agent, every prompt, all LangGraph routing, the entire FastAPI API, and the Streamlit UI
+        are <span style="color:var(--green); font-weight:700;">identical in both phases.</span>
+        Azure doesn't change <em>what</em> the system does — it changes <em>where</em> it runs and <em>how</em> it connects to infrastructure.
+        The AI intelligence is 100% yours. Azure is the enterprise-grade plumbing underneath it.
+      </div>
+    </div>
+
+  </div><!-- end diff -->
+
+  <p class="footer">KPMG PMO Chatbot · Phase 1 & 2 · Full Workflow · Papiya Mazumder</p>
+
+</div><!-- wrap -->
+
+<script>
+  function show(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.remove('active-p1','active-p2','active-diff');
+    });
+    const map = {p1:'active-p1', p2:'active-p2', diff:'active-diff'};
+    event.target.classList.add(map[id]);
+  }
+</script>
+</body>
+</html>

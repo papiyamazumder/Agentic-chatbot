@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPMG Chatbot — Features</title>
+  <style>
+    :root {
+      --bg: #05070d;
+      --s1: #0b0f1a;
+      --s2: #111827;
+      --border: #1a2332;
+      --blue: #38bdf8;
+      --purple: #a78bfa;
+      --green: #34d399;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --pink: #f472b6;
+      --orange: #fb923c;
+      --teal: #2dd4bf;
+      --text: #cbd5e1;
+      --muted: #374151;
+      --white: #f1f5f9;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      padding: 36px 20px 60px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: radial-gradient(ellipse at 15% 30%, rgba(56, 189, 248, 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 70%, rgba(167, 139, 250, 0.04) 0%, transparent 55%);
+    }
+
+    .wrap {
+      max-width: 1300px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hdr {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hdr-badge {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 30px;
+      padding: 5px 18px;
+      margin-bottom: 12px;
+    }
+
+    .hdr h1 {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: -0.8px;
+      margin-bottom: 6px;
+    }
+
+    .hdr p {
+      font-size: 10px;
+      color: #475569;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+
+    .tab {
+      padding: 9px 28px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--s1);
+      color: #475569;
+    }
+
+    .tab.u-act {
+      background: rgba(52, 211, 153, 0.1);
+      border-color: rgba(52, 211, 153, 0.35);
+      color: var(--green);
+    }
+
+    .tab.t-act {
+      background: rgba(167, 139, 250, 0.1);
+      border-color: rgba(167, 139, 250, 0.35);
+      color: var(--purple);
+    }
+
+    .tab.b-act {
+      background: rgba(251, 191, 36, 0.1);
+      border-color: rgba(251, 191, 36, 0.35);
+      color: var(--amber);
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .slabel {
+      font-size: 8px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #374151;
+      text-align: center;
+      margin: 8px 0 14px;
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 12px;
+    }
+
+    .fc {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fc:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .fc::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .fc.gr::before {
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+
+    .fc.pu::before {
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+    }
+
+    .fc.bl::before {
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    }
+
+    .fc.am::before {
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    }
+
+    .fc.or::before {
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+    }
+
+    .fc.pi::before {
+      background: linear-gradient(90deg, transparent, var(--pink), transparent);
+    }
+
+    .fc.te::before {
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    }
+
+    .fc.re::before {
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    }
+
+    .fc-num {
+      font-size: 9px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      opacity: 0.3;
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .fc.gr .fc-num {
+      color: var(--green);
+    }
+
+    .fc.pu .fc-num {
+      color: var(--purple);
+    }
+
+    .fc.bl .fc-num {
+      color: var(--blue);
+    }
+
+    .fc.am .fc-num {
+      color: var(--amber);
+    }
+
+    .fc.or .fc-num {
+      color: var(--orange);
+    }
+
+    .fc.pi .fc-num {
+      color: var(--pink);
+    }
+
+    .fc.te .fc-num {
+      color: var(--teal);
+    }
+
+    .fc.re .fc-num {
+      color: var(--red);
+    }
+
+    .fc-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .fc-emo {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .fc-title {
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 2px;
+      line-height: 1.2;
+    }
+
+    .fc.gr .fc-title {
+      color: var(--green);
+    }
+
+    .fc.pu .fc-title {
+      color: var(--purple);
+    }
+
+    .fc.bl .fc-title {
+      color: var(--blue);
+    }
+
+    .fc.am .fc-title {
+      color: var(--amber);
+    }
+
+    .fc.or .fc-title {
+      color: var(--orange);
+    }
+
+    .fc.pi .fc-title {
+      color: var(--pink);
+    }
+
+    .fc.te .fc-title {
+      color: var(--teal);
+    }
+
+    .fc.re .fc-title {
+      color: var(--red);
+    }
+
+    .fc-sub {
+      font-size: 8.5px;
+      color: #475569;
+    }
+
+    .fc-desc {
+      font-size: 9.5px;
+      color: #64748b;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+
+    .fc-example {
+      background: var(--s2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 8.5px;
+      color: #94a3b8;
+      line-height: 1.5;
+      border-left: 2px solid;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .fc.gr .fc-example {
+      border-color: var(--green);
+    }
+
+    .fc.pu .fc-example {
+      border-color: var(--purple);
+    }
+
+    .fc.bl .fc-example {
+      border-color: var(--blue);
+    }
+
+    .fc.am .fc-example {
+      border-color: var(--amber);
+    }
+
+    .fc.or .fc-example {
+      border-color: var(--orange);
+    }
+
+    .fc.pi .fc-example {
+      border-color: var(--pink);
+    }
+
+    .fc.te .fc-example {
+      border-color: var(--teal);
+    }
+
+    .fc.re .fc-example {
+      border-color: var(--red);
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 7px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 2px 3px 0 0;
+    }
+
+    .tg {
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--green);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    .tp {
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--purple);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+    }
+
+    .tb {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--blue);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .ta {
+      background: rgba(251, 191, 36, 0.1);
+      color: var(--amber);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+
+    .to {
+      background: rgba(251, 146, 60, 0.1);
+      color: var(--orange);
+      border: 1px solid rgba(251, 146, 60, 0.2);
+    }
+
+    .tpi {
+      background: rgba(244, 114, 182, 0.1);
+      color: var(--pink);
+      border: 1px solid rgba(244, 114, 182, 0.2);
+    }
+
+    .tte {
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--teal);
+      border: 1px solid rgba(45, 212, 191, 0.2);
+    }
+
+    .tre {
+      background: rgba(248, 113, 113, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+    }
+
+    .both-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: stretch;
+      margin-bottom: 0;
+    }
+
+    .br-user {
+      background: var(--s1);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      border-radius: 10px;
+      padding: 14px;
+      border-left: 3px solid var(--green);
+    }
+
+    .br-tech {
+      background: var(--s1);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      border-radius: 10px;
+      padding: 14px;
+      border-left: 3px solid var(--purple);
+    }
+
+    .br-feature {
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .br-user .br-feature {
+      color: var(--green);
+    }
+
+    .br-tech .br-feature {
+      color: var(--purple);
+    }
+
+    .br-desc {
+      font-size: 8.5px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    .br-label {
+      font-size: 7px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 1px 7px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 8px;
+    }
+
+    .br-user .br-label {
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--green);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+
+    .br-tech .br-label {
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--purple);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+    }
+
+    .feat-num-badge {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 900;
+      color: #475569;
+      flex-shrink: 0;
+      font-family: 'Courier New', monospace;
+    }
+
+    .sec-div {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 12px;
+    }
+
+    .sd-l {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .sd-t {
+      font-size: 8px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .col-hdrs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .col-hdr {
+      border-radius: 10px;
+      padding: 11px 16px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .ch-g {
+      background: rgba(52, 211, 153, 0.07);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      color: var(--green);
+    }
+
+    .ch-p {
+      background: rgba(167, 139, 250, 0.07);
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      color: var(--purple);
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #1f2937;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="hdr">
+      <div class="hdr-badge">KPMG PMO Assistant</div>
+      <h1>Chatbot Features &amp; Functionalities</h1>
+      <p>User Perspective &nbsp;·&nbsp; Technical Perspective &nbsp;·&nbsp; Combined View</p>
+    </div>
+
+    <div class="tabs">
+      <div class="tab u-act" onclick="show('user',this,'u-act')">👤 User Perspective</div>
+      <div class="tab" onclick="show('tech',this,'t-act')">⚙️ Technical Perspective</div>
+      <div class="tab" onclick="show('both',this,'b-act')">🔀 Combined View</div>
+    </div>
+
+    <!-- ══ USER ══ -->
+    <div class="panel active" id="user">
+      <div class="slabel">What the user can DO with this chatbot — 13 features</div>
+      <div class="feat-grid">
+
+        <div class="fc gr">
+          <div class="fc-num">01</div>
+          <div class="fc-head">
+            <div class="fc-emo">📄</div>
+            <div>
+              <div class="fc-title">Ask Questions About Documents</div>
+              <div class="fc-sub">Natural language document search</div>
+            </div>
+          </div>
+          <div class="fc-desc">Ask any question about PDFs, SOPs, Word files, meeting notes, and reports stored in the
+            enterprise. Get a direct summarised answer — no need to manually search through folders or open files.</div>
+          <div class="fc-example">"What are the risks in the Q3 delivery report?"<br>"Show me the SOP for vendor
+            onboarding."<br>"What was decided in last week's PMO meeting?"</div>
+          <span class="tag tg">Unstructured data</span><span class="tag tg">RAG-powered</span><span
+            class="tag tg">Source cited</span>
+        </div>
+
+        <div class="fc am">
+          <div class="fc-num">02</div>
+          <div class="fc-head">
+            <div class="fc-emo">📊</div>
+            <div>
+              <div class="fc-title">Retrieve Live KPI &amp; Project Data</div>
+              <div class="fc-sub">Structured data from backend systems</div>
+            </div>
+          </div>
+          <div class="fc-desc">Ask for any project metric, delivery score, or performance indicator. Get live data
+            fetched from backend databases in a clean readable summary — no need to open dashboards manually.</div>
+          <div class="fc-example">"What is the delivery risk score for Project Alpha?"<br>"Show me this month's resource
+            utilisation."<br>"What is the current sprint velocity for Team B?"</div>
+          <span class="tag ta">Live data</span><span class="tag ta">Power BI ready</span><span
+            class="tag ta">Auto-formatted</span>
+        </div>
+
+        <div class="fc bl">
+          <div class="fc-num">03</div>
+          <div class="fc-head">
+            <div class="fc-emo">🎫</div>
+            <div>
+              <div class="fc-title">Raise IT Helpdesk Tickets</div>
+              <div class="fc-sub">Instant ticket creation via chat</div>
+            </div>
+          </div>
+          <div class="fc-desc">Create support tickets by describing the issue in natural language. Chatbot generates a
+            ticket ID and logs it automatically. No need to open a separate ITSM tool.</div>
+          <div class="fc-example">"Raise a ticket — access issue on reporting portal."<br>"Create a P1 ticket,
+            production dashboard is down."</div>
+          <span class="tag tb">Auto ticket ID</span><span class="tag tb">ITSM integrated</span><span
+            class="tag tb">Instant confirm</span>
+        </div>
+
+        <div class="fc pi">
+          <div class="fc-num">04</div>
+          <div class="fc-head">
+            <div class="fc-emo">✅</div>
+            <div>
+              <div class="fc-title">Trigger Approval Workflows</div>
+              <div class="fc-sub">Route approvals without switching tools</div>
+            </div>
+          </div>
+          <div class="fc-desc">Send approval requests to the right person automatically. The chatbot routes through the
+            correct approval chain in Outlook or Teams — all from the chat interface.</div>
+          <div class="fc-example">"Send approval for the budget change to the PM."<br>"Get sign-off from delivery lead
+            on scope change."</div>
+          <span class="tag tpi">Auto-routing</span><span class="tag tpi">Teams / Outlook</span><span
+            class="tag tpi">Audit trail</span>
+        </div>
+
+        <div class="fc or">
+          <div class="fc-num">05</div>
+          <div class="fc-head">
+            <div class="fc-emo">📧</div>
+            <div>
+              <div class="fc-title">Send Email Notifications</div>
+              <div class="fc-sub">Email without opening Outlook</div>
+            </div>
+          </div>
+          <div class="fc-desc">Ask the chatbot to notify a person or team — status updates, meeting reminders, delivery
+            alerts. The email is sent automatically without the user opening Outlook at all.</div>
+          <div class="fc-example">"Notify the delivery team about today's 3pm meeting."<br>"Send the weekly PMO update
+            to all stakeholders."</div>
+          <span class="tag to">Auto-send</span><span class="tag to">O365 integrated</span>
+        </div>
+
+        <div class="fc te">
+          <div class="fc-num">06</div>
+          <div class="fc-head">
+            <div class="fc-emo">📝</div>
+            <div>
+              <div class="fc-title">Update RAID Logs &amp; System Logs</div>
+              <div class="fc-sub">Log updates via natural language</div>
+            </div>
+          </div>
+          <div class="fc-desc">Update project logs, RAID registers, and PMO status trackers by telling the chatbot what
+            happened. No need to manually open spreadsheets or log templates.</div>
+          <div class="fc-example">"Log that the RAID review was completed today."<br>"Mark the vendor delay risk as
+            resolved."</div>
+          <span class="tag tte">Auto-logged</span><span class="tag tte">Timestamped</span><span class="tag tte">RAID
+            aware</span>
+        </div>
+
+        <div class="fc pu">
+          <div class="fc-num">07</div>
+          <div class="fc-head">
+            <div class="fc-emo">💬</div>
+            <div>
+              <div class="fc-title">Conversational Memory</div>
+              <div class="fc-sub">Follow-up questions work naturally</div>
+            </div>
+          </div>
+          <div class="fc-desc">Ask follow-up questions without repeating context. The chatbot remembers what was
+            discussed earlier in the session and responds accordingly.</div>
+          <div class="fc-example">"What are the risks in Q3?" → "Which are critical?" → "Who owns the top risk?"</div>
+          <span class="tag tp">Session memory</span><span class="tag tp">Context-aware</span><span
+            class="tag tp">Multi-turn</span>
+        </div>
+
+        <div class="fc re">
+          <div class="fc-num">08</div>
+          <div class="fc-head">
+            <div class="fc-emo">🏷️</div>
+            <div>
+              <div class="fc-title">Agent Transparency</div>
+              <div class="fc-sub">User knows what handled their query</div>
+            </div>
+          </div>
+          <div class="fc-desc">Every response shows which agent handled the query — Retrieval, API, or Workflow. The
+            user understands what action was taken, building trust in the system.</div>
+          <div class="fc-example">"Handled by: Retrieval Agent — sourced from Q3_Report.pdf"<br>"Handled by: Workflow
+            Agent — Ticket TKT-20241015 created"</div>
+          <span class="tag tre">Transparent</span><span class="tag tre">Agent badge</span><span class="tag tre">Source
+            shown</span>
+        </div>
+
+      </div>
+
+      <div class="fc gr">
+        <div class="fc-num">09</div>
+        <div class="fc-head">
+          <div class="fc-emo">📤</div>
+          <div>
+            <div class="fc-title">Upload &amp; Ask Documents</div>
+            <div class="fc-sub">Session-scoped temporary storage</div>
+          </div>
+        </div>
+        <div class="fc-desc">Upload PDFs, Word, Excel files directly in the sidebar. Ask questions immediately — chatbot
+          indexes them on-the-fly and searches both uploaded and pre-stored documents simultaneously.</div>
+        <div class="fc-example">"Upload Q3_Report.pdf" → "What are the risks in Q3?"<br>"Upload budget.xlsx" → "What's
+          the total budget for Project Alpha?"</div>
+        <span class="tag tg">Live upload</span><span class="tag tg">Session-scoped</span><span
+          class="tag tg">Multi-format</span>
+      </div>
+
+      <div class="fc am">
+        <div class="fc-num">10</div>
+        <div class="fc-head">
+          <div class="fc-emo">🔐</div>
+          <div>
+            <div class="fc-title">Login &amp; Role-Based Access</div>
+            <div class="fc-sub">3 roles with different permissions</div>
+          </div>
+        </div>
+        <div class="fc-desc">Login as PMO Admin (full access), Manager (all agents), or Resource (doc Q&A + tickets
+          only). Each role sees only the features and agents they're allowed to use. Locked features show a 🔒 icon.
+        </div>
+        <div class="fc-example">"admin / admin123" → Full access + User Management<br>"resource / resource123" → Doc Q&A
+          + Helpdesk only</div>
+        <span class="tag ta">RBAC</span><span class="tag ta">3 roles</span><span class="tag ta">Agent filtering</span>
+      </div>
+
+      <div class="fc pi">
+        <div class="fc-num">11</div>
+        <div class="fc-head">
+          <div class="fc-emo">👤</div>
+          <div>
+            <div class="fc-title">Onboarding Workflow</div>
+            <div class="fc-sub">PMO Admin only — auto approval email</div>
+          </div>
+        </div>
+        <div class="fc-desc">Onboard a new team member by describing them in chat. System creates an onboarding record
+          with checklist and automatically sends an approval email to the manager via Outlook/Graph API.</div>
+        <div class="fc-example">"Onboard Rahul Sharma as Sr. Developer on Project Alpha"<br>→ Creates record ONB-xxx +
+          emails manager for approval</div>
+        <span class="tag tpi">PMO only</span><span class="tag tpi">Graph API</span><span
+          class="tag tpi">Checklist</span>
+      </div>
+
+      <div class="fc or">
+        <div class="fc-num">12</div>
+        <div class="fc-head">
+          <div class="fc-emo">📤</div>
+          <div>
+            <div class="fc-title">Offboarding Workflow</div>
+            <div class="fc-sub">PMO Admin only — auto approval email</div>
+          </div>
+        </div>
+        <div class="fc-desc">Release a resource from a project via chat. System creates offboarding record with exit
+          checklist (access revoke, asset return, KT, exit interview) and sends approval email to manager.</div>
+        <div class="fc-example">"Offboard Priya from Project Beta, project completed"<br>→ Creates record OFF-xxx +
+          emails manager for approval</div>
+        <span class="tag to">PMO only</span><span class="tag to">Exit checklist</span><span
+          class="tag to">Approval</span>
+      </div>
+
+      <div class="fc te">
+        <div class="fc-num">13</div>
+        <div class="fc-head">
+          <div class="fc-emo">🏷️</div>
+          <div>
+            <div class="fc-title">Resource Tagging</div>
+            <div class="fc-sub">PMO Admin only — reassign between projects</div>
+          </div>
+        </div>
+        <div class="fc-desc">Move a team member from one project to another by describing the transfer in chat. Creates
+          tagging record with audit trail and sends approval notification to the manager via Outlook.</div>
+        <div class="fc-example">"Move Rahul from Project Alpha to Project Gamma"<br>→ Creates TAG-xxx + emails manager
+          for approval</div>
+        <span class="tag tte">PMO only</span><span class="tag tte">Audit trail</span><span class="tag tte">Graph
+          API</span>
+      </div>
+    </div>
+
+    <!-- ══ TECH ══ -->
+    <div class="panel" id="tech">
+      <div class="slabel">How each capability is technically built — 13 components</div>
+      <div class="feat-grid">
+
+        <div class="fc pu">
+          <div class="fc-num">T01</div>
+          <div class="fc-head">
+            <div class="fc-emo">🔀</div>
+            <div>
+              <div class="fc-title">Multi-Agent Orchestration</div>
+              <div class="fc-sub">LangGraph StateGraph routing</div>
+            </div>
+          </div>
+          <div class="fc-desc">LangGraph orchestrates 3 specialised agents using a StateGraph. route_query() classifies
+            each query by keyword matching and directs to Retrieval, API, or Workflow agent. Fully modular — agents have
+            single responsibility with no overlap.</div>
+          <span class="tag tp">LangGraph</span><span class="tag tp">StateGraph</span><span class="tag tp">Conditional
+            routing</span>
+        </div>
+
+        <div class="fc bl">
+          <div class="fc-num">T02</div>
+          <div class="fc-head">
+            <div class="fc-emo">🔍</div>
+            <div>
+              <div class="fc-title">RAG Pipeline</div>
+              <div class="fc-sub">Retrieval-Augmented Generation</div>
+            </div>
+          </div>
+          <div class="fc-desc">Documents chunked at 500 chars with 100-char overlap using
+            RecursiveCharacterTextSplitter. Each chunk embedded via text-embedding-3-small into 1536-dim vectors. Stored
+            in FAISS (P1) or Azure AI Search (P2). Top-5 chunks injected as LLM context.</div>
+          <span class="tag tb">LangChain</span><span class="tag tb">FAISS / AI Search</span><span class="tag tb">Top-k
+            retrieval</span>
+        </div>
+
+        <div class="fc gr">
+          <div class="fc-num">T03</div>
+          <div class="fc-head">
+            <div class="fc-emo">🧮</div>
+            <div>
+              <div class="fc-title">Semantic Vector Search</div>
+              <div class="fc-sub">Dense vectors — not keyword matching</div>
+            </div>
+          </div>
+          <div class="fc-desc">Query embedded at runtime → cosine similarity finds semantically relevant chunks even
+            when exact keywords don't match. Phase 2 upgrades this with Azure AI Search semantic re-ranking layer on top
+            of vector similarity.</div>
+          <span class="tag tg">1536-dim vectors</span><span class="tag tg">Cosine similarity</span><span
+            class="tag tg">Semantic re-rank (P2)</span>
+        </div>
+
+        <div class="fc am">
+          <div class="fc-num">T04</div>
+          <div class="fc-head">
+            <div class="fc-emo">🧠</div>
+            <div>
+              <div class="fc-title">LLM Intent Classification</div>
+              <div class="fc-sub">NLP-based action extraction</div>
+            </div>
+          </div>
+          <div class="fc-desc">Workflow Agent uses an LLM prompt to parse natural language into structured JSON —
+            extracting action type (create_ticket / send_email / approve / update_log) and all parameters. No rigid
+            command syntax required from the user.</div>
+          <span class="tag ta">Prompt engineering</span><span class="tag ta">JSON extraction</span><span
+            class="tag ta">GPT-4o</span>
+        </div>
+
+        <div class="fc or">
+          <div class="fc-num">T05</div>
+          <div class="fc-head">
+            <div class="fc-emo">🔗</div>
+            <div>
+              <div class="fc-title">REST API Integration</div>
+              <div class="fc-sub">Live KPI data via HTTP endpoints</div>
+            </div>
+          </div>
+          <div class="fc-desc">API Agent calls internal REST endpoints with Bearer auth headers. LLM extracts metric
+            name → requests.get() fetches data → LLM formats JSON response into readable output. SQLAlchemy MySQL
+            fallback if API unavailable.</div>
+          <span class="tag to">requests</span><span class="tag to">SQLAlchemy</span><span class="tag to">Bearer
+            auth</span><span class="tag to">MySQL fallback</span>
+        </div>
+
+        <div class="fc pi">
+          <div class="fc-num">T06</div>
+          <div class="fc-head">
+            <div class="fc-emo">⚡</div>
+            <div>
+              <div class="fc-title">Workflow Automation Engine</div>
+              <div class="fc-sub">Python functions → Logic Apps</div>
+            </div>
+          </div>
+          <div class="fc-desc">Phase 1: smtplib email, in-memory ticket dicts, local JSON logs. Phase 2: Workflow Agent
+            POSTs to Azure Logic App HTTP trigger URL → Logic Apps handle real Outlook email, ITSM tickets, Teams
+            approvals, RAID log updates. Zero agent code change between phases.</div>
+          <span class="tag tpi">smtplib (P1)</span><span class="tag tpi">Logic Apps (P2)</span><span
+            class="tag tpi">HTTP triggers</span>
+        </div>
+
+        <div class="fc te">
+          <div class="fc-num">T07</div>
+          <div class="fc-head">
+            <div class="fc-emo">🚀</div>
+            <div>
+              <div class="fc-title">FastAPI Backend</div>
+              <div class="fc-sub">REST API with Pydantic + Swagger</div>
+            </div>
+          </div>
+          <div class="fc-desc">POST /chat endpoint receives queries. Pydantic models validate request/response schema.
+            Swagger UI auto-documents the API. Postman used for testing. Async uvicorn ASGI server. Deployed as Docker
+            container on Azure App Service in Phase 2.</div>
+          <span class="tag tte">FastAPI</span><span class="tag tte">Pydantic</span><span class="tag tte">Swagger
+            UI</span><span class="tag tte">uvicorn</span>
+        </div>
+
+        <div class="fc re">
+          <div class="fc-num">T08</div>
+          <div class="fc-head">
+            <div class="fc-emo">📄</div>
+            <div>
+              <div class="fc-title">Document Ingestion Pipeline</div>
+              <div class="fc-sub">Decoupled — automated in Phase 2</div>
+            </div>
+          </div>
+          <div class="fc-desc">Separate pipeline: PyMuPDF loads PDFs, python-docx for Word files, pandas for Excel.
+            RecursiveCharacterTextSplitter chunks text. OpenAI embeds. FAISS/AI Search indexes. Decoupled from chatbot.
+            Phase 1: manual run. Phase 2: Azure Functions nightly timer trigger.</div>
+          <span class="tag tre">PyMuPDF</span><span class="tag tre">python-docx</span><span class="tag tre">Nightly
+            schedule (P2)</span>
+        </div>
+
+        <div class="fc bl">
+          <div class="fc-num">T09</div>
+          <div class="fc-head">
+            <div class="fc-emo">🖥️</div>
+            <div>
+              <div class="fc-title">Streamlit Conversational UI</div>
+              <div class="fc-sub">Chat interface with session state</div>
+            </div>
+          </div>
+          <div class="fc-desc">st.chat_message and st.chat_input render chat bubbles. Conversation history stored in
+            st.session_state as list of role/content dicts. Each response shows agent badge. HTTP POST to FastAPI.
+            Deployed on Azure App Service via Docker in Phase 2.</div>
+          <span class="tag tb">Streamlit</span><span class="tag tb">session_state</span><span class="tag tb">Docker
+            (P2)</span>
+        </div>
+
+        <div class="fc gr">
+          <div class="fc-num">T10</div>
+          <div class="fc-head">
+            <div class="fc-emo">🔐</div>
+            <div>
+              <div class="fc-title">Enterprise Security</div>
+              <div class="fc-sub">.env → Azure Key Vault</div>
+            </div>
+          </div>
+          <div class="fc-desc">Phase 1: python-dotenv loads secrets from .env file into os.environ. Phase 2: Azure Key
+            Vault stores all API keys and connection strings. App uses Managed Identity — no credentials in code. Secret
+            rotation automatic. Full audit log. .env kept only for local dev.</div>
+          <span class="tag tg">python-dotenv (P1)</span><span class="tag tg">Key Vault (P2)</span><span
+            class="tag tg">Managed Identity</span>
+        </div>
+
+        <div class="fc pi">
+          <div class="fc-num">T11</div>
+          <div class="fc-head">
+            <div class="fc-emo">🔐</div>
+            <div>
+              <div class="fc-title">RBAC &amp; Session Auth</div>
+              <div class="fc-sub">Role-based access via session state</div>
+            </div>
+          </div>
+          <div class="fc-desc">3 roles: PMO Admin (level 3), Manager (level 2), Resource (level 1). Login stores role in
+            st.session_state. call_backend() checks allowed agents per role — blocks unauthorized agent responses with
+            access denied message.</div>
+          <span class="tag tpi">RBAC</span><span class="tag tpi">session_state</span><span class="tag tpi">Role
+            filtering</span>
+        </div>
+
+        <div class="fc or">
+          <div class="fc-num">T12</div>
+          <div class="fc-head">
+            <div class="fc-emo">👤</div>
+            <div>
+              <div class="fc-title">Onboarding/Offboarding Engine</div>
+              <div class="fc-sub">Outlook Graph API + approval workflow</div>
+            </div>
+          </div>
+          <div class="fc-desc">LLM extracts {action, employee_name, role, project} → outlook_connector creates record +
+            checklist → send_approval_notification() sends email via Microsoft Graph API /sendMail with OAuth2 client
+            credentials. Mock fallback logs locally.</div>
+          <span class="tag to">Graph API</span><span class="tag to">OAuth2</span><span class="tag to">LLM JSON
+            extraction</span>
+        </div>
+
+        <div class="fc am">
+          <div class="fc-num">T13</div>
+          <div class="fc-head">
+            <div class="fc-emo">👥</div>
+            <div>
+              <div class="fc-title">User Management Panel</div>
+              <div class="fc-sub">Admin-only role grant/revoke</div>
+            </div>
+          </div>
+          <div class="fc-desc">PMO Admin tab with selectbox per user to change roles. Updates USERS dict + managed_users
+            session state. Changes take effect on next login. Includes access level reference table.</div>
+          <span class="tag ta">Admin panel</span><span class="tag ta">Selectbox</span><span class="tag ta">Session
+            persistence</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ COMBINED ══ -->
+    <div class="panel" id="both">
+      <div class="slabel">Each feature — user view on the left, technical mechanism on the right</div>
+
+      <div class="col-hdrs">
+        <div class="col-hdr ch-g">👤 User Sees / Does</div>
+        <div class="col-hdr ch-p">⚙️ Technical Mechanism</div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 1 — Document Q&amp;A</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">01</div>Ask questions about documents
+          </div>
+          <div class="br-desc">Types a natural language question. Gets a direct summarised answer from enterprise
+            documents. No folder browsing needed. Source document name shown in response.</div>
+          <span class="br-label">Retrieval Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">01</div>RAG · FAISS / Azure AI Search
+          </div>
+          <div class="br-desc">Query → text-embedding-3-small → 1536-dim vector → FAISS cosine search (P1) or AI Search
+            VectorizedQuery (P2) → top-5 chunks → GPT-4o prompt with context → grounded answer.
+            RecursiveCharacterTextSplitter 500/100.</div>
+          <span class="br-label">LangChain · OpenAI · FAISS</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 2 — KPI Data</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">02</div>Get live KPI &amp; project metrics
+          </div>
+          <div class="br-desc">Asks for any metric in plain English. Receives live formatted data without opening Power
+            BI or any dashboard tool. Numbers are up-to-date.</div>
+          <span class="br-label">API Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">02</div>LLM extraction + REST API + MySQL
+          </div>
+          <div class="br-desc">LLM extracts metric name → requests.get(internal_api, headers=auth) → JSON response → LLM
+            formats to readable summary → SQLAlchemy MySQL fallback if API fails. Azure Function triggers in P2.</div>
+          <span class="br-label">requests · SQLAlchemy · GPT-4o</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 3 — Ticket Creation</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">03</div>Raise IT helpdesk tickets
+          </div>
+          <div class="br-desc">Describes issue in chat. Ticket created instantly with unique ID. No ITSM portal needed.
+            Confirmation message with ticket number received immediately.</div>
+          <span class="br-label">Workflow Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">03</div>LLM JSON extraction + Logic Apps
+          </div>
+          <div class="br-desc">LLM parses query → JSON: action: create_ticket, details: {...} → P1: Python dict +
+            TKT-{timestamp} ID + local log. P2: POST to Logic App trigger URL → Logic App creates ITSM ticket → returns
+            ticket ID.</div>
+          <span class="br-label">smtplib (P1) · Logic Apps (P2)</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 4 — Approvals</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">04</div>Trigger approval workflows
+          </div>
+          <div class="br-desc">Requests approval via chat. System routes to the correct approver in Teams or Outlook
+            automatically. User gets notified when approved or rejected.</div>
+          <span class="br-label">Workflow Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">04</div>Logic Apps approval chain
+          </div>
+          <div class="br-desc">LLM extracts action: approve + approver + details → POST to Logic App URL → Logic App
+            sends adaptive approval card to Teams/Outlook → waits for response → updates RAID log on completion. Full
+            audit trail.</div>
+          <span class="br-label">Logic Apps · Teams connector · O365</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 5 — Email Notifications</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">05</div>Send email notifications
+          </div>
+          <div class="br-desc">Asks chatbot to notify someone. Email sent automatically. No Outlook needed. Recipient,
+            subject, and body all extracted from the chat message.</div>
+          <span class="br-label">Workflow Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">05</div>smtplib → O365 Logic App
+          </div>
+          <div class="br-desc">LLM extracts action: send_email + to/subject/body → P1: smtplib SMTP direct send. P2:
+            POST to Logic App → Outlook O365 connector sends real enterprise email with proper sender identity and
+            formatting.</div>
+          <span class="br-label">smtplib (P1) · Outlook Logic App (P2)</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 6 — Log Updates</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">06</div>Update RAID &amp; system logs
+          </div>
+          <div class="br-desc">Tells chatbot what happened. RAID log or PMO tracker updated with timestamp. No
+            spreadsheet needed. Confirmation received.</div>
+          <span class="br-label">Workflow Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">06</div>Local JSON → Azure Table Storage
+          </div>
+          <div class="br-desc">LLM extracts action: update_log + entry text → P1: append to Python list / local JSON
+            file with datetime.now(). P2: POST to Logic App → writes to Azure Table Storage or SharePoint list with full
+            audit log.</div>
+          <span class="br-label">local JSON (P1) · Azure Table (P2)</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 7 — Conversation Memory</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">07</div>Follow-up questions work
+          </div>
+          <div class="br-desc">Continues conversation naturally. Chatbot remembers context from earlier in session. No
+            need to repeat background information with every message.</div>
+          <span class="br-label">All Agents</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">07</div>Streamlit session_state
+          </div>
+          <div class="br-desc">st.session_state["messages"] stores conversation as list of {role, content} dicts. Each
+            new query appended before sending full history to FastAPI. Multi-turn support without external memory store
+            or DB. Resets on browser refresh.</div>
+          <span class="br-label">st.session_state · list of dicts</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 8 — Smart Routing</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">08</div>One interface for everything
+          </div>
+          <div class="br-desc">User doesn't choose an agent — just types naturally. System automatically decides whether
+            it's a document question, KPI request, or workflow action.</div>
+          <span class="br-label">Transparent to user</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">08</div>LangGraph conditional entry point
+          </div>
+          <div class="br-desc">route_query() lowercases query → checks retrieval_keywords list first → then api_keywords
+            → then workflow_keywords → returns "retrieval" / "api" / "workflow" → LangGraph routes to node → default
+            fallback: retrieval. set_conditional_entry_point(route_query, mapping).</div>
+          <span class="br-label">LangGraph · set_conditional_entry_point</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 9 — File Upload</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">09</div>Upload docs for instant Q&amp;A
+          </div>
+          <div class="br-desc">Drops PDF/Word/Excel in sidebar. Asks questions immediately. Documents exist only for the
+            session and are never stored permanently.</div>
+          <span class="br-label">Retrieval Agent</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">09</div>Session FAISS + dual-index merge
+          </div>
+          <div class="br-desc">Upload → save to /tmp/{session_id}/ → parse (PyMuPDF/docx/pandas) → chunk (500/100) →
+            embed (MiniLM) → session FAISS index. Retrieval Agent searches BOTH main + session indexes, merges results
+            by relevance.</div>
+          <span class="br-label">FAISS · uuid session · /tmp storage</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 10 — Onboarding/Offboarding</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">10</div>Onboard/offboard via chat
+          </div>
+          <div class="br-desc">PMO Admin types natural language request. Record created with checklist. Approval email
+            auto-sent to manager. Confirmation with ID and status displayed.</div>
+          <span class="br-label">Workflow Agent (PMO only)</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">10</div>Graph API approval + checklist
+          </div>
+          <div class="br-desc">Groq extracts {action, employee, role, project} → initiate_onboarding() creates record +
+            checklist dict → send_approval_notification() calls send_email() → Graph /sendMail with OAuth2. Mock
+            fallback logs to _onboarding_records list.</div>
+          <span class="br-label">Outlook connector · Graph API · OAuth2</span>
+        </div>
+      </div>
+
+      <div class="sec-div">
+        <div class="sd-l"></div>
+        <div class="sd-t">Feature 11 — Resource Tagging</div>
+        <div class="sd-l"></div>
+      </div>
+      <div class="both-row">
+        <div class="br-user">
+          <div class="br-feature">
+            <div class="feat-num-badge">11</div>Reassign resources between projects
+          </div>
+          <div class="br-desc">PMO Admin says "Move X from A to B". System creates tagging record with audit trail and
+            emails manager for approval. Resource transferred on approval.</div>
+          <span class="br-label">Workflow Agent (PMO only)</span>
+        </div>
+        <div class="br-tech">
+          <div class="br-feature">
+            <div class="feat-num-badge">11</div>tag_resource() + approval email
+          </div>
+          <div class="br-desc">LLM extracts from_project + to_project → tag_resource() creates TAG-xxx record →
+            send_approval_notification() emails manager. All records stored in _onboarding_records in-memory list. Mock
+            fallback available.</div>
+          <span class="br-label">Outlook connector · in-memory store</span>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="footer">KPMG PMO Chatbot &nbsp;·&nbsp; Features &amp; Functionalities &nbsp;·&nbsp; Papiya Mazumder</p>
+  </div>
+
+  <script>
+    function show(id, el, cls) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('u-act', 't-act', 'b-act'));
+      el.classList.add(cls);
+    }
+  </script>
+</body>
+
+</html>

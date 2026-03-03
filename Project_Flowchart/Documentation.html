@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPMG PMO AI Chatbot — Full Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #0a0e1a;
+            --card: #111827;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #3b82f6;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --purple: #8b5cf6;
+            --cyan: #06b6d4;
+            --pink: #ec4899
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 30px
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--cyan);
+            margin: 50px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border)
+        }
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 30px 0 12px
+        }
+
+        h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--yellow);
+            margin: 20px 0 8px
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 30px
+        }
+
+        p {
+            margin-bottom: 14px;
+            color: var(--text)
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 16px 0
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 16px 0
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin: 2px 4px;
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        .b-blue {
+            background: rgba(59, 130, 246, .15);
+            color: var(--accent);
+            border: 1px solid var(--accent)
+        }
+
+        .b-green {
+            background: rgba(16, 185, 129, .15);
+            color: var(--green);
+            border: 1px solid var(--green)
+        }
+
+        .b-yellow {
+            background: rgba(245, 158, 11, .15);
+            color: var(--yellow);
+            border: 1px solid var(--yellow)
+        }
+
+        .b-red {
+            background: rgba(239, 68, 68, .15);
+            color: var(--red);
+            border: 1px solid var(--red)
+        }
+
+        .b-purple {
+            background: rgba(139, 92, 246, .15);
+            color: var(--purple);
+            border: 1px solid var(--purple)
+        }
+
+        .b-cyan {
+            background: rgba(6, 182, 212, .15);
+            color: var(--cyan);
+            border: 1px solid var(--cyan)
+        }
+
+        pre {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 12px 0;
+            color: #c9d1d9
+        }
+
+        code {
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 13px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px
+        }
+
+        th {
+            background: #1e293b;
+            color: var(--cyan);
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .5px
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text)
+        }
+
+        tr:hover td {
+            background: rgba(59, 130, 246, .05)
+        }
+
+        .flow-box {
+            background: linear-gradient(135deg, #0d1117, #111827);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 2;
+            white-space: pre
+        }
+
+        .def {
+            background: rgba(59, 130, 246, .08);
+            border-left: 3px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0
+        }
+
+        .use-case {
+            background: rgba(16, 185, 129, .08);
+            border-left: 3px solid var(--green);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0
+        }
+
+        .nav {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 14, 26, .95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 30px;
+            z-index: 100;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: .2s
+        }
+
+        .nav a:hover {
+            color: var(--cyan);
+            border-color: var(--cyan)
+        }
+
+        .emoji {
+            font-size: 1.3rem;
+            margin-right: 6px
+        }
+
+        .highlight {
+            color: var(--yellow);
+            font-weight: 600
+        }
+
+        .param-table td:first-child {
+            color: var(--yellow);
+            font-family: monospace;
+            font-weight: 500
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <a href="#overview">Overview</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#routing">Routing</a>
+        <a href="#agents">Agents</a>
+        <a href="#connectors">Connectors</a>
+        <a href="#ingestion">Ingestion</a>
+        <a href="#upload">Upload</a>
+        <a href="#backend">Backend</a>
+        <a href="#frontend">Frontend</a>
+        <a href="#master-table">Master Table</a>
+        <a href="#concepts">Concepts</a>
+        <a href="#interview">Interview Q&A</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- ============ OVERVIEW ============ -->
+        <h1 id="overview">🤖 KPMG PMO AI Chatbot</h1>
+        <p class="subtitle">Multi-Agent RAG Chatbot — Full Project Documentation for AI Role Interviews</p>
+
+        <div class="card">
+            <h3>What is this project?</h3>
+            <p>A <strong>multi-agent AI chatbot</strong> built for KPMG's Project Management Office (PMO). Instead of
+                one monolithic bot, it uses <strong>4 specialized AI agents</strong> — each expert in a different domain
+                — orchestrated by a <strong>LangGraph router</strong> that decides which agent should handle each query.
+            </p>
+            <p><strong>Stack:</strong> <span class="badge b-blue">Python</span> <span
+                    class="badge b-green">FastAPI</span> <span class="badge b-yellow">LangGraph</span> <span
+                    class="badge b-red">Groq LLaMA 3.1</span> <span class="badge b-purple">FAISS</span> <span
+                    class="badge b-cyan">Streamlit</span></p>
+        </div>
+
+        <div class="card">
+            <h3>Why multi-agent instead of one agent?</h3>
+            <div class="def"><strong>Definition:</strong> Multi-agent architecture splits responsibilities across
+                specialized agents. Each agent has its own tools, prompts, and data sources — making the system modular,
+                testable, and extensible.</div>
+            <p>A single agent would need to handle document Q&A, SQL queries, ticket creation, email sending, and log
+                analysis — all in one prompt. That leads to confusion, hallucination, and poor routing. With 4 agents,
+                each one does ONE thing very well.</p>
+        </div>
+
+        <!-- ============ ARCHITECTURE ============ -->
+        <h2 id="architecture">🏗️ Architecture — End-to-End Flow</h2>
+
+        <div class="flow-box">User types: "What's the budget burn rate for Project Alpha?"
+            ↓
+            <span style="color:#3b82f6">Streamlit Frontend</span> (port 8501) — sends POST /chat
+            ↓
+            <span style="color:#10b981">FastAPI Backend</span> (port 8000) — validates with Pydantic
+            ↓
+            <span style="color:#f59e0b">LangGraph Router</span> — 3-tier hybrid routing
+            Tier 1: keyword "budget" found → routes to API Agent ✅
+            ↓
+            <span style="color:#ef4444">API Agent</span> — Groq extracts metric → SQL connector returns data
+            ↓
+            <span style="color:#8b5cf6">Groq LLM</span> — formats raw data into executive summary
+            ↓
+            Response returned: "Budget burn rate is 91%. Status: High — Review needed."
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>Frontend Layer</h4>
+                <p><strong>Streamlit</strong> — multi-page app with login (3 roles: PMO Admin/Manager/Resource), RBAC,
+                    documentation card grid with 11 routable docs, tabbed chatbot, user management panel (admin only),
+                    file uploader, agent badges on responses</p>
+            </div>
+            <div class="card">
+                <h4>API Layer</h4>
+                <p><strong>FastAPI</strong> — REST endpoints: /chat, /upload, /health, /tickets, /logs, /approvals.
+                    Pydantic validation, CORS, Swagger docs</p>
+            </div>
+            <div class="card">
+                <h4>Intelligence Layer</h4>
+                <p><strong>LangGraph StateGraph</strong> — routes to 4 agent nodes using 3-tier hybrid strategy (keyword
+                    → embedding → LLM)</p>
+            </div>
+            <div class="card">
+                <h4>Data Layer</h4>
+                <p><strong>7 Connectors</strong> — SQL, Jira, ServiceNow, Outlook, Teams, SharePoint, Azure App
+                    Insights. All with mock fallback</p>
+            </div>
+        </div>
+
+        <!-- ============ ROUTING ============ -->
+        <h2 id="routing">🧭 3-Tier Hybrid Router</h2>
+
+        <div class="def"><strong>Definition:</strong> The router is the "brain" that decides which agent handles a
+            query. Instead of one approach, we use 3 tiers to balance speed, cost, and accuracy.</div>
+
+        <div class="card">
+            <h4>Tier 1 — Keyword Matching</h4>
+            <p><strong>How:</strong> Scan query for trigger words from 4 keyword lists (~15 words each).</p>
+            <p><strong>Speed:</strong> &lt;1ms | <strong>Cost:</strong> Free | <strong>Handles:</strong> ~70% of queries
+            </p>
+            <p><strong>Example:</strong> "Raise a <span class="highlight">ticket</span> for login issue" → keyword
+                "ticket" found → Helpdesk Agent</p>
+            <p><strong>Priority order:</strong> Helpdesk > Workflow > API > Retrieval (checked in this order)</p>
+            <div class="use-case"><strong>Use case:</strong> Fast, deterministic routing for obvious queries that
+                contain clear intent words.</div>
+        </div>
+
+        <div class="card">
+            <h4>Tier 2 — Embedding Cosine Similarity</h4>
+            <p><strong>How:</strong> Embed query with all-MiniLM-L6-v2 (384-dim vector). Compare against pre-embedded
+                "anchor sentences" per agent using cosine similarity. Route to highest-scoring agent if score ≥ 0.35.
+            </p>
+            <p><strong>Speed:</strong> ~5ms | <strong>Cost:</strong> Free (local model) | <strong>Handles:</strong> ~20%
+                of queries</p>
+            <p><strong>Example:</strong> "I can't connect to the company network from home" → no keywords match → embed
+                → helpdesk anchors score 0.502 → Helpdesk Agent</p>
+            <div class="def"><strong>Definition — Cosine Similarity:</strong> Measures the angle between two vectors.
+                1.0 = identical direction, 0 = perpendicular. Used because it's magnitude-invariant — a short query and
+                long anchor can still match well.</div>
+            <div class="use-case"><strong>Use case:</strong> Handles paraphrased queries where the user doesn't use any
+                expected keywords.</div>
+
+            <table class="param-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Why</th>
+                </tr>
+                <tr>
+                    <td>threshold</td>
+                    <td>0.35</td>
+                    <td>Below this, similarity is too weak — escalate to Tier 3</td>
+                </tr>
+                <tr>
+                    <td>anchors per agent</td>
+                    <td>6-8 sentences</td>
+                    <td>Representative queries that define each agent's domain</td>
+                </tr>
+                <tr>
+                    <td>embedding dim</td>
+                    <td>384</td>
+                    <td>Output dimension of all-MiniLM-L6-v2</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h4>Tier 3 — Groq LLM Classifier</h4>
+            <p><strong>How:</strong> Send the query to Groq (llama-3.1-8b-instant) with a classification prompt. LLM
+                returns one word: retrieval/api/helpdesk/workflow.</p>
+            <p><strong>Speed:</strong> ~300ms | <strong>Cost:</strong> 1 API call (free tier) |
+                <strong>Handles:</strong> ~10% of queries
+            </p>
+            <p><strong>Example:</strong> "Can you help me think about our delivery approach?" → keywords ❌ → embeddings
+                all &lt;0.35 ❌ → LLM says "retrieval" ✅</p>
+            <div class="use-case"><strong>Use case:</strong> Definitive fallback for truly ambiguous queries that
+                neither keywords nor embeddings can classify.</div>
+
+            <table class="param-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Why</th>
+                </tr>
+                <tr>
+                    <td>temperature</td>
+                    <td>0</td>
+                    <td>Deterministic — always pick the most likely classification</td>
+                </tr>
+                <tr>
+                    <td>max_tokens</td>
+                    <td>10</td>
+                    <td>Only need one word back</td>
+                </tr>
+                <tr>
+                    <td>model</td>
+                    <td>llama-3.1-8b-instant</td>
+                    <td>Fastest Groq model, sufficient for classification</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ============ AGENTS ============ -->
+        <h2 id="agents">🤖 4 AI Agents — Deep Dive</h2>
+
+        <!-- RETRIEVAL AGENT -->
+        <div class="card">
+            <h3><span class="emoji">🔍</span>Retrieval Agent (RAG)</h3>
+            <div class="def"><strong>Definition — RAG (Retrieval-Augmented Generation):</strong> Instead of relying on
+                the LLM's training data, we RETRIEVE relevant document chunks first, inject them as context, then
+                GENERATE an answer grounded in those chunks. This prevents hallucination.</div>
+
+            <h4>Pipeline Flow</h4>
+            <div class="flow-box">Query: "What does the SOP say about vendor onboarding?"
+                ↓
+                Step 1: Embed query → 384-dim vector (all-MiniLM-L6-v2)
+                ↓
+                Step 2: FAISS search main index → top 5 chunks (L2 distance)
+                Step 3: FAISS search upload index → top 3 chunks (if session has uploads)
+                ↓
+                Step 4: Merge results (uploads first) → top 7 chunks as context
+                ↓
+                Step 5: Build prompt: system="Answer ONLY from context" + user=context+query
+                ↓
+                Step 6: Groq LLM (temp=0.2) → grounded answer citing source documents
+                ↓
+                Output: "According to the Vendor Onboarding SOP (page 3)..."</div>
+
+            <h4>Parameters</h4>
+            <table class="param-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>top_k (main)</td>
+                    <td>5</td>
+                    <td>Number of chunks from pre-ingested docs</td>
+                </tr>
+                <tr>
+                    <td>top_k (upload)</td>
+                    <td>3</td>
+                    <td>Number of chunks from uploaded docs</td>
+                </tr>
+                <tr>
+                    <td>temperature</td>
+                    <td>0.2</td>
+                    <td>Low = factual, minimal creativity</td>
+                </tr>
+                <tr>
+                    <td>max_tokens</td>
+                    <td>1024</td>
+                    <td>Enough for detailed answers</td>
+                </tr>
+                <tr>
+                    <td>chunk_size</td>
+                    <td>500 chars</td>
+                    <td>Balance: too small = no context, too large = noise</td>
+                </tr>
+                <tr>
+                    <td>overlap</td>
+                    <td>100 chars</td>
+                    <td>Prevents splitting sentences at chunk boundaries</td>
+                </tr>
+            </table>
+
+            <div class="use-case"><strong>Use cases:</strong> "Summarize the Q3 report", "What's the policy on remote
+                work?", "Find risks in the delivery document"</div>
+        </div>
+
+        <!-- API AGENT -->
+        <div class="card">
+            <h3><span class="emoji">📊</span>API Agent (Structured Data)</h3>
+            <div class="def"><strong>Definition:</strong> Fetches structured data (numbers, tables) from SQL databases
+                and Jira, then uses the LLM to format it into human-readable executive summaries.</div>
+
+            <h4>Pipeline Flow</h4>
+            <div class="flow-box">Query: "What's the sprint velocity?"
+                ↓
+                Step 1: Groq LLM extracts metric_key (temp=0) → "sprint_velocity"
+                ↓
+                Step 2: Route to connector:
+                - "sprint_velocity" → jira_connector.get_sprints()
+                - "budget_burn_rate" → sql_connector.get_metric("budget_burn_rate")
+                ↓
+                Step 3: Raw data: { sprint: "Sprint 14", velocity: 38, committed: 42 }
+                ↓
+                Step 4: Groq LLM formats (temp=0.3) → executive summary with status
+                ↓
+                Output: "Sprint 14 velocity is 38 pts (committed 42). Status: Good."</div>
+
+            <h4>Supported Metrics (15+)</h4>
+            <table>
+                <tr>
+                    <th>From SQL</th>
+                    <th>From Jira</th>
+                </tr>
+                <tr>
+                    <td>delivery_risk_score, resource_utilisation, budget_burn_rate, sprint_velocity,
+                        milestone_completion, open_risk_items, helpdesk_tickets, stakeholder_satisfaction</td>
+                    <td>jira_sprints, jira_issues, jira_velocity, jira_projects</td>
+                </tr>
+                <tr>
+                    <td>project_summary, team_performance, budget_details (table queries)</td>
+                    <td></td>
+                </tr>
+            </table>
+
+            <div class="use-case"><strong>Use cases:</strong> "Show me the KPI dashboard", "What's the burn rate?", "How
+                many open risks?"</div>
+        </div>
+
+        <!-- HELPDESK AGENT -->
+        <div class="card">
+            <h3><span class="emoji">🎫</span>Helpdesk Agent (IT Tickets)</h3>
+            <div class="def"><strong>Definition:</strong> Handles IT support operations by using the LLM as a "JSON
+                extractor" — parsing natural language into structured ServiceNow API calls.</div>
+
+            <h4>Pipeline Flow</h4>
+            <div class="flow-box">Query: "My VPN is not connecting, please help"
+                ↓
+                Step 1: Groq LLM extracts intent JSON (temp=0):
+                { action: "create_ticket", short_description: "VPN not connecting",
+                urgency: "2", category: "Network" }
+                ↓
+                Step 2: ServiceNow connector → create_ticket() → INC0010004
+                ↓
+                Output: "✅ Ticket INC0010004 created. Urgency: High. Assigned to: IT Network Team"</div>
+
+            <h4>5 Actions</h4>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Trigger</th>
+                    <th>API Call</th>
+                </tr>
+                <tr>
+                    <td>create_ticket</td>
+                    <td>"raise ticket", "my X is broken"</td>
+                    <td>POST /incident</td>
+                </tr>
+                <tr>
+                    <td>check_status</td>
+                    <td>"status of INC001"</td>
+                    <td>GET /incident?number=INC001</td>
+                </tr>
+                <tr>
+                    <td>list_tickets</td>
+                    <td>"show open tickets"</td>
+                    <td>GET /incident?state=Open</td>
+                </tr>
+                <tr>
+                    <td>escalate</td>
+                    <td>"escalate INC001"</td>
+                    <td>PATCH urgency→1</td>
+                </tr>
+                <tr>
+                    <td>update_ticket</td>
+                    <td>"close ticket INC001"</td>
+                    <td>PATCH state→Resolved</td>
+                </tr>
+            </table>
+            <div class="use-case"><strong>Use cases:</strong> "Laptop screen flickering", "Check ticket INC0010001",
+                "Escalate the DB incident"</div>
+        </div>
+
+        <!-- WORKFLOW AGENT -->
+        <div class="card">
+            <h3><span class="emoji">⚙️</span>Workflow Agent (Automation)</h3>
+            <div class="def"><strong>Definition:</strong> Triggers enterprise actions — sending emails, posting approval
+                cards, logging RAID items, querying system telemetry. Each sub-action routes to a different connector.
+            </div>
+
+            <h4>8 Sub-Actions</h4>
+            <table>
+                <tr>
+                    <th>Action</th>
+                    <th>Connector</th>
+                    <th>Data Source</th>
+                    <th>Data Type</th>
+                </tr>
+                <tr>
+                    <td>📧 send_email</td>
+                    <td>outlook_connector</td>
+                    <td>Microsoft Graph API</td>
+                    <td>Action (fire & forget)</td>
+                </tr>
+                <tr>
+                    <td>✅ approve</td>
+                    <td>teams_connector</td>
+                    <td>Teams Webhook</td>
+                    <td>Adaptive Card (interactive)</td>
+                </tr>
+                <tr>
+                    <td>📋 update_raid</td>
+                    <td>sharepoint_connector</td>
+                    <td>SharePoint Lists</td>
+                    <td>Semi-structured (list item)</td>
+                </tr>
+                <tr>
+                    <td>📊 query_logs</td>
+                    <td>azure_insights_connector</td>
+                    <td>App Insights REST</td>
+                    <td>Structured (telemetry)</td>
+                </tr>
+                <tr>
+                    <td>📢 notify_team</td>
+                    <td>teams_connector</td>
+                    <td>Teams Webhook</td>
+                    <td>Text message</td>
+                </tr>
+                <tr>
+                    <td>👤 onboard</td>
+                    <td>outlook_connector</td>
+                    <td>Microsoft Graph API</td>
+                    <td>Workflow + approval email (PMO only)</td>
+                </tr>
+                <tr>
+                    <td>📤 offboard</td>
+                    <td>outlook_connector</td>
+                    <td>Microsoft Graph API</td>
+                    <td>Workflow + approval email (PMO only)</td>
+                </tr>
+                <tr>
+                    <td>🏷️ tag_resource</td>
+                    <td>outlook_connector</td>
+                    <td>Microsoft Graph API</td>
+                    <td>Workflow + approval email (PMO only)</td>
+                </tr>
+            </table>
+            <div class="use-case"><strong>Use cases:</strong> "Email the team about the delay", "Approve budget change",
+                "Log a risk for vendor delay", "Show error logs", "Onboard Rahul as developer on Project Alpha",
+                "Offboard Priya from Project Beta", "Move Ankit from Alpha to Gamma"</div>
+        </div>
+
+        <!-- ============ CONNECTORS ============ -->
+        <h2 id="connectors">🔌 7 Enterprise Connectors</h2>
+
+        <div class="def"><strong>Design Pattern — Mock Fallback:</strong> Every connector follows:
+            <code>if api_key_set: try_real_api() except: use_mock()</code>. This means the app NEVER crashes from
+            missing API keys — it gracefully degrades to realistic mock data.
+        </div>
+
+        <table>
+            <tr>
+                <th>Connector</th>
+                <th>Real API</th>
+                <th>Auth Method</th>
+                <th>Mock Data</th>
+                <th>Env Vars Required</th>
+            </tr>
+            <tr>
+                <td>sql_connector</td>
+                <td>pyodbc → SQL Server</td>
+                <td>SQL auth (user/pass)</td>
+                <td>4 tables: KPIs, projects, budgets, teams</td>
+                <td>SQL_SERVER, SQL_DATABASE, SQL_USER, SQL_PASSWORD</td>
+            </tr>
+            <tr>
+                <td>jira_connector</td>
+                <td>Jira REST API v3</td>
+                <td>Basic auth (email + token)</td>
+                <td>3 sprints, 7 issues, 3 projects</td>
+                <td>JIRA_URL, JIRA_EMAIL, JIRA_API_TOKEN</td>
+            </tr>
+            <tr>
+                <td>servicenow_connector</td>
+                <td>ServiceNow Table API</td>
+                <td>Basic auth</td>
+                <td>3 pre-populated tickets + in-memory CRUD</td>
+                <td>SNOW_INSTANCE, SNOW_USER, SNOW_PASSWORD</td>
+            </tr>
+            <tr>
+                <td>outlook_connector</td>
+                <td>MS Graph /sendMail</td>
+                <td>OAuth2 client credentials</td>
+                <td>Logs email to in-memory list</td>
+                <td>AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID</td>
+            </tr>
+            <tr>
+                <td>teams_connector</td>
+                <td>Incoming Webhook</td>
+                <td>Webhook URL</td>
+                <td>Stores approvals in-memory</td>
+                <td>TEAMS_WEBHOOK_URL</td>
+            </tr>
+            <tr>
+                <td>sharepoint_connector</td>
+                <td>MS Graph (Drive + Lists)</td>
+                <td>OAuth2 client credentials</td>
+                <td>Local files + 4 RAID entries</td>
+                <td>AZURE_CLIENT_ID, SHAREPOINT_SITE_ID</td>
+            </tr>
+            <tr>
+                <td>azure_insights_connector</td>
+                <td>App Insights REST + KQL</td>
+                <td>API key</td>
+                <td>6 log entries + performance summary</td>
+                <td>AZURE_INSIGHTS_APP_ID, AZURE_INSIGHTS_API_KEY</td>
+            </tr>
+        </table>
+
+        <!-- ============ INGESTION ============ -->
+        <h2 id="ingestion">📥 Ingestion Pipeline</h2>
+
+        <div class="def"><strong>Definition:</strong> The ingestion pipeline converts raw documents into searchable
+            vectors. It runs ONCE before the app starts (via <code>python run_ingestion.py</code>).</div>
+
+        <div class="flow-box">data/raw_docs/SOP.pdf, Report.docx, KPIs.xlsx
+            ↓
+            <span style="color:#3b82f6">Step 1: pdf_loader.py</span> — Parse each file format to plain text
+            PDF → PyMuPDF (fitz) | DOCX → python-docx | XLSX → pandas
+            ↓
+            <span style="color:#10b981">Step 2: chunker.py</span> — Split into 500-char chunks with 100-char overlap
+            "The vendor onboarding process requires..." → chunk_0, chunk_1, ...
+            ↓
+            <span style="color:#f59e0b">Step 3: embedder.py</span> — Encode each chunk → 384-dim float vector
+            all-MiniLM-L6-v2 (HuggingFace, runs locally, free)
+            ↓
+            <span style="color:#8b5cf6">Step 4: vector_store.py</span> — Save to FAISS IndexFlatL2
+            data/vector_store/index.faiss + metadata.pkl
+        </div>
+
+        <table>
+            <tr>
+                <th>Component</th>
+                <th>File</th>
+                <th>Key Concept</th>
+            </tr>
+            <tr>
+                <td>Document Parser</td>
+                <td>pdf_loader.py</td>
+                <td>PyMuPDF for PDF, python-docx for Word, pandas for Excel/CSV</td>
+            </tr>
+            <tr>
+                <td>Chunker</td>
+                <td>chunker.py</td>
+                <td>Overlapping windows prevent splitting mid-sentence</td>
+            </tr>
+            <tr>
+                <td>Embedder</td>
+                <td>embedder.py</td>
+                <td>Singleton pattern — model loaded once, reused across requests</td>
+            </tr>
+            <tr>
+                <td>Vector Store</td>
+                <td>vector_store.py</td>
+                <td>FAISS IndexFlatL2 — brute-force L2 distance, exact results</td>
+            </tr>
+        </table>
+
+        <!-- ============ UPLOAD ============ -->
+        <h2 id="upload">📤 File Upload Feature</h2>
+
+        <div class="def"><strong>Definition — Session-scoped Storage:</strong> Each browser tab gets a unique
+            <code>session_id</code> (UUID). Uploaded docs are indexed into a SEPARATE temp FAISS index under
+            <code>/tmp/kpmg_uploads/{session_id}/</code>. When the user clears chat, the temp files and index are
+            deleted.
+        </div>
+
+        <div class="flow-box">User drops "Q4_Report.pdf" into sidebar uploader
+            ↓
+            Frontend sends POST /upload (multipart form: file + session_id)
+            ↓
+            Backend: upload_handler.py
+            1. Save file → /tmp/kpmg_uploads/abc123.../Q4_Report.pdf
+            2. Parse → pdf_loader._load_pdf()
+            3. Chunk → 500-char chunks with source "📎 Q4_Report.pdf (uploaded)"
+            4. Embed → all-MiniLM-L6-v2
+            5. Add to session FAISS index (separate from main)
+            ↓
+            User asks: "What does the Q4 report say about risks?"
+            ↓
+            Retrieval Agent searches BOTH:
+            Main index (pre-ingested docs) → top 5
+            Session index (uploaded docs) → top 3
+            Merge → LLM answers → "According to 📎 Q4_Report.pdf (uploaded)..."
+            ↓
+            "Clear Chat" → deletes /tmp files + in-memory index → fresh session</div>
+
+        <!-- ============ BACKEND ============ -->
+        <h2 id="backend">⚡ Backend — FastAPI Endpoints</h2>
+
+        <table>
+            <tr>
+                <th>Endpoint</th>
+                <th>Method</th>
+                <th>Description</th>
+                <th>Request</th>
+                <th>Response</th>
+            </tr>
+            <tr>
+                <td>/chat</td>
+                <td>POST</td>
+                <td>Main chat — routes through LangGraph</td>
+                <td><code>{ query, session_id }</code></td>
+                <td><code>{ answer, agent_used, sources }</code></td>
+            </tr>
+            <tr>
+                <td>/upload</td>
+                <td>POST</td>
+                <td>Upload doc for session Q&A</td>
+                <td>multipart: file + session_id</td>
+                <td><code>{ status, chunks, total_files }</code></td>
+            </tr>
+            <tr>
+                <td>/upload/clear</td>
+                <td>POST</td>
+                <td>Delete session uploads</td>
+                <td><code>session_id</code></td>
+                <td><code>{ status: "cleared" }</code></td>
+            </tr>
+            <tr>
+                <td>/upload/files</td>
+                <td>GET</td>
+                <td>List uploaded files</td>
+                <td><code>?session_id=...</code></td>
+                <td><code>{ files, vectors, chunks }</code></td>
+            </tr>
+            <tr>
+                <td>/health</td>
+                <td>GET</td>
+                <td>Health check</td>
+                <td>—</td>
+                <td><code>{ status, index_loaded, agents }</code></td>
+            </tr>
+            <tr>
+                <td>/tickets</td>
+                <td>GET</td>
+                <td>All helpdesk tickets</td>
+                <td>—</td>
+                <td><code>{ count, tickets[] }</code></td>
+            </tr>
+            <tr>
+                <td>/logs</td>
+                <td>GET</td>
+                <td>RAID log entries</td>
+                <td>—</td>
+                <td><code>{ count, logs[] }</code></td>
+            </tr>
+            <tr>
+                <td>/approvals</td>
+                <td>GET</td>
+                <td>Approval requests</td>
+                <td>—</td>
+                <td><code>{ count, approvals[] }</code></td>
+            </tr>
+        </table>
+
+        <!-- ============ FRONTEND ============ -->
+        <h2 id="frontend">🖥️ Frontend — Streamlit</h2>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>Chat Interface</h4>
+                <p>Multi-turn conversation with <code>st.session_state</code> memory. Messages persist across reruns
+                    within the same tab.</p>
+            </div>
+            <div class="card">
+                <h4>Agent Badges</h4>
+                <p>Color-coded badges on each response: 🔍 blue, 📊 yellow, 🎫 red, ⚙️ green — so users know which agent
+                    answered.</p>
+            </div>
+            <div class="card">
+                <h4>File Uploader</h4>
+                <p><code>st.file_uploader</code> in sidebar — accepts multiple files, shows progress, lists uploaded
+                    files with 📎 icon.</p>
+            </div>
+            <div class="card">
+                <h4>Quick Examples</h4>
+                <p>6 preset queries as buttons — one-click to test each agent. Demonstrates all features instantly.</p>
+            </div>
+        </div>
+
+        <!-- ============ MASTER TABLE ============ -->
+        <h2 id="master-table">📋 Master Feature × Data × Agent Table</h2>
+
+        <div style="overflow-x:auto">
+            <table>
+                <tr>
+                    <th>Feature</th>
+                    <th>Data Type</th>
+                    <th>Data Source</th>
+                    <th>Agent</th>
+                    <th>Route Trigger</th>
+                    <th>Key Params</th>
+                    <th>Tech Used</th>
+                </tr>
+                <tr>
+                    <td>Document Q&A</td>
+                    <td>Unstructured</td>
+                    <td>SharePoint / local files</td>
+                    <td>🔍 Retrieval</td>
+                    <td>T1: "sop","document"</td>
+                    <td>top_k=5, temp=0.2</td>
+                    <td>RAG, FAISS, chunking</td>
+                </tr>
+                <tr>
+                    <td>File Upload Q&A</td>
+                    <td>Unstructured</td>
+                    <td>User upload</td>
+                    <td>🔍 Retrieval</td>
+                    <td>Same as above</td>
+                    <td>session_id, top_k=3</td>
+                    <td>Temp FAISS, dual-index</td>
+                </tr>
+                <tr>
+                    <td>KPI Metrics</td>
+                    <td>Structured</td>
+                    <td>SQL Server</td>
+                    <td>📊 API</td>
+                    <td>T1: "kpi","metric"</td>
+                    <td>metric_key, temp=0.3</td>
+                    <td>Text-to-SQL, pyodbc</td>
+                </tr>
+                <tr>
+                    <td>Sprint/Velocity</td>
+                    <td>Structured</td>
+                    <td>Jira REST</td>
+                    <td>📊 API</td>
+                    <td>T1: "sprint","jira"</td>
+                    <td>board_id, JQL</td>
+                    <td>REST API, basic auth</td>
+                </tr>
+                <tr>
+                    <td>Project Summary</td>
+                    <td>Structured</td>
+                    <td>SQL Server</td>
+                    <td>📊 API</td>
+                    <td>T2: embed score</td>
+                    <td>project_key</td>
+                    <td>LLM formatting</td>
+                </tr>
+                <tr>
+                    <td>Budget Details</td>
+                    <td>Structured</td>
+                    <td>SQL Server</td>
+                    <td>📊 API</td>
+                    <td>T1: "budget","cost"</td>
+                    <td>financial cols</td>
+                    <td>Read-only DB</td>
+                </tr>
+                <tr>
+                    <td>Create Ticket</td>
+                    <td>Structured</td>
+                    <td>ServiceNow</td>
+                    <td>🎫 Helpdesk</td>
+                    <td>T1: "ticket","broken"</td>
+                    <td>urgency, category</td>
+                    <td>LLM→JSON, CRUD</td>
+                </tr>
+                <tr>
+                    <td>Check Status</td>
+                    <td>Structured</td>
+                    <td>ServiceNow</td>
+                    <td>🎫 Helpdesk</td>
+                    <td>T1: "status","INC"</td>
+                    <td>ticket_number</td>
+                    <td>GET by query</td>
+                </tr>
+                <tr>
+                    <td>List Tickets</td>
+                    <td>Structured</td>
+                    <td>ServiceNow</td>
+                    <td>🎫 Helpdesk</td>
+                    <td>T1: "helpdesk"</td>
+                    <td>state, limit=5</td>
+                    <td>Pagination</td>
+                </tr>
+                <tr>
+                    <td>Escalate</td>
+                    <td>Structured</td>
+                    <td>ServiceNow</td>
+                    <td>🎫 Helpdesk</td>
+                    <td>T1: "escalate"</td>
+                    <td>→ urgency=1</td>
+                    <td>PATCH operation</td>
+                </tr>
+                <tr>
+                    <td>Send Email</td>
+                    <td>Action</td>
+                    <td>Outlook Graph</td>
+                    <td>⚙️ Workflow</td>
+                    <td>T1: "email","send"</td>
+                    <td>to, subject, body</td>
+                    <td>OAuth2, Graph API</td>
+                </tr>
+                <tr>
+                    <td>Approval</td>
+                    <td>Action</td>
+                    <td>Teams Webhook</td>
+                    <td>⚙️ Workflow</td>
+                    <td>T1: "approve"</td>
+                    <td>approver, title</td>
+                    <td>Adaptive Cards</td>
+                </tr>
+                <tr>
+                    <td>RAID Log</td>
+                    <td>Semi-struct</td>
+                    <td>SharePoint Lists</td>
+                    <td>⚙️ Workflow</td>
+                    <td>T1: "raid","risk"</td>
+                    <td>type (R/A/I/D)</td>
+                    <td>Graph API Lists</td>
+                </tr>
+                <tr>
+                    <td>System Logs</td>
+                    <td>Structured</td>
+                    <td>App Insights</td>
+                    <td>⚙️ Workflow</td>
+                    <td>T1: "error log"</td>
+                    <td>severity, hours</td>
+                    <td>KQL queries</td>
+                </tr>
+                <tr>
+                    <td>Notification</td>
+                    <td>Action</td>
+                    <td>Teams Webhook</td>
+                    <td>⚙️ Workflow</td>
+                    <td>T1: "notify team"</td>
+                    <td>channel, message</td>
+                    <td>Webhook POST</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ============ CONCEPTS ============ -->
+        <h2 id="concepts">🧠 Technical Concepts Explained</h2>
+
+        <div class="card">
+            <h4>RAG (Retrieval-Augmented Generation)</h4>
+            <p><strong>What:</strong> Instead of asking the LLM from its training data (which can hallucinate), we first
+                RETRIEVE relevant documents, then let the LLM GENERATE an answer grounded in those docs.</p>
+            <p><strong>Where:</strong> Retrieval Agent — every document Q&A query.</p>
+            <p><strong>Why:</strong> Prevents hallucination. The LLM can only cite what we give it.</p>
+        </div>
+
+        <div class="card">
+            <h4>Vector Embeddings</h4>
+            <p><strong>What:</strong> Text converted to a list of 384 floating-point numbers (a "vector") that captures
+                semantic meaning. Similar texts → similar vectors.</p>
+            <p><strong>Where:</strong> Ingestion pipeline (chunks → vectors), Router Tier 2 (query → vector), Upload
+                handler.</p>
+            <p><strong>Model:</strong> all-MiniLM-L6-v2 — 22M params, runs locally on CPU, free, no API needed.</p>
+        </div>
+
+        <div class="card">
+            <h4>FAISS (Facebook AI Similarity Search)</h4>
+            <p><strong>What:</strong> A library for fast nearest-neighbor search on vector data. We use IndexFlatL2
+                (brute-force L2 distance — exact results, good for &lt;100K vectors).</p>
+            <p><strong>Where:</strong> vector_store.py (main index) + upload_handler.py (session temp index).</p>
+            <p><strong>Why not a cloud DB?</strong> Zero cost, zero latency, zero setup. Swappable to Azure AI Search
+                later.</p>
+        </div>
+
+        <div class="card">
+            <h4>LangGraph StateGraph</h4>
+            <p><strong>What:</strong> A directed graph where nodes are functions and edges define flow. State (a
+                TypedDict) flows through the graph. Conditional entry point routes to one of 4 nodes.</p>
+            <p><strong>Why not LangChain agents?</strong> LangChain ReAct agents use unpredictable tool-calling loops.
+                LangGraph is deterministic — we control exactly which node runs.</p>
+        </div>
+
+        <div class="card">
+            <h4>Prompt Engineering Techniques Used</h4>
+            <table>
+                <tr>
+                    <th>Technique</th>
+                    <th>Agent</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>System prompt constraints</td>
+                    <td>Retrieval</td>
+                    <td>"Answer ONLY from the context. If not found, say so."</td>
+                </tr>
+                <tr>
+                    <td>JSON extraction</td>
+                    <td>Helpdesk/Workflow</td>
+                    <td>"Return ONLY valid JSON. No explanation."</td>
+                </tr>
+                <tr>
+                    <td>One-word classification</td>
+                    <td>Router Tier 3</td>
+                    <td>"Reply with ONLY one word: retrieval, api, helpdesk, or workflow"</td>
+                </tr>
+                <tr>
+                    <td>Temperature control</td>
+                    <td>All</td>
+                    <td>0 for extraction, 0.2 for factual, 0.3 for formatting</td>
+                </tr>
+                <tr>
+                    <td>Role-based prompts</td>
+                    <td>All</td>
+                    <td>"You are an expert PMO AI Assistant for KPMG"</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h4>OAuth2 Client Credentials Flow</h4>
+            <p><strong>What:</strong> App-only authentication (no user login). App sends client_id + client_secret to
+                Azure AD → gets an access token → uses it to call Graph API.</p>
+            <p><strong>Where:</strong> Outlook (send email), SharePoint (read docs/lists), Teams (post cards).</p>
+            <p><strong>Flow:</strong> POST to <code>login.microsoftonline.com/{tenant}/oauth2/v2.0/token</code> → Bearer
+                token → API headers.</p>
+        </div>
+
+        <div class="card">
+            <h4>Mock Fallback Pattern</h4>
+            <pre>def fetch_data():
+    if os.getenv("API_KEY"):        # Real API configured?
+        try:
+            return call_real_api()   # Try it
+        except Exception:
+            pass                     # Failed? Fall through
+    return MOCK_DATA                 # Always have a fallback</pre>
+            <p><strong>Why:</strong> App never crashes. Works locally with zero setup. Easy to demo. Easy to test.</p>
+        </div>
+
+        <!-- ============ INTERVIEW Q&A ============ -->
+        <h2 id="interview">🎯 Interview Questions & Answers</h2>
+
+        <div class="card">
+            <h4>Q: Explain your project in 2 minutes.</h4>
+            <p>"We built a multi-agent RAG chatbot for KPMG's PMO team. It uses LangGraph to orchestrate 4 specialized
+                agents: one for document Q&A using FAISS vector search, one for KPI data from SQL/Jira, one for IT
+                helpdesk tickets via ServiceNow, and one for workflow automation — emails, approvals, RAID logs. The
+                router uses a 3-tier strategy: keyword matching for speed, embedding cosine similarity for semantic
+                understanding, and an LLM fallback for ambiguous queries. Everything runs locally with mock data — only
+                a free Groq API key is needed."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: Why multi-agent instead of one agent?</h4>
+            <p>"Separation of concerns. Each agent has its own tools, prompts, and data sources. The retrieval agent
+                uses RAG with FAISS. The API agent queries SQL. The helpdesk agent does CRUD on ServiceNow. Mixing all
+                of this into one prompt would cause confusion and hallucination. Multi-agent also means we can test,
+                debug, and scale each agent independently."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: How do you handle hallucination?</h4>
+            <p>"Three safeguards: (1) Grounded generation — the retrieval agent can only use retrieved chunks as
+                context, not its training data. (2) System prompt constraint: 'If the answer is not in the context, say
+                so clearly.' (3) Low temperature (0.2) for factual answers, which reduces creative but inaccurate
+                output."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: Why 3 tiers for routing?</h4>
+            <p>"Cost and speed optimization. Keywords handle 70% of queries in under 1ms for free. Embeddings catch
+                paraphrased queries using the local model. The LLM fallback is only used for the ~10% truly ambiguous
+                cases — saving API calls and latency. It's a cascade: cheap and fast first, expensive and accurate
+                last."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: What is cosine similarity and why use it?</h4>
+            <p>"It measures the angle between two vectors — 1.0 means identical direction, 0 means no relationship. We
+                use it in Tier 2 routing to compare the query embedding against pre-embedded anchor sentences for each
+                agent. We chose cosine over L2 distance because it's magnitude-invariant: a short query and a long
+                anchor can still match if they're semantically similar."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: What is FAISS and why not use a cloud vector database?</h4>
+            <p>"FAISS is Facebook's library for fast similarity search. We use IndexFlatL2, which does exact brute-force
+                search. For our scale (~few thousand chunks), it's faster than any cloud DB, costs nothing, and needs
+                zero setup. The architecture is designed so we can swap to Azure AI Search later by only changing
+                vector_store.py — no agent code changes needed."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: How does file upload work?</h4>
+            <p>"Each browser tab gets a UUID session_id. When a user uploads a file, it's saved to /tmp, parsed (PyMuPDF
+                for PDF, python-docx for Word, pandas for Excel), chunked into 500-char pieces, embedded with
+                all-MiniLM-L6-v2, and stored in a session-scoped FAISS index — separate from the main index. The
+                retrieval agent searches both indexes and merges results. On 'Clear Chat', the temp files and index are
+                deleted. This means uploaded docs are never persisted — they exist only for the session."</p>
+        </div>
+
+        <div class="card">
+            <h4>Q: What would you change for production?</h4>
+            <p>"Three things: (1) Replace FAISS with Azure AI Search for scalability and persistence. (2) Add Azure AD
+                JWT authentication to protect the endpoints. (3) Set up scheduled re-ingestion via Azure Functions timer
+                trigger to keep the docs index fresh. The architecture already supports all of this — it's just config
+                changes, no agent rewrites."</p>
+        </div>
+
+    </div><!-- container -->
+
+    <div
+        style="text-align:center;padding:40px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);margin-top:40px">
+        <p><strong>Built by Papiya Mazumder · Capgemini · KPMG PMO AI Project</strong></p>
+        <p>Python · FastAPI · LangGraph · Groq · FAISS · Streamlit · Docker · Azure</p>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPMG Chatbot — AI Concepts</title>
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --s1: #111827;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --white: #f1f5f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 36px 20px 60px;
+        }
+
+        .wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+        }
+
+        h2 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 28px 0 12px;
+            padding-left: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 12px;
+            background: var(--s1);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            padding: 10px 12px;
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: #1e293b;
+            color: #94a3b8;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-top: 1px solid var(--border);
+            vertical-align: top;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        td:first-child {
+            width: 30px;
+            font-weight: 700;
+            opacity: 0.5;
+        }
+
+        td:nth-child(2) {
+            width: 180px;
+            font-weight: 600;
+        }
+
+        tr:hover td {
+            background: rgba(56, 189, 248, 0.03);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 9px;
+            color: #374151;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>AI Concepts Dictionary — Interview Reference</h1>
+        <p class="subtitle">54 AI/ML concepts · definitions · project usage · interview answers</p>
+
+        <h2 style="color:#38bdf8">🔤 Foundation Concepts</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>LLM (Large Language Model)</td>
+                <td>Neural network trained on billions of text tokens for language understanding and generation</td>
+                <td>Groq LLaMA 3.1 in ALL agents</td>
+                <td>We use LLaMA 3.1 8B via Groq API for routing, extraction, parsing, and generation</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Transformer</td>
+                <td>Architecture using self-attention for parallel text processing</td>
+                <td>LLaMA 3.1 (decoder) + MiniLM (encoder)</td>
+                <td>LLaMA is decoder-only, MiniLM is encoder-only — both transformer-based</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Attention Mechanism</td>
+                <td>Allows model to focus on relevant input parts during generation</td>
+                <td>Inside both LLaMA and MiniLM</td>
+                <td>Self-attention is why transformers understand context better than RNNs</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Inference</td>
+                <td>Running trained model for predictions (not training)</td>
+                <td>Every Groq API call</td>
+                <td>We only do inference — no training. Groq uses custom LPU hardware</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Token</td>
+                <td>Smallest unit of text for LLM processing (~4 chars = 1 token)</td>
+                <td>LLaMA 3.1 = 128K token context</td>
+                <td>We send ~1000 tokens of context per query, well within 128K limit</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#a78bfa">🧠 Embeddings &amp; Vector Search</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Embedding</td>
+                <td>Converting text into fixed-size numerical vector capturing semantic meaning</td>
+                <td>ingestion/embedder.py — 384-dim vectors</td>
+                <td>We use all-MiniLM-L6-v2 for 384-dim embeddings; similar texts → similar vectors</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>Sentence Transformer</td>
+                <td>Transformer fine-tuned for sentence-level embeddings</td>
+                <td>all-MiniLM-L6-v2 from HuggingFace</td>
+                <td>Trained on 1B+ sentence pairs with contrastive learning</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>Vector Database / Store</td>
+                <td>DB optimized for similarity search on vectors</td>
+                <td>FAISS IndexFlatL2</td>
+                <td>We use FAISS — a library, not a cloud DB. Perfect for &lt;100K vectors</td>
+            </tr>
+            <tr>
+                <td>9</td>
+                <td>Cosine Similarity</td>
+                <td>Measures angle between vectors (1.0 = identical)</td>
+                <td>Router Tier 2</td>
+                <td>Magnitude-invariant — 5-word query matches 20-word anchor if same meaning</td>
+            </tr>
+            <tr>
+                <td>10</td>
+                <td>L2 Distance (Euclidean)</td>
+                <td>Straight-line distance between vectors</td>
+                <td>FAISS IndexFlatL2</td>
+                <td>For normalized vectors, L2 and cosine give equivalent rankings</td>
+            </tr>
+            <tr>
+                <td>11</td>
+                <td>Nearest Neighbor Search</td>
+                <td>Finding K closest vectors to query</td>
+                <td>FAISS top_k=5</td>
+                <td>Exact NN search — brute force is faster than HNSW for &lt;100K vectors</td>
+            </tr>
+            <tr>
+                <td>12</td>
+                <td>Dimensionality</td>
+                <td>Number of values per vector</td>
+                <td>DIMENSION = 384</td>
+                <td>384 dims balances accuracy vs speed. OpenAI uses 1536 — 4x slower</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#34d399">📚 RAG (Retrieval-Augmented Generation)</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td>RAG</td>
+                <td>Retrieve relevant docs, then generate answer grounded in those docs</td>
+                <td>Retrieval Agent core pattern</td>
+                <td>We retrieve top-5 chunks from FAISS, inject as context, LLM answers from context only</td>
+            </tr>
+            <tr>
+                <td>14</td>
+                <td>Chunking</td>
+                <td>Splitting docs into smaller pieces for LLM context</td>
+                <td>500-char chunks, 100-char overlap</td>
+                <td>Overlap prevents cutting mid-sentence. Each chunk = one FAISS vector</td>
+            </tr>
+            <tr>
+                <td>15</td>
+                <td>Context Window</td>
+                <td>Max text LLM can process at once</td>
+                <td>LLaMA 3.1 = 128K tokens</td>
+                <td>We use ~1000 tokens of context — well within 128K limit</td>
+            </tr>
+            <tr>
+                <td>16</td>
+                <td>Grounded Generation</td>
+                <td>LLM answers ONLY from provided context</td>
+                <td>System prompt enforcement</td>
+                <td>Anti-hallucination: must cite documents, say "I don't know" if not in context</td>
+            </tr>
+            <tr>
+                <td>17</td>
+                <td>Semantic Search</td>
+                <td>Search by meaning, not exact words</td>
+                <td>FAISS search + Router Tier 2</td>
+                <td>"financial burn" finds "budget expenditure" because vectors are similar</td>
+            </tr>
+            <tr>
+                <td>18</td>
+                <td>Document Ingestion</td>
+                <td>Pipeline: Parse → Chunk → Embed → Store</td>
+                <td>ingestion/ pipeline</td>
+                <td>Runs once: parse → 500-char chunks → MiniLM embed → FAISS. ~10s for 50 docs</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#fbbf24">🤖 Agent Architecture</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>19</td>
+                <td>Multi-Agent System</td>
+                <td>Multiple specialized agents, each expert in one domain</td>
+                <td>4 agents: Retrieval, API, Helpdesk, Workflow</td>
+                <td>Each agent has own tools, prompts, data sources — independently testable</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td>Agent Orchestration</td>
+                <td>Coordinating which agent handles which request</td>
+                <td>LangGraph StateGraph</td>
+                <td>LangGraph uses conditional edges to route to the right node</td>
+            </tr>
+            <tr>
+                <td>21</td>
+                <td>State Machine</td>
+                <td>Typed state dict flowing through nodes/edges</td>
+                <td>ChatState TypedDict</td>
+                <td>State carries query, session_id, answer, agent_used through the graph</td>
+            </tr>
+            <tr>
+                <td>22</td>
+                <td>Conditional Routing</td>
+                <td>Different paths based on classification</td>
+                <td>route_query() → 4 branches</td>
+                <td>3-tier routing: keyword → embedding → LLM fallback</td>
+            </tr>
+            <tr>
+                <td>23</td>
+                <td>Tool Use</td>
+                <td>Agent calling external APIs/functions</td>
+                <td>Connectors = agent tools</td>
+                <td>Each agent has specialized connectors (SQL, Jira, ServiceNow, etc.)</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#f87171">🎯 LLM Techniques</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>24</td>
+                <td>Prompt Engineering</td>
+                <td>Crafting instructions for LLM behavior</td>
+                <td>System prompts per agent</td>
+                <td>Each agent has specialized system prompts tuned for its task</td>
+            </tr>
+            <tr>
+                <td>25</td>
+                <td>System Prompt</td>
+                <td>Instructions that set LLM behavior/persona</td>
+                <td>"Answer ONLY from context"</td>
+                <td>Grounding prompt prevents hallucination in retrieval agent</td>
+            </tr>
+            <tr>
+                <td>26</td>
+                <td>Temperature</td>
+                <td>Controls randomness (0=deterministic, 1=creative)</td>
+                <td>0 / 0.2 / 0.3 per task</td>
+                <td>0 for extraction, 0.2 for factual, 0.3 for formatting</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td>Few-Shot Learning</td>
+                <td>Examples in prompt to guide output</td>
+                <td>JSON extraction examples</td>
+                <td>We include 2-3 examples in prompts for consistent JSON output</td>
+            </tr>
+            <tr>
+                <td>28</td>
+                <td>Zero-Shot Classification</td>
+                <td>LLM classifies without examples</td>
+                <td>Router Tier 3</td>
+                <td>Fallback when keyword + embedding fail — LLM picks the right agent</td>
+            </tr>
+            <tr>
+                <td>29</td>
+                <td>JSON Mode</td>
+                <td>Forcing LLM to output valid JSON</td>
+                <td>Helpdesk/Workflow extraction</td>
+                <td>We parse action, fields, urgency from natural language into structured JSON</td>
+            </tr>
+            <tr>
+                <td>30</td>
+                <td>Chain-of-Thought</td>
+                <td>Step-by-step reasoning in prompts</td>
+                <td>Complex metric explanations</td>
+                <td>Helps LLM break down multi-step questions about KPIs and project health</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#fb923c">📝 NLP &amp; Text Processing</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>31</td>
+                <td>Text-to-SQL</td>
+                <td>LLM generates SQL from natural language</td>
+                <td>API Agent queries</td>
+                <td>User asks "budget burn rate" → LLM generates SELECT query → SQL connector runs it</td>
+            </tr>
+            <tr>
+                <td>32</td>
+                <td>Named Entity Recognition</td>
+                <td>Extracting names/dates/IDs from text</td>
+                <td>Ticket fields extraction</td>
+                <td>LLM extracts ticket IDs, urgency, category from natural language</td>
+            </tr>
+            <tr>
+                <td>33</td>
+                <td>Intent Classification</td>
+                <td>Determining user's goal from query</td>
+                <td>Router + agent action parsing</td>
+                <td>3-tier router classifies intent → routes to correct agent</td>
+            </tr>
+            <tr>
+                <td>34</td>
+                <td>Keyword Extraction</td>
+                <td>Identifying important terms in text</td>
+                <td>Router Tier 1</td>
+                <td>Fastest routing tier — direct keyword match in &lt;1ms</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#2dd4bf">🔌 APIs, Frameworks &amp; Infrastructure</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>35</td>
+                <td>REST API</td>
+                <td>HTTP endpoints for data exchange</td>
+                <td>FastAPI + all connectors</td>
+                <td>FastAPI serves /chat endpoint, connectors call Jira/ServiceNow/Graph APIs</td>
+            </tr>
+            <tr>
+                <td>36</td>
+                <td>API Gateway</td>
+                <td>Central entry point for API requests</td>
+                <td>FastAPI /chat endpoint</td>
+                <td>Single endpoint receives all queries, routes internally via LangGraph</td>
+            </tr>
+            <tr>
+                <td>37</td>
+                <td>Webhook</td>
+                <td>HTTP callback triggered by events</td>
+                <td>Teams approval cards</td>
+                <td>Teams webhook sends approval notifications to stakeholders</td>
+            </tr>
+            <tr>
+                <td>38</td>
+                <td>Middleware</td>
+                <td>Code between request and handler</td>
+                <td>CORS middleware</td>
+                <td>CORSMiddleware allows Streamlit (8501) to call FastAPI (8000)</td>
+            </tr>
+            <tr>
+                <td>39</td>
+                <td>Containerization</td>
+                <td>Packaging app with dependencies</td>
+                <td>Docker + Dockerfile</td>
+                <td>Docker ensures consistent environment across dev/staging/prod</td>
+            </tr>
+            <tr>
+                <td>40</td>
+                <td>CI/CD</td>
+                <td>Automated build + deploy pipeline</td>
+                <td>GitHub Actions → Azure</td>
+                <td>Push to main → auto-build Docker → deploy to Azure App Service</td>
+            </tr>
+            <tr>
+                <td>41</td>
+                <td>Microservices</td>
+                <td>App split into independent services</td>
+                <td>Frontend + Backend containers</td>
+                <td>Streamlit and FastAPI run in same container but are logically separate</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#f472b6">🤗 HuggingFace &amp; Model Details</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>42</td>
+                <td>HuggingFace Hub</td>
+                <td>Repository of pre-trained ML models</td>
+                <td>all-MiniLM-L6-v2 download</td>
+                <td>~80MB model downloaded once, cached locally for fast inference</td>
+            </tr>
+            <tr>
+                <td>43</td>
+                <td>Model Card</td>
+                <td>Documentation for model capabilities</td>
+                <td>MiniLM: 22M params, 384 dims</td>
+                <td>22M params makes it lightweight — loads in ~2s, runs on CPU</td>
+            </tr>
+            <tr>
+                <td>44</td>
+                <td>Fine-Tuning</td>
+                <td>Training pre-trained model on specific data</td>
+                <td>MiniLM fine-tuned on 1B+ pairs</td>
+                <td>We don't fine-tune — we use the pre-trained model as-is</td>
+            </tr>
+            <tr>
+                <td>45</td>
+                <td>Transfer Learning</td>
+                <td>Using knowledge from one task for another</td>
+                <td>MiniLM trained on NLI → search</td>
+                <td>Model trained on NLI task transfers well to semantic search</td>
+            </tr>
+            <tr>
+                <td>46</td>
+                <td>Contrastive Learning</td>
+                <td>Training by comparing similar/dissimilar pairs</td>
+                <td>How MiniLM learned embeddings</td>
+                <td>Similar sentences → close vectors, dissimilar → far vectors</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#ef4444">⚙️ Design Patterns</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>47</td>
+                <td>Singleton Pattern</td>
+                <td>One instance shared globally</td>
+                <td>LLM client, embedding model, FAISS index</td>
+                <td>Model loaded once (~2s), reused across all requests — no re-init</td>
+            </tr>
+            <tr>
+                <td>48</td>
+                <td>Mock Fallback Pattern</td>
+                <td>Try real API → catch error → return mock</td>
+                <td>Every connector</td>
+                <td>System always works: real API if configured, realistic mock otherwise</td>
+            </tr>
+            <tr>
+                <td>49</td>
+                <td>Session Scoping</td>
+                <td>Data isolated per user session</td>
+                <td>upload_handler per session_id</td>
+                <td>Uploaded files exist only for that session — auto-cleaned</td>
+            </tr>
+            <tr>
+                <td>50</td>
+                <td>Graceful Degradation</td>
+                <td>System works with reduced features</td>
+                <td>Mock data always available</td>
+                <td>No API keys needed for demo — mock data provides full functionality</td>
+            </tr>
+        </table>
+
+        <h2 style="color:#38bdf8">🔐 Security &amp; Workflow Automation</h2>
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Concept</th>
+                <th>Definition</th>
+                <th>Used In Project</th>
+                <th>Interview Answer</th>
+            </tr>
+            <tr>
+                <td>51</td>
+                <td>RBAC</td>
+                <td>Access control based on assigned roles</td>
+                <td>3 roles: PMO Admin/Manager/Resource</td>
+                <td>Enforced at frontend + backend, restricts agent access by role</td>
+            </tr>
+            <tr>
+                <td>52</td>
+                <td>Approval Workflow</td>
+                <td>Multi-step process requiring authorization</td>
+                <td>Onboarding/offboarding need manager approval</td>
+                <td>PMO Admin triggers, manager notified via Graph API, approval logged</td>
+            </tr>
+            <tr>
+                <td>53</td>
+                <td>Onboarding/Offboarding</td>
+                <td>Automated employee lifecycle workflows</td>
+                <td>PMO Admin triggers via chatbot</td>
+                <td>LLM extracts employee, role, project → connector sends approval email</td>
+            </tr>
+            <tr>
+                <td>54</td>
+                <td>Resource Tagging</td>
+                <td>Reassigning resources between projects</td>
+                <td>PMO Admin moves people</td>
+                <td>Chatbot parses "Move X from A to B" → creates workflow + notifies manager</td>
+            </tr>
+        </table>
+
+        <p class="footer">KPMG PMO Chatbot · 54 AI Concepts · Built by Papiya Mazumder</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KPMG — Python Libraries & Models</title>
+<style>
+:root{--bg:#05070d;--s1:#0b0f1a;--s2:#111827;--border:#1a2332;--blue:#38bdf8;--purple:#a78bfa;--green:#34d399;--amber:#fbbf24;--red:#f87171;--pink:#f472b6;--orange:#fb923c;--teal:#2dd4bf;--lime:#a3e635;--text:#cbd5e1;--muted:#374151;--white:#f1f5f9}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',Tahoma,sans-serif;padding:36px 20px 60px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 10% 20%,rgba(56,189,248,.05) 0%,transparent 50%),radial-gradient(ellipse at 90% 80%,rgba(167,139,250,.05) 0%,transparent 50%)}
+.wrap{max-width:1280px;margin:0 auto;position:relative;z-index:1}
+.hdr{text-align:center;margin-bottom:36px}
+.hdr-badge{display:inline-block;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);border-radius:30px;padding:5px 18px;margin-bottom:12px}
+.hdr h1{font-size:24px;font-weight:900;color:var(--white);letter-spacing:-.8px;margin-bottom:6px}
+.hdr p{font-size:10px;color:#475569;letter-spacing:2px;text-transform:uppercase}
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
+.tab{padding:9px 22px;border-radius:8px;border:1px solid var(--border);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;background:var(--s1);color:#475569}
+.tab.a-all{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.35);color:var(--blue)}
+.tab.a-hf{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.35);color:var(--amber)}
+.tab.a-py{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.35);color:var(--purple)}
+.tab.a-az{background:rgba(45,212,191,.1);border-color:rgba(45,212,191,.35);color:var(--teal)}
+.panel{display:none}.panel.active{display:block}
+.slabel{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#374151;text-align:center;margin:6px 0 16px}
+.sec-div{display:flex;align-items:center;gap:12px;margin:24px 0 14px}
+.sd-l{flex:1;height:1px;background:var(--border)}
+.sd-t{font-size:8px;letter-spacing:3px;text-transform:uppercase;white-space:nowrap;padding:3px 10px;border-radius:20px}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.lc{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:18px;transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}
+.lc:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.lc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0}
+.lc.bl::after{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.lc.pu::after{background:linear-gradient(90deg,transparent,var(--purple),transparent)}
+.lc.gr::after{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.lc.am::after{background:linear-gradient(90deg,transparent,var(--amber),transparent)}
+.lc.or::after{background:linear-gradient(90deg,transparent,var(--orange),transparent)}
+.lc.pi::after{background:linear-gradient(90deg,transparent,var(--pink),transparent)}
+.lc.te::after{background:linear-gradient(90deg,transparent,var(--teal),transparent)}
+.lc.re::after{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+.lc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:8px}
+.lc-left{display:flex;align-items:flex-start;gap:10px;flex:1}
+.lc-emo{font-size:20px;line-height:1;flex-shrink:0;margin-top:2px}
+.lc-name{font-size:13px;font-weight:800;margin-bottom:2px;font-family:'Courier New',monospace}
+.lc.bl .lc-name{color:var(--blue)}.lc.pu .lc-name{color:var(--purple)}.lc.gr .lc-name{color:var(--green)}
+.lc.am .lc-name{color:var(--amber)}.lc.or .lc-name{color:var(--orange)}.lc.pi .lc-name{color:var(--pink)}
+.lc.te .lc-name{color:var(--teal)}.lc.re .lc-name{color:var(--red)}
+.lc-role{font-size:8px;color:#475569}
+.lc-phase{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.ph-both{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2)}
+.ph-p1{background:rgba(56,189,248,.1);color:var(--blue);border:1px solid rgba(56,189,248,.2)}
+.ph-p2{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.lc-used{font-size:8.5px;font-weight:700;color:#94a3b8;margin-bottom:6px;background:var(--s2);border-radius:6px;padding:5px 10px;font-family:'Courier New',monospace}
+.lc-why{font-size:9.5px;color:#64748b;line-height:1.65;margin-bottom:10px}
+.lc-where{font-size:8px;color:#475569;margin-bottom:8px}
+.lc-where strong{color:#94a3b8}
+.tag{display:inline-block;font-size:7px;padding:2px 8px;border-radius:20px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin:2px 3px 0 0}
+.tbl{background:rgba(56,189,248,.1);color:var(--blue);border:1px solid rgba(56,189,248,.2)}
+.tpu{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.tgr{background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2)}
+.tam{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.2)}
+.tor{background:rgba(251,146,60,.1);color:var(--orange);border:1px solid rgba(251,146,60,.2)}
+.tpi{background:rgba(244,114,182,.1);color:var(--pink);border:1px solid rgba(244,114,182,.2)}
+.tte{background:rgba(45,212,191,.1);color:var(--teal);border:1px solid rgba(45,212,191,.2)}
+.tre{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+.hf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px}
+.hfc{background:var(--s1);border-radius:16px;padding:20px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;border:1px solid var(--border)}
+.hfc:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.hfc::before{content:'HF';position:absolute;right:16px;top:14px;font-size:22px;font-weight:900;opacity:.04;color:var(--white);letter-spacing:-1px}
+.hfc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+.hfc.bl::after{background:linear-gradient(90deg,var(--blue),var(--purple))}
+.hfc.am::after{background:linear-gradient(90deg,var(--amber),var(--orange))}
+.hfc.gr::after{background:linear-gradient(90deg,var(--green),var(--teal))}
+.hfc.pi::after{background:linear-gradient(90deg,var(--pink),var(--purple))}
+.hfc-type{font-size:7.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:6px}
+.hfc.bl .hfc-type{color:var(--blue)}.hfc.am .hfc-type{color:var(--amber)}.hfc.gr .hfc-type{color:var(--green)}.hfc.pi .hfc-type{color:var(--pink)}
+.hfc-name{font-size:15px;font-weight:900;color:var(--white);font-family:'Courier New',monospace;margin-bottom:4px;line-height:1.2}
+.hfc-org{font-size:9px;color:#475569;margin-bottom:10px}
+.hfc-slabel{font-size:8px;letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;margin-top:12px}
+.hfc.bl .hfc-slabel{color:var(--blue)}.hfc.am .hfc-slabel{color:var(--amber)}.hfc.gr .hfc-slabel{color:var(--green)}.hfc.pi .hfc-slabel{color:var(--pink)}
+.hfc-text{font-size:9.5px;color:#64748b;line-height:1.65}
+.hfc-code{background:var(--s2);border-radius:8px;padding:10px 14px;font-family:'Courier New',monospace;font-size:8.5px;color:#94a3b8;line-height:1.7;border:1px solid var(--border);margin-top:8px}
+.ci{color:var(--purple)}.cs{color:var(--green)}.cf{color:var(--blue)}.cc{color:#374151}
+.hfc-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.stat{background:var(--s2);border-radius:8px;padding:8px 12px;flex:1;min-width:80px;text-align:center;border:1px solid var(--border)}
+.stat-val{font-size:14px;font-weight:900;font-family:'Courier New',monospace}
+.stat-key{font-size:7px;text-transform:uppercase;letter-spacing:1px;color:#374151;margin-top:2px}
+.hfc.bl .stat-val{color:var(--blue)}.hfc.am .stat-val{color:var(--amber)}.hfc.gr .stat-val{color:var(--green)}.hfc.pi .stat-val{color:var(--pink)}
+.vs-note{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px}
+.vs-note-title{font-size:9px;font-weight:700;color:var(--amber);margin-bottom:6px}
+.vs-note-text{font-size:9px;color:#64748b;line-height:1.6}
+.ref-table{width:100%;border-collapse:collapse;font-size:9px}
+.ref-table th{padding:9px 14px;text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid var(--border);color:#475569;background:var(--s2)}
+.ref-table td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.ref-table tr:last-child td{border-bottom:none}
+.lib-n{font-family:'Courier New',monospace;font-weight:700;font-size:9.5px}
+.lib-p{font-size:8.5px;color:#64748b}
+.footer{text-align:center;margin-top:40px;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#1f2937;padding-top:16px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="hdr">
+  <div class="hdr-badge">KPMG PMO Chatbot</div>
+  <h1>Python Libraries &amp; HuggingFace Models</h1>
+  <p>What &nbsp;·&nbsp; Why &nbsp;·&nbsp; Where — Project-specific breakdown</p>
+</div>
+<div class="tabs">
+  <div class="tab a-all" onclick="show('all',this,'a-all')">📦 All Libraries</div>
+  <div class="tab"       onclick="show('hf', this,'a-hf')">🤗 HuggingFace Models</div>
+  <div class="tab"       onclick="show('py', this,'a-py')">🐍 Quick Reference</div>
+  <div class="tab"       onclick="show('az', this,'a-az')">☁️ Azure SDK (P2)</div>
+</div>
+
+<!-- ALL LIBS -->
+<div class="panel active" id="all">
+<div class="slabel">Every library used — what it does and why it was chosen for this project</div>
+
+<div class="sec-div"><div class="sd-l"></div><div class="sd-t" style="background:rgba(56,189,248,.1);color:var(--blue);border:1px solid rgba(56,189,248,.2);">📄 Document Processing</div><div class="sd-l"></div></div>
+<div class="lib-grid">
+  <div class="lc bl">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">📄</div><div><div class="lc-name">PyMuPDF (fitz)</div><div class="lc-role">PDF text extractor</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">import fitz &nbsp;·&nbsp; doc = fitz.open("file.pdf") &nbsp;·&nbsp; page.get_text()</div>
+    <div class="lc-why">Fastest and most accurate Python PDF parser. Handles complex PMO reports with tables, headers, and multi-column layouts better than PyPDF2. Extracts text page-by-page with layout awareness. Critical for KPMG delivery reports which have dense formatting.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/pdf_loader.py — loads every PDF before chunking.</div>
+    <span class="tag tbl">PDF parsing</span><span class="tag tbl">Ingestion pipeline</span><span class="tag tbl">Layout-aware</span>
+  </div>
+  <div class="lc gr">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">📝</div><div><div class="lc-name">python-docx</div><div class="lc-role">Word document reader</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">from docx import Document &nbsp;·&nbsp; doc.paragraphs &nbsp;·&nbsp; para.text</div>
+    <div class="lc-why">Reads .docx Word files from SharePoint and enterprise repos. SOPs and meeting notes at KPMG are predominantly Word format. python-docx extracts paragraph text cleanly without formatting noise like bold/italic markers polluting the embedded text.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/pdf_loader.py — handles Word files alongside PyMuPDF.</div>
+    <span class="tag tgr">Word files</span><span class="tag tgr">SOPs</span><span class="tag tgr">Meeting notes</span>
+  </div>
+  <div class="lc am">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">📊</div><div><div class="lc-name">pandas</div><div class="lc-role">Excel/CSV + tabular data</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">pd.read_excel() &nbsp;·&nbsp; pd.read_csv() &nbsp;·&nbsp; df.to_dict("records")</div>
+    <div class="lc-why">Two roles: (1) reads Excel/CSV reports in ingestion pipeline, (2) handles tabular KPI data returned from REST APIs in the API Agent. Standard data manipulation — no alternative needed. Works with both local files and Azure Blob-fetched bytes.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/pdf_loader.py (Excel) + agents/api_agent.py (KPI formatting).</div>
+    <span class="tag tam">Excel reading</span><span class="tag tam">KPI data</span><span class="tag tam">Tabular ops</span>
+  </div>
+</div>
+
+<div class="sec-div"><div class="sd-l"></div><div class="sd-t" style="background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2);">🧠 AI, LLM &amp; Embeddings</div><div class="sd-l"></div></div>
+<div class="lib-grid">
+  <div class="lc pu">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🤖</div><div><div class="lc-name">openai</div><div class="lc-role">LLM + Embeddings API client</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">OpenAI() → P1 &nbsp;·&nbsp; AzureOpenAI(endpoint, api_version) → P2</div>
+    <div class="lc-why">Core LLM client. Used for two things: (1) generating 1536-dim embeddings via text-embedding-3-small for every document chunk, (2) GPT-4o chat completions for all three agent responses. AzureOpenAI() is the same library — different constructor for enterprise Azure deployment. Data stays inside Azure tenant in P2.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/embedder.py + all 3 agent files.</div>
+    <span class="tag tpu">GPT-4o</span><span class="tag tpu">text-embedding-3-small</span><span class="tag tpu">All agents</span>
+  </div>
+  <div class="lc pi">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🕸️</div><div><div class="lc-name">langgraph</div><div class="lc-role">Multi-agent orchestration</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">StateGraph(ChatState) &nbsp;·&nbsp; add_node() &nbsp;·&nbsp; set_conditional_entry_point() &nbsp;·&nbsp; compile()</div>
+    <div class="lc-why">The most critical library in the project. Replaces a simple LangChain chain with a stateful multi-agent graph. Each agent is a node. The router is the conditional entry point. This is what makes the system truly agentic — it routes, branches, and maintains typed state across steps. Without LangGraph this would just be if/else blocks, not an agent system.</div>
+    <div class="lc-where"><strong>Used in:</strong> router/graph.py — builds and compiles the entire orchestration graph.</div>
+    <span class="tag tpi">StateGraph</span><span class="tag tpi">Agent routing</span><span class="tag tpi">Agentic AI — core</span>
+  </div>
+  <div class="lc bl">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔗</div><div><div class="lc-name">langchain</div><div class="lc-role">RAG framework + text splitting</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)</div>
+    <div class="lc-why">Used specifically for RecursiveCharacterTextSplitter — the best chunking strategy for PMO documents because it tries paragraph breaks first, then sentences, then words. Keeps semantic units intact unlike simple character splitting. Also provides prompt template utilities used across agents.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/chunker.py (text splitting) + agent prompt templates.</div>
+    <span class="tag tbl">Text chunking</span><span class="tag tbl">RAG backbone</span><span class="tag tbl">Prompt templates</span>
+  </div>
+  <div class="lc gr">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔌</div><div><div class="lc-name">langchain-openai</div><div class="lc-role">LangChain + OpenAI bridge</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">from langchain_openai import ChatOpenAI, AzureChatOpenAI</div>
+    <div class="lc-why">LangChain's official OpenAI integration. Allows using OpenAI models inside LangChain chains and LangGraph nodes with consistent interfaces. Handles token management, retry logic, and streaming automatically. Needed whenever LangChain abstractions call OpenAI models.</div>
+    <div class="lc-where"><strong>Used in:</strong> All agent files where LangChain prompt chains call OpenAI.</div>
+    <span class="tag tgr">LangChain bridge</span><span class="tag tgr">ChatOpenAI</span>
+  </div>
+  <div class="lc am">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔢</div><div><div class="lc-name">tiktoken</div><div class="lc-role">Token counter for GPT-4o</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">tiktoken.encoding_for_model("gpt-4o") &nbsp;·&nbsp; len(enc.encode(text))</div>
+    <div class="lc-why">Counts tokens before sending to GPT-4o to prevent context window overflow errors. Critical for PMO reports — retrieved chunks + query can easily exceed limits. If over limit, prompt is truncated intelligently before API call rather than throwing a hard error mid-conversation.</div>
+    <div class="lc-where"><strong>Used in:</strong> agents/retrieval_agent.py — validates prompt length before LLM call.</div>
+    <span class="tag tam">Token counting</span><span class="tag tam">Context safety</span><span class="tag tam">Overflow prevention</span>
+  </div>
+</div>
+
+<div class="sec-div"><div class="sd-l"></div><div class="sd-t" style="background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2);">🗄️ Vector Store (Phase 1)</div><div class="sd-l"></div></div>
+<div class="lib-grid">
+  <div class="lc gr">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">⚡</div><div><div class="lc-name">faiss-cpu</div><div class="lc-role">Local vector similarity search</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
+    <div class="lc-used">faiss.IndexFlatL2(1536) &nbsp;·&nbsp; index.add(vectors) &nbsp;·&nbsp; index.search(query, k=5)</div>
+    <div class="lc-why">Facebook AI's vector search library. Chosen for Phase 1 because it runs entirely locally with zero cloud cost, handles millions of vectors efficiently, and is extremely fast for similarity search. IndexFlatL2 does exact L2 distance search on 1536-dim OpenAI embedding vectors. Replaced by Azure AI Search in Phase 2.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/vector_store.py (save) + agents/retrieval_agent.py (search).</div>
+    <span class="tag tgr">Vector index</span><span class="tag tgr">Local — no cloud</span><span class="tag tgr">Phase 1 only</span>
+  </div>
+  <div class="lc bl">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔢</div><div><div class="lc-name">numpy</div><div class="lc-role">Array formatting for FAISS</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
+    <div class="lc-used">np.array(embeddings).astype("float32") &nbsp;·&nbsp; np.array([query_vec])</div>
+    <div class="lc-why">FAISS requires numpy float32 arrays — cannot work with plain Python lists. numpy converts OpenAI embedding lists into the correct matrix format for FAISS indexing and searching. Minimal direct use but essential dependency. Not needed in Phase 2 since Azure AI Search handles its own data format.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/vector_store.py + agents/retrieval_agent.py.</div>
+    <span class="tag tbl">FAISS dependency</span><span class="tag tbl">Float32 arrays</span>
+  </div>
+  <div class="lc or">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🥒</div><div><div class="lc-name">pickle</div><div class="lc-role">Chunk metadata serialisation</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
+    <div class="lc-used">pickle.dump(metadata, file) &nbsp;·&nbsp; pickle.load(file)</div>
+    <div class="lc-why">FAISS stores only vectors — not the actual text or source filenames. pickle saves a parallel metadata list (chunk_id, text, source filename) to disk alongside the .index file so retrieved vectors can be mapped back to readable content the LLM can use. Simple and fast for local Phase 1 use.</div>
+    <div class="lc-where"><strong>Used in:</strong> ingestion/vector_store.py — saves/loads chunk metadata.</div>
+    <span class="tag tor">Metadata store</span><span class="tag tor">FAISS companion</span>
+  </div>
+</div>
+
+<div class="sec-div"><div class="sd-l"></div><div class="sd-t" style="background:rgba(244,114,182,.1);color:var(--pink);border:1px solid rgba(244,114,182,.2);">🚀 Backend, Frontend &amp; Utilities</div><div class="sd-l"></div></div>
+<div class="lib-grid">
+  <div class="lc pi">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">⚡</div><div><div class="lc-name">fastapi</div><div class="lc-role">REST API framework</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">@app.post("/chat") &nbsp;·&nbsp; async def chat(request: ChatRequest)</div>
+    <div class="lc-why">Chosen over Flask because it is async-native (handles concurrent requests without blocking), auto-generates Swagger UI at /docs, and has native Pydantic integration. Perfect for an AI API where GPT-4o responses take 2-5 seconds — async prevents one slow request blocking others.</div>
+    <div class="lc-where"><strong>Used in:</strong> backend/main.py — the entire API server layer.</div>
+    <span class="tag tpi">REST API</span><span class="tag tpi">Async</span><span class="tag tpi">Swagger auto-docs</span>
+  </div>
+  <div class="lc re">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🌐</div><div><div class="lc-name">uvicorn</div><div class="lc-role">ASGI server for FastAPI</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">uvicorn backend.main:app --reload --port 8000</div>
+    <div class="lc-why">The server that runs FastAPI. ASGI handles many simultaneous requests without blocking — important when multiple KPMG users query the chatbot simultaneously and GPT-4o takes several seconds per response. Also specified in Dockerfile CMD for Azure deployment.</div>
+    <div class="lc-where"><strong>Used in:</strong> Terminal startup + Dockerfile CMD for production.</div>
+    <span class="tag tre">ASGI server</span><span class="tag tre">Concurrent requests</span>
+  </div>
+  <div class="lc am">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">✅</div><div><div class="lc-name">pydantic</div><div class="lc-role">Request/response validation</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">class ChatRequest(BaseModel): query: str &nbsp;·&nbsp; class ChatResponse(BaseModel)</div>
+    <div class="lc-why">Validates that every /chat request has a properly formatted query string. Validates that every response has the correct response and agent_used fields. Prevents malformed data from reaching LangGraph and causing runtime errors. FastAPI uses Pydantic natively — no extra setup.</div>
+    <div class="lc-where"><strong>Used in:</strong> backend/main.py — ChatRequest and ChatResponse models.</div>
+    <span class="tag tam">Input validation</span><span class="tag tam">Type safety</span>
+  </div>
+  <div class="lc te">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">💬</div><div><div class="lc-name">streamlit</div><div class="lc-role">Chat UI framework</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">st.chat_input() &nbsp;·&nbsp; st.chat_message("user") &nbsp;·&nbsp; st.session_state["messages"]</div>
+    <div class="lc-why">Turns Python into a working web chat UI with almost zero frontend code. st.chat_message and st.chat_input give proper conversational layout. st.session_state maintains conversation history across turns. Fast to build, easy to Docker-ise and deploy on Azure App Service in Phase 2.</div>
+    <div class="lc-where"><strong>Used in:</strong> frontend/app.py — the entire user interface.</div>
+    <span class="tag tte">Chat UI</span><span class="tag tte">Session state</span><span class="tag tte">No HTML needed</span>
+  </div>
+  <div class="lc bl">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔗</div><div><div class="lc-name">requests</div><div class="lc-role">HTTP client — 3 places</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">requests.post("/chat") &nbsp;·&nbsp; requests.get(kpi_api) &nbsp;·&nbsp; requests.post(logic_app_url)</div>
+    <div class="lc-why">Used in three distinct places: Streamlit calls FastAPI backend, API Agent calls internal KPI REST endpoints with Bearer auth headers, Workflow Agent triggers Logic App HTTP endpoints with JSON payloads. Standard Python HTTP library — reliable, handles auth, timeouts, and JSON cleanly.</div>
+    <div class="lc-where"><strong>Used in:</strong> frontend/app.py + agents/api_agent.py + agents/workflow_agent.py.</div>
+    <span class="tag tbl">Frontend to Backend</span><span class="tag tbl">REST calls</span><span class="tag tbl">Logic App triggers</span>
+  </div>
+  <div class="lc am">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🗃️</div><div><div class="lc-name">sqlalchemy + pymysql</div><div class="lc-role">MySQL ORM + driver</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">create_engine(mysql_url) &nbsp;·&nbsp; session.execute(query) &nbsp;·&nbsp; pymysql driver</div>
+    <div class="lc-why">API Agent falls back to direct MySQL query when the internal REST API is unavailable. SQLAlchemy provides a clean ORM layer. Same query code works against local MySQL (P1) and Azure Database for MySQL (P2) — only the connection string changes. pymysql is the driver SQLAlchemy uses under the hood.</div>
+    <div class="lc-where"><strong>Used in:</strong> agents/api_agent.py — KPI data fallback.</div>
+    <span class="tag tam">MySQL ORM</span><span class="tag tam">API fallback</span>
+  </div>
+  <div class="lc or">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">📧</div><div><div class="lc-name">smtplib + email.mime</div><div class="lc-role">Email sending (Phase 1)</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
+    <div class="lc-used">smtplib.SMTP(host, port) &nbsp;·&nbsp; MIMEText(body) &nbsp;·&nbsp; server.sendmail()</div>
+    <div class="lc-why">Phase 1 email sending before Logic Apps. Workflow Agent uses smtplib to send direct SMTP emails when the send_email action is triggered. Built into Python standard library — no install needed. Replaced by Azure Logic Apps O365 connector in Phase 2 for proper enterprise email with correct sender identity.</div>
+    <div class="lc-where"><strong>Used in:</strong> agents/workflow_agent.py — send_email action in Phase 1.</div>
+    <span class="tag tor">Email sending</span><span class="tag tor">Standard library</span><span class="tag tor">P1 only</span>
+  </div>
+  <div class="lc gr">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔐</div><div><div class="lc-name">python-dotenv</div><div class="lc-role">Local secret management</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
+    <div class="lc-used">from dotenv import load_dotenv &nbsp;·&nbsp; load_dotenv() &nbsp;·&nbsp; os.getenv("OPENAI_API_KEY")</div>
+    <div class="lc-why">Loads API keys and config values from the .env file into os.environ at startup. Keeps secrets out of code completely. Used in every Python file that needs a key. In Phase 2 this is replaced by Azure Key Vault + DefaultAzureCredential but the os.getenv() read calls stay identical — zero code change.</div>
+    <div class="lc-where"><strong>Used in:</strong> Every file — main.py, all agents, all ingestion scripts.</div>
+    <span class="tag tgr">Secret loading</span><span class="tag tgr">All files</span><span class="tag tgr">P1 only</span>
+  </div>
+  <div class="lc bl">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🛠️</div><div><div class="lc-name">json + datetime + os</div><div class="lc-role">Standard library utilities</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">json.loads(llm_output) &nbsp;·&nbsp; datetime.now().strftime() &nbsp;·&nbsp; os.getenv()</div>
+    <div class="lc-why">json parses the structured JSON output from LLM action classification in the Workflow Agent — converts LLM string output into a Python dict the agent can act on. datetime generates unique ticket IDs and log timestamps. os reads all environment variables across the entire codebase. All Python built-ins — zero install.</div>
+    <div class="lc-where"><strong>Used in:</strong> agents/workflow_agent.py (json, datetime) + every file (os).</div>
+    <span class="tag tbl">LLM JSON parsing</span><span class="tag tbl">Ticket IDs</span><span class="tag tbl">Env vars</span>
+  </div>
+</div>
+</div>
+
+<!-- HF MODELS -->
+<div class="panel" id="hf">
+<div class="slabel">HuggingFace models — open-source alternatives and add-ons specific to this RAG project</div>
+<div class="vs-note">
+  <div class="vs-note-title">Context — Why HuggingFace alongside OpenAI</div>
+  <div class="vs-note-text">This project uses <strong>OpenAI API models</strong> (GPT-4o, text-embedding-3-small) as the primary LLM and embedding solution for enterprise KPMG deployment. HuggingFace models serve two purposes here: (1) <strong>free local alternatives</strong> for development and testing without API costs, and (2) <strong>specialised models</strong> like cross-encoder re-rankers that HuggingFace excels at and which directly improve RAG quality.</div>
+</div>
+<div class="hf-grid">
+  <div class="hfc bl">
+    <div class="hfc-type">Embedding Model — Alternative to text-embedding-3-small</div>
+    <div class="hfc-name">all-MiniLM-L6-v2</div>
+    <div class="hfc-org">sentence-transformers · Microsoft Research</div>
+    <span class="lc-phase ph-p1" style="display:inline-block;margin-bottom:4px;">Phase 1 Dev Alternative</span>
+    <div class="hfc-slabel">What it does</div>
+    <div class="hfc-text">Converts text chunks and queries into 384-dimensional dense vectors for semantic similarity search. The HuggingFace equivalent of OpenAI's text-embedding-3-small. Runs entirely locally on your laptop CPU — no API key, no cost per call, no internet needed.</div>
+    <div class="hfc-slabel">Why use this in your project</div>
+    <div class="hfc-text">During local development, calling OpenAI embeddings API for every test run costs money. all-MiniLM-L6-v2 lets you build and test the entire FAISS ingestion pipeline and retrieval agent offline. Same FAISS code works — just swap the embedding function. 384 dims vs 1536 means slightly less precision but 4x faster indexing and free.</div>
+    <div class="hfc-code">
+<span class="ci">from</span> sentence_transformers <span class="ci">import</span> SentenceTransformer<br>
+model = SentenceTransformer(<span class="cs">'all-MiniLM-L6-v2'</span>)<br>
+<span class="cc"># Drop-in replacement for OpenAI embeddings:</span><br>
+embeddings = model.<span class="cf">encode</span>(chunks, batch_size=<span class="cs">32</span>, show_progress_bar=True)<br>
+<span class="cc"># Update FAISS dim from 1536 to 384</span><br>
+index = faiss.IndexFlatL2(<span class="cs">384</span>)
+    </div>
+    <div class="hfc-stats">
+      <div class="stat"><div class="stat-val">384</div><div class="stat-key">Dimensions</div></div>
+      <div class="stat"><div class="stat-val">22M</div><div class="stat-key">Parameters</div></div>
+      <div class="stat"><div class="stat-val">Free</div><div class="stat-key">Cost</div></div>
+      <div class="stat"><div class="stat-val">CPU</div><div class="stat-key">Hardware</div></div>
+    </div>
+  </div>
+
+  <div class="hfc am">
+    <div class="hfc-type">Cross-Encoder Re-Ranker — Improves RAG retrieval quality</div>
+    <div class="hfc-name">ms-marco-MiniLM-L-6-v2</div>
+    <div class="hfc-org">cross-encoder · Microsoft (MS MARCO dataset)</div>
+    <span class="lc-phase ph-both" style="display:inline-block;margin-bottom:4px;">P1 + P2 Optional Add-on</span>
+    <div class="hfc-slabel">What it does</div>
+    <div class="hfc-text">Re-ranks the top-5 FAISS or AI Search results AFTER initial retrieval. FAISS finds candidates fast using approximate similarity. This model then reads each candidate chunk against the actual query and scores them more precisely — pushing the truly most relevant chunk to position 1.</div>
+    <div class="hfc-slabel">Why this matters specifically for your PMO RAG</div>
+    <div class="hfc-text">PMO documents have many chunks about similar topics — multiple sections in different reports all mentioning "project risk". Without re-ranking, FAISS might return 5 risk-related chunks but the one specifically answering THIS question could be at position 3. Cross-encoder re-ranking directly improves answer accuracy for KPMG delivery queries.</div>
+    <div class="hfc-code">
+<span class="ci">from</span> sentence_transformers <span class="ci">import</span> CrossEncoder<br>
+reranker = CrossEncoder(<span class="cs">'cross-encoder/ms-marco-MiniLM-L-6-v2'</span>)<br>
+<span class="cc"># After FAISS returns top-5:</span><br>
+pairs = [[query, chunk[<span class="cs">'text'</span>]] <span class="ci">for</span> chunk <span class="ci">in</span> faiss_results]<br>
+scores = reranker.<span class="cf">predict</span>(pairs)<br>
+best_idx = scores.<span class="cf">argmax</span>()<br>
+top_chunk = faiss_results[best_idx]
+    </div>
+    <div class="hfc-stats">
+      <div class="stat"><div class="stat-val">22M</div><div class="stat-key">Parameters</div></div>
+      <div class="stat"><div class="stat-val">MS MARCO</div><div class="stat-key">Trained on</div></div>
+      <div class="stat"><div class="stat-val">Free</div><div class="stat-key">Cost</div></div>
+    </div>
+  </div>
+
+  <div class="hfc gr">
+    <div class="hfc-type">Larger Embedding Model — Higher precision for complex docs</div>
+    <div class="hfc-name">all-mpnet-base-v2</div>
+    <div class="hfc-org">sentence-transformers · Microsoft</div>
+    <span class="lc-phase ph-p1" style="display:inline-block;margin-bottom:4px;">Phase 1 Upgrade Option</span>
+    <div class="hfc-slabel">What it does</div>
+    <div class="hfc-text">Higher quality embedding model than MiniLM. Produces 768-dimensional vectors with better semantic understanding. Better for dense, complex PMO language — delivery frameworks, risk taxonomies, project management jargon — where MiniLM might miss subtle semantic distinctions.</div>
+    <div class="hfc-slabel">When to choose this over MiniLM</div>
+    <div class="hfc-text">When retrieval accuracy matters more than speed. For KPMG SOPs and delivery reports with complex technical language, mpnet-base captures meaning more accurately. Trade-off: 5x more parameters, 2x slower than MiniLM, but still free and fully local.</div>
+    <div class="hfc-code">
+<span class="ci">from</span> sentence_transformers <span class="ci">import</span> SentenceTransformer<br>
+model = SentenceTransformer(<span class="cs">'all-mpnet-base-v2'</span>)<br>
+embeddings = model.<span class="cf">encode</span>(chunks)<br>
+<span class="cc"># Update FAISS from 384 to 768 dimensions:</span><br>
+index = faiss.IndexFlatL2(<span class="cs">768</span>)
+    </div>
+    <div class="hfc-stats">
+      <div class="stat"><div class="stat-val">768</div><div class="stat-key">Dimensions</div></div>
+      <div class="stat"><div class="stat-val">110M</div><div class="stat-key">Parameters</div></div>
+      <div class="stat"><div class="stat-val">Free</div><div class="stat-key">Cost</div></div>
+    </div>
+  </div>
+
+  <div class="hfc pi">
+    <div class="hfc-type">Local LLM — Full offline alternative to GPT-4o</div>
+    <div class="hfc-name">Phi-3-mini-4k-instruct</div>
+    <div class="hfc-org">Microsoft · HuggingFace Hub</div>
+    <span class="lc-phase ph-p1" style="display:inline-block;margin-bottom:4px;">Phase 1 Local Dev Only</span>
+    <div class="hfc-slabel">What it does</div>
+    <div class="hfc-text">Small but capable instruction-tuned LLM from Microsoft. Can replace GPT-4o for local testing of all three agents — document Q&A in the Retrieval Agent, KPI formatting in the API Agent, and workflow action classification in the Workflow Agent. Runs on a laptop CPU without any API key.</div>
+    <div class="hfc-slabel">Why relevant to your project specifically</div>
+    <div class="hfc-text">During development, calling GPT-4o for every agent test costs money and requires internet. Phi-3-mini lets you test all LangGraph routing logic, agent prompts, and JSON extraction patterns completely offline. When satisfied, swap back the client to GPT-4o for production quality. Same prompt format — easy swap.</div>
+    <div class="hfc-code">
+<span class="ci">from</span> transformers <span class="ci">import</span> pipeline<br>
+pipe = <span class="cf">pipeline</span>(<span class="cs">"text-generation"</span>,<br>
+&nbsp;&nbsp;model=<span class="cs">"microsoft/Phi-3-mini-4k-instruct"</span>,<br>
+&nbsp;&nbsp;trust_remote_code=True)<br>
+<span class="cc"># Same prompt format as GPT-4o:</span><br>
+response = <span class="cf">pipe</span>(prompt, max_new_tokens=<span class="cs">500</span>)[0][<span class="cs">'generated_text'</span>]
+    </div>
+    <div class="hfc-stats">
+      <div class="stat"><div class="stat-val">3.8B</div><div class="stat-key">Parameters</div></div>
+      <div class="stat"><div class="stat-val">4K</div><div class="stat-key">Context</div></div>
+      <div class="stat"><div class="stat-val">Free</div><div class="stat-key">Cost</div></div>
+      <div class="stat"><div class="stat-val">CPU OK</div><div class="stat-key">Hardware</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- QUICK REF -->
+<div class="panel" id="py">
+<div class="slabel">All libraries in one table — sorted by pipeline stage</div>
+<div style="background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+<table class="ref-table">
+<thead><tr>
+  <th style="color:var(--blue);">Library</th>
+  <th style="color:var(--purple);">Category</th>
+  <th style="color:var(--green);">File Used In</th>
+  <th style="color:var(--amber);">Why This One Specifically</th>
+  <th style="color:var(--teal);">Phase</th>
+</tr></thead>
+<tbody>
+<tr><td class="lib-n" style="color:var(--blue);">fitz (PyMuPDF)</td><td class="lib-p">Doc Loading</td><td class="lib-p">ingestion/pdf_loader.py</td><td class="lib-p">Fastest PDF parser, handles complex PMO report layouts</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--blue);">python-docx</td><td class="lib-p">Doc Loading</td><td class="lib-p">ingestion/pdf_loader.py</td><td class="lib-p">Only option for .docx — SOPs are Word at KPMG</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--blue);">pandas</td><td class="lib-p">Doc Loading + KPI</td><td class="lib-p">ingestion + api_agent.py</td><td class="lib-p">Excel ingestion + tabular KPI data formatting</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">langchain</td><td class="lib-p">Text Chunking</td><td class="lib-p">ingestion/chunker.py</td><td class="lib-p">RecursiveCharacterTextSplitter — best for PMO docs</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">langgraph</td><td class="lib-p">Agent Orchestration</td><td class="lib-p">router/graph.py</td><td class="lib-p">Stateful multi-agent graph — the entire agentic system</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">openai</td><td class="lib-p">LLM + Embeddings</td><td class="lib-p">embedder.py + all agents</td><td class="lib-p">GPT-4o responses + text-embedding-3-small vectors</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">langchain-openai</td><td class="lib-p">LangChain bridge</td><td class="lib-p">All agent files</td><td class="lib-p">ChatOpenAI / AzureChatOpenAI inside LangChain</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">tiktoken</td><td class="lib-p">Token Management</td><td class="lib-p">retrieval_agent.py</td><td class="lib-p">Prevents GPT-4o context overflow on long PMO docs</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--green);">faiss-cpu</td><td class="lib-p">Vector Store</td><td class="lib-p">vector_store.py + retrieval_agent.py</td><td class="lib-p">Local, fast, free — no cloud cost in Phase 1</td><td><span class="tag tbl">P1 only</span></td></tr>
+<tr><td class="lib-n" style="color:var(--green);">numpy</td><td class="lib-p">Array ops</td><td class="lib-p">vector_store.py</td><td class="lib-p">FAISS requires float32 numpy arrays specifically</td><td><span class="tag tbl">P1 only</span></td></tr>
+<tr><td class="lib-n" style="color:var(--green);">pickle</td><td class="lib-p">Metadata save/load</td><td class="lib-p">vector_store.py</td><td class="lib-p">Saves chunk text alongside FAISS index file</td><td><span class="tag tbl">P1 only</span></td></tr>
+<tr><td class="lib-n" style="color:var(--pink);">fastapi</td><td class="lib-p">Backend API</td><td class="lib-p">backend/main.py</td><td class="lib-p">Async + Swagger auto-docs + Pydantic native</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--pink);">uvicorn</td><td class="lib-p">ASGI Server</td><td class="lib-p">Dockerfile + terminal</td><td class="lib-p">Async server — multiple users simultaneously</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--pink);">pydantic</td><td class="lib-p">Data Validation</td><td class="lib-p">backend/main.py</td><td class="lib-p">Request/response schema — no bad data to agents</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--teal);">streamlit</td><td class="lib-p">Frontend UI</td><td class="lib-p">frontend/app.py</td><td class="lib-p">Chat UI + session state in pure Python</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--teal);">requests</td><td class="lib-p">HTTP client</td><td class="lib-p">frontend + api_agent + workflow_agent</td><td class="lib-p">Frontend→Backend, REST APIs, Logic App triggers</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--amber);">sqlalchemy + pymysql</td><td class="lib-p">Database ORM</td><td class="lib-p">agents/api_agent.py</td><td class="lib-p">MySQL fallback for KPI data — same code P1+P2</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--orange);">smtplib + email.mime</td><td class="lib-p">Email</td><td class="lib-p">agents/workflow_agent.py</td><td class="lib-p">Direct email in P1 before Logic Apps</td><td><span class="tag tbl">P1 only</span></td></tr>
+<tr><td class="lib-n" style="color:var(--green);">python-dotenv</td><td class="lib-p">Secrets / Config</td><td class="lib-p">All files</td><td class="lib-p">Loads .env into os.environ — replaced by Key Vault P2</td><td><span class="tag tbl">P1 only</span></td></tr>
+<tr><td class="lib-n" style="color:var(--blue);">json + datetime + os</td><td class="lib-p">Standard Library</td><td class="lib-p">workflow_agent + all files</td><td class="lib-p">LLM JSON parse, ticket IDs, env vars — built-in</td><td><span class="tag tgr">Both</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- AZURE SDK -->
+<div class="panel" id="az">
+<div class="slabel">Azure SDK libraries — Phase 2 only. Each one replaces a Phase 1 Python tool.</div>
+<div class="lib-grid">
+  <div class="lc te">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔍</div><div><div class="lc-name">azure-search-documents</div><div class="lc-role">Replaces: faiss-cpu + numpy + pickle</div></div></div><div class="lc-phase ph-p2">P2 Only</div></div>
+    <div class="lc-used">SearchClient(endpoint, index_name, credential) &nbsp;·&nbsp; VectorizedQuery(vector, k, fields)</div>
+    <div class="lc-why">Replaces the entire FAISS + pickle local vector store. SearchClient connects to Azure AI Search managed index. VectorizedQuery runs semantic vector search with optional semantic re-ranking. Scales to millions of documents without managing local .index files or metadata pickle files. Enterprise security built-in.</div>
+    <div class="lc-where"><strong>Replaces:</strong> faiss-cpu + numpy + pickle in vector_store.py and retrieval_agent.py.</div>
+    <span class="tag tte">Replaces FAISS</span><span class="tag tte">Managed index</span><span class="tag tte">Semantic ranking</span>
+  </div>
+  <div class="lc pu">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">☁️</div><div><div class="lc-name">azure-storage-blob</div><div class="lc-role">Replaces: local /data folder reads</div></div></div><div class="lc-phase ph-p2">P2 Only</div></div>
+    <div class="lc-used">BlobServiceClient(account_url, credential) &nbsp;·&nbsp; container_client.list_blobs() &nbsp;·&nbsp; blob.download_blob()</div>
+    <div class="lc-why">Replaces reading files from local /data/raw_docs folder. Azure Functions ingestion pipeline reads PDFs, Word, and Excel files from Blob Storage containers. Supports SharePoint-synced files, team-uploaded documents, and scheduled enterprise file drops — none of which work with a local folder.</div>
+    <div class="lc-where"><strong>Replaces:</strong> os.listdir() + open() + file reads in ingestion/pdf_loader.py.</div>
+    <span class="tag tpu">Replaces local folder</span><span class="tag tpu">Enterprise file store</span>
+  </div>
+  <div class="lc gr">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔑</div><div><div class="lc-name">azure-identity</div><div class="lc-role">Replaces: API key strings in constructors</div></div></div><div class="lc-phase ph-p2">P2 Only</div></div>
+    <div class="lc-used">DefaultAzureCredential() &nbsp;·&nbsp; passed to all Azure SDK client constructors</div>
+    <div class="lc-why">Provides Managed Identity authentication. The deployed app proves its identity to Azure services automatically without storing any API keys or passwords in code. DefaultAzureCredential tries multiple auth methods automatically — works in Azure App Service without any config. Eliminates hardcoded credentials entirely.</div>
+    <div class="lc-where"><strong>Replaces:</strong> api_key= strings in all Azure SDK client constructors.</div>
+    <span class="tag tgr">Managed Identity</span><span class="tag tgr">No hardcoded keys</span><span class="tag tgr">All SDK clients</span>
+  </div>
+  <div class="lc re">
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔐</div><div><div class="lc-name">azure-keyvault-secrets</div><div class="lc-role">Replaces: python-dotenv + .env file</div></div></div><div class="lc-phase ph-p2">P2 Only</div></div>
+    <div class="lc-used">SecretClient(vault_url, DefaultAzureCredential()) &nbsp;·&nbsp; client.get_secret("OPENAI-KEY").value</div>
+    <div class="lc-why">Replaces .env file for production secret management. All API keys, connection strings, and passwords stored in Azure Key Vault. App fetches at runtime via SecretClient. Secrets never appear in code, containers, logs, or environment variables. Supports automatic secret rotation and full audit history — required for KPMG enterprise compliance.</div>
+    <div class="lc-where"><strong>Replaces:</strong> load_dotenv() + os.getenv() pattern across all files in production.</div>
+    <span class="tag tre">Replaces .env</span><span class="tag tre">Secret rotation</span><span class="tag tre">KPMG compliance</span>
+  </div>
+</div>
+<div style="background:linear-gradient(135deg,rgba(45,212,191,.04),rgba(167,139,250,.04));border:1px solid rgba(45,212,191,.2);border-radius:12px;padding:18px 22px;margin-top:20px;">
+  <div style="font-size:10px;font-weight:700;color:var(--white);margin-bottom:14px;letter-spacing:1px;">Phase 1 → Phase 2 · Complete Library Swap</div>
+  <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;font-size:9px;">
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">faiss-cpu + numpy + pickle</span>Local vector store + metadata files</div>
+    <div style="color:var(--purple);font-size:20px;text-align:center;">→</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--teal);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">azure-search-documents</span>Managed cloud vector index</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">os.listdir() + open()</span>Local file system reads</div>
+    <div style="color:var(--purple);font-size:20px;text-align:center;">→</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--teal);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">azure-storage-blob</span>Azure Blob container reads</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">python-dotenv + .env</span>Local secret file</div>
+    <div style="color:var(--purple);font-size:20px;text-align:center;">→</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--teal);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">azure-keyvault-secrets</span>Key Vault runtime fetch</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">api_key= in constructor</span>Hardcoded auth string</div>
+    <div style="color:var(--purple);font-size:20px;text-align:center;">→</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--teal);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">azure-identity</span>Managed Identity — zero keys</div>
+  </div>
+</div>
+</div>
+
+<p class="footer">KPMG PMO Chatbot &nbsp;·&nbsp; Python Libraries &amp; HuggingFace Models &nbsp;·&nbsp; Papiya Mazumder</p>
+</div>
+<script>
+function show(id,el,cls){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('a-all','a-hf','a-py','a-az'));
+  el.classList.add(cls);
+}
+</script>
+</body>
+</html>

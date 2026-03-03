@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPMG Chatbot — Step-by-Step Build Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #0a0e1a;
+            --card: #111827;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --accent: #3b82f6;
+            --green: #10b981;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --purple: #8b5cf6;
+            --cyan: #06b6d4
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px 30px
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--cyan);
+            margin: 40px 0 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border)
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 24px 0 10px
+        }
+
+        h4 {
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--yellow);
+            margin: 16px 0 8px
+        }
+
+        p,
+        li {
+            margin-bottom: 10px
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: .95rem;
+            margin-bottom: 30px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 14px 0
+        }
+
+        pre {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 10px 0;
+            color: #c9d1d9
+        }
+
+        code {
+            font-family: 'SF Mono', Consolas, monospace;
+            font-size: 13px
+        }
+
+        .step {
+            counter-increment: s;
+            position: relative;
+            padding-left: 60px;
+            margin: 20px 0 30px
+        }
+
+        .step::before {
+            content: counter(s);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+            color: #fff
+        }
+
+        .phase {
+            counter-reset: s;
+            margin: 10px 0 30px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px
+        }
+
+        th {
+            background: #1e293b;
+            color: var(--cyan);
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase
+        }
+
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .flow {
+            background: linear-gradient(135deg, #0d1117, #111827);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 2;
+            white-space: pre
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            margin: 2px 4px;
+            letter-spacing: .4px
+        }
+
+        .t-blue {
+            background: rgba(59, 130, 246, .15);
+            color: var(--accent);
+            border: 1px solid var(--accent)
+        }
+
+        .t-green {
+            background: rgba(16, 185, 129, .15);
+            color: var(--green);
+            border: 1px solid var(--green)
+        }
+
+        .t-yellow {
+            background: rgba(245, 158, 11, .15);
+            color: var(--yellow);
+            border: 1px solid var(--yellow)
+        }
+
+        .t-red {
+            background: rgba(239, 68, 68, .15);
+            color: var(--red);
+            border: 1px solid var(--red)
+        }
+
+        .t-purple {
+            background: rgba(139, 92, 246, .15);
+            color: var(--purple);
+            border: 1px solid var(--purple)
+        }
+
+        .nav {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 14, 26, .95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 10px 30px;
+            z-index: 100;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap
+        }
+
+        .nav a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: .2s
+        }
+
+        .nav a:hover {
+            color: var(--cyan);
+            border-color: var(--cyan)
+        }
+
+        ol {
+            padding-left: 20px
+        }
+
+        ul {
+            padding-left: 20px;
+            list-style: disc
+        }
+
+        .file {
+            color: var(--yellow);
+            font-family: monospace;
+            font-weight: 500
+        }
+
+        .arrow {
+            color: var(--cyan);
+            font-weight: 700
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav">
+        <a href="#flow">Code Flow</a>
+        <a href="#scratch">Build from Scratch</a>
+        <a href="#s1">Step 1: Env</a>
+        <a href="#s2">Step 2: Ingestion</a>
+        <a href="#s3">Step 3: Connectors</a>
+        <a href="#s4">Step 4: Agents</a>
+        <a href="#s5">Step 5: Router</a>
+        <a href="#s6">Step 6: Backend</a>
+        <a href="#s7">Step 7: Frontend</a>
+        <a href="#s8">Step 8: Docker</a>
+        <a href="#s9">Step 9: Deploy</a>
+    </nav>
+
+    <div class="container">
+
+        <h1>🚀 KPMG PMO AI Chatbot — Complete Build Guide</h1>
+        <p class="sub">Step-by-step guide to understand the code flow and build this project from scratch</p>
+
+        <!-- ═══════════ RUNTIME CODE FLOW ═══════════ -->
+        <h2 id="flow">📡 Runtime Code Flow — What Happens When You Type a Query</h2>
+
+        <div class="card">
+            <h4>Step-by-step trace: "What's the budget burn rate?"</h4>
+            <div class="flow"><span class="t-green">1. FRONTEND</span> frontend/app.py
+                User types query → st.chat_input() captures text
+                → call_backend(query) sends POST /chat
+                → requests.post("http://localhost:8000/chat", json={query, session_id})
+
+                ↓ HTTP POST (JSON)
+
+                <span class="t-blue">2. BACKEND</span> backend/main.py
+                FastAPI receives request → Pydantic validates ChatRequest
+                → run_chat(query, session_id) called
+                → passes control to the router
+
+                ↓ Python function call
+
+                <span class="t-yellow">3. ROUTER</span> router/graph.py
+                3a. build_graph() creates LangGraph StateGraph (once, cached)
+                3b. route_query(state) — 3-tier classification:
+                Tier 1: scan keywords → "budget" found in API_KEYWORDS ✅
+                → returns "api"
+                3c. LangGraph routes to api_node()
+
+                ↓ Conditional edge in graph
+
+                <span class="t-red">4. API AGENT</span> agents/api_agent.py
+                4a. _extract_metric_intent(query) → calls Groq LLM (temp=0)
+                → LLM returns "budget_burn_rate"
+                4b. Route to SQL connector:
+                sql_connector.get_metric("budget_burn_rate")
+                → returns {value: 91, unit: "%", status: "High"}
+                4c. _format_response(data) → calls Groq LLM (temp=0.3)
+                → LLM formats: "Budget burn rate is 91%. Status: High."
+
+                ↓ Return dict
+
+                <span class="t-purple">5. CONNECTOR</span> connectors/sql_connector.py
+                5a. Check os.getenv("SQL_SERVER")
+                → Not set → use MOCK_KPI_DATA dict
+                5b. Return {"budget_burn_rate": {value:91, unit:"%", status:"High"}}
+
+                ↓ Dict flows back up
+
+                <span class="t-blue">6. BACKEND</span> backend/main.py
+                Receives {answer, agent_used, sources}
+                → Wraps in ChatResponse (Pydantic model)
+                → Returns JSON HTTP 200
+
+                ↓ HTTP Response (JSON)
+
+                <span class="t-green">7. FRONTEND</span> frontend/app.py
+                Receives response → displays:
+                → Agent badge: 📊 API Agent (yellow)
+                → Answer text: "Budget burn rate is 91%..."
+                → Sources: (none for API Agent)
+                → Saves to st.session_state.messages
+            </div>
+        </div>
+
+        <div class="card">
+            <h4>File execution order for EACH query</h4>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>File</th>
+                    <th>Function Called</th>
+                    <th>What It Does</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td class="file">frontend/app.py</td>
+                    <td>call_backend(query)</td>
+                    <td>HTTP POST to /chat</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td class="file">backend/main.py</td>
+                    <td>chat_endpoint()</td>
+                    <td>Pydantic validation → calls run_chat()</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td class="file">router/graph.py</td>
+                    <td>run_chat() → route_query()</td>
+                    <td>3-tier routing → picks agent</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td class="file">router/graph.py</td>
+                    <td>*_node() (e.g. api_node)</td>
+                    <td>LangGraph node → calls agent</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td class="file">agents/*.py</td>
+                    <td>run_*_agent()</td>
+                    <td>LLM extraction → connector call → LLM format</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td class="file">connectors/*.py</td>
+                    <td>get_metric() / create_ticket() etc.</td>
+                    <td>Try real API → fallback to mock</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td class="file">backend/main.py</td>
+                    <td>return ChatResponse</td>
+                    <td>JSON response to frontend</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td class="file">frontend/app.py</td>
+                    <td>st.markdown(answer)</td>
+                    <td>Display answer + badge</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h4>Which agent calls which files?</h4>
+            <table>
+                <tr>
+                    <th>Agent</th>
+                    <th>Calls These Connectors</th>
+                    <th>Uses LLM For</th>
+                </tr>
+                <tr>
+                    <td>🔍 Retrieval</td>
+                    <td>ingestion/vector_store.py, ingestion/upload_handler.py</td>
+                    <td>Grounded Q&A (temp=0.2)</td>
+                </tr>
+                <tr>
+                    <td>📊 API</td>
+                    <td>connectors/sql_connector.py, connectors/jira_connector.py</td>
+                    <td>Metric extraction (temp=0) + formatting (temp=0.3)</td>
+                </tr>
+                <tr>
+                    <td>🎫 Helpdesk</td>
+                    <td>connectors/servicenow_connector.py</td>
+                    <td>Intent → JSON extraction (temp=0)</td>
+                </tr>
+                <tr>
+                    <td>⚙️ Workflow</td>
+                    <td>outlook, teams, sharepoint, azure_insights connectors</td>
+                    <td>Action classification → JSON (temp=0)</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ═══════════ BUILD FROM SCRATCH ═══════════ -->
+        <h2 id="scratch">🔨 Build This Project From Scratch — 9 Steps</h2>
+        <p>Follow these steps in order. Each step builds on the previous one.</p>
+
+        <!-- STEP 1 -->
+        <h3 id="s1">Step 1 — Project Setup & Environment</h3>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create the folder structure</h4>
+                <pre>mkdir kpmg-chatbot && cd kpmg-chatbot
+mkdir -p data/raw_docs data/vector_store
+mkdir -p ingestion agents connectors router backend frontend utils Flowchart</pre>
+                <p>Put some sample PDFs, DOCX, or Excel files in <code>data/raw_docs/</code>.</p>
+            </div>
+
+            <div class="step card">
+                <h4>Create .env file</h4>
+                <pre># Only REQUIRED key — get free at https://console.groq.com
+GROQ_API_KEY=gsk_your_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+EMBEDDING_MODEL=all-MiniLM-L6-v2
+BACKEND_URL=http://localhost:8000
+
+# All other keys are OPTIONAL — leave blank for mock data
+SQL_SERVER=
+JIRA_URL=
+SNOW_INSTANCE=
+AZURE_CLIENT_ID=
+# ... (see .env file for full list)</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Create requirements.txt & install</h4>
+                <pre># Core: groq, sentence-transformers, faiss-cpu, numpy
+# Framework: langchain, langgraph, langchain-community
+# Docs: pymupdf, python-docx, pandas, openpyxl, python-pptx
+# Web: fastapi, uvicorn, pydantic, streamlit
+# Utils: requests, python-dotenv, python-multipart, reportlab
+pip install -r requirements.txt</pre>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <h3 id="s2">Step 2 — Ingestion Pipeline (Documents → Vectors)</h3>
+        <p><em>Build order: pdf_loader → chunker → embedder → vector_store → run_ingestion.py</em></p>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">ingestion/pdf_loader.py</span></h4>
+                <p><strong>Purpose:</strong> Read raw documents and extract plain text.</p>
+                <pre># Functions to create:
+def load_all_documents(folder_path="data/raw_docs") -> list[dict]:
+    # Scan folder, detect extension, call correct parser
+    # Returns [{"text": "...", "source": "filename.pdf"}, ...]
+
+def _load_pdf(filepath)    # → fitz.open() → page.get_text()
+def _load_docx(filepath)   # → Document(filepath) → p.text
+def _load_excel(filepath)  # → pd.read_excel() → df.to_string()
+def _load_csv(filepath)    # → pd.read_csv() → df.to_string()</pre>
+                <p><strong>Key decisions:</strong> PyMuPDF (fitz) for PDFs because it's faster and more accurate than
+                    PyPDF2. pandas for Excel/CSV because it handles complex sheets.</p>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">ingestion/chunker.py</span></h4>
+                <p><strong>Purpose:</strong> Split long documents into smaller pieces that fit in LLM context.</p>
+                <pre>def chunk_documents(documents, chunk_size=500, overlap=100) -> list:
+    # For each doc, slide a window of 500 chars with 100-char overlap
+    # Returns [{"chunk_id": 0, "text": "...", "source": "file.pdf"}, ...]</pre>
+                <p><strong>Why 500/100?</strong> 500 chars ≈ 100 words — enough semantic meaning per chunk. 100-char
+                    overlap prevents cutting sentences at boundaries.</p>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">ingestion/embedder.py</span></h4>
+                <p><strong>Purpose:</strong> Convert text chunks into 384-dim vectors using HuggingFace model.</p>
+                <pre>from sentence_transformers import SentenceTransformer
+
+_model = None  # Singleton — loaded once
+
+def get_model():
+    global _model
+    if _model is None:
+        _model = SentenceTransformer("all-MiniLM-L6-v2")  # ~80MB download
+    return _model
+
+def embed_chunks(chunks) -> np.ndarray:
+    texts = [c["text"] for c in chunks]
+    return get_model().encode(texts)  # shape (N, 384)
+
+def embed_query(query) -> np.ndarray:
+    return get_model().encode([query])  # shape (1, 384)</pre>
+                <p><strong>Singleton pattern:</strong> Loading the model takes ~2s. We load ONCE and reuse across all
+                    requests.</p>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">ingestion/vector_store.py</span></h4>
+                <p><strong>Purpose:</strong> Save/load FAISS index for fast similarity search.</p>
+                <pre>import faiss
+
+DIMENSION = 384  # matches all-MiniLM-L6-v2 output
+
+def save_index(embeddings, chunks):
+    index = faiss.IndexFlatL2(DIMENSION)  # Brute-force L2 distance
+    index.add(embeddings)
+    faiss.write_index(index, "data/vector_store/index.faiss")
+    pickle.dump(chunks, open("data/vector_store/metadata.pkl", "wb"))
+
+def load_index():
+    return faiss.read_index("..."), pickle.load(open("..."))
+
+def search(query_vector, top_k=5):
+    index, chunks = load_index()
+    distances, indices = index.search(query_vector, top_k)
+    # Return matching chunks with scores</pre>
+                <p><strong>Why IndexFlatL2?</strong> Exact search (no approximation). For &lt;100K vectors, it's faster
+                    than approximate methods and gives perfect results.</p>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">run_ingestion.py</span></h4>
+                <p><strong>Purpose:</strong> One-time script that chains the 4 modules above.</p>
+                <pre>from ingestion.pdf_loader import load_all_documents
+from ingestion.chunker import chunk_documents
+from ingestion.embedder import embed_chunks
+from ingestion.vector_store import save_index
+
+docs = load_all_documents()     # Step 1: parse
+chunks = chunk_documents(docs)  # Step 2: chunk
+embeds = embed_chunks(chunks)   # Step 3: embed
+save_index(embeds, chunks)      # Step 4: save FAISS
+print("Done! Index ready.")</pre>
+                <p><strong>Run:</strong> <code>python run_ingestion.py</code> — only needed once (or when docs change).
+                </p>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <h3 id="s3">Step 3 — Connectors (Data Source Adapters)</h3>
+        <p><em>Build order: sql → jira → servicenow → outlook → teams → sharepoint → azure_insights</em></p>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">connectors/</span> package (7 files)</h4>
+                <p><strong>Pattern:</strong> Every connector follows the same structure:</p>
+                <pre>import os, requests
+
+# ── Mock data (always available) ──────────────────
+MOCK_DATA = { ... }  # Realistic fake data
+
+# ── Real API function ────────────────────────────
+def fetch_from_real_api(params):
+    url = os.getenv("API_URL")
+    if not url:
+        return None  # Not configured
+    response = requests.get(url, auth=(...), params=params)
+    return response.json()
+
+# ── Public function (try real → fallback mock) ───
+def get_data(key):
+    real = fetch_from_real_api(key)
+    if real:
+        return real
+    return MOCK_DATA.get(key, {})</pre>
+
+                <table>
+                    <tr>
+                        <th>File to Create</th>
+                        <th>Real API</th>
+                        <th>Key Functions</th>
+                    </tr>
+                    <tr>
+                        <td class="file">sql_connector.py</td>
+                        <td>pyodbc → SQL Server</td>
+                        <td>get_metric(key), execute_query(sql), get_project_summary()</td>
+                    </tr>
+                    <tr>
+                        <td class="file">jira_connector.py</td>
+                        <td>Jira REST v3</td>
+                        <td>get_sprints(), get_issues(jql), get_projects()</td>
+                    </tr>
+                    <tr>
+                        <td class="file">servicenow_connector.py</td>
+                        <td>Table API</td>
+                        <td>create_ticket(), get_ticket(), list_tickets(), escalate(), update()</td>
+                    </tr>
+                    <tr>
+                        <td class="file">outlook_connector.py</td>
+                        <td>MS Graph /sendMail</td>
+                        <td>send_email(), initiate_onboarding(), initiate_offboarding(), tag_resource()</td>
+                    </tr>
+                    <tr>
+                        <td class="file">teams_connector.py</td>
+                        <td>Webhook POST</td>
+                        <td>send_approval_card(), send_notification()</td>
+                    </tr>
+                    <tr>
+                        <td class="file">sharepoint_connector.py</td>
+                        <td>MS Graph Drive+Lists</td>
+                        <td>download_documents(), add_raid_entry(), get_raid_logs()</td>
+                    </tr>
+                    <tr>
+                        <td class="file">azure_insights_connector.py</td>
+                        <td>KQL REST API</td>
+                        <td>query_logs(severity, hours), get_performance()</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <h3 id="s4">Step 4 — Agents (The AI Brains)</h3>
+        <p><em>Build order: retrieval → api → helpdesk → workflow</em></p>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">agents/retrieval_agent.py</span></h4>
+                <p><strong>Pattern:</strong> embed query → FAISS search → build context → Groq LLM → answer</p>
+                <pre>def run_retrieval_agent(query, session_id=None):
+    query_vector = embed_query(query)                    # 384-dim
+    main_results = search(query_vector, top_k=5)         # main FAISS
+    upload_results = search_uploaded(session_id, ...)     # session FAISS
+    context = merge_and_format(main_results + upload_results)
+    
+    answer = groq_client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[
+            {"role": "system", "content": "Answer ONLY from context..."},
+            {"role": "user", "content": f"Context:\n{context}\n\nQ: {query}"}
+        ],
+        temperature=0.2
+    )
+    return {"answer": answer, "sources": [r["source"] for r in results]}</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">agents/api_agent.py</span></h4>
+                <p><strong>Pattern:</strong> LLM extracts metric key → connector fetches data → LLM formats</p>
+                <pre>def run_api_agent(query):
+    # Step 1: LLM extracts what metric user wants (temp=0)
+    metric_key = groq_extract(query)  # → "budget_burn_rate"
+    # Step 2: Fetch from SQL or Jira connector
+    data = sql_connector.get_metric(metric_key)
+    # Step 3: LLM formats into executive summary (temp=0.3)
+    formatted = groq_format(data)
+    return {"answer": formatted}</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">agents/helpdesk_agent.py</span></h4>
+                <p><strong>Pattern:</strong> LLM extracts action JSON → ServiceNow connector executes</p>
+                <pre>def run_helpdesk_agent(query):
+    # LLM extracts: { action, short_description, urgency, category }
+    intent = groq_extract_json(query)  # temp=0
+    if intent["action"] == "create_ticket":
+        result = servicenow.create_ticket(intent)
+    elif intent["action"] == "check_status":
+        result = servicenow.get_ticket(intent["ticket_number"])
+    # ... 5 actions total
+    return {"answer": format_result(result)}</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">agents/workflow_agent.py</span></h4>
+                <p><strong>Pattern:</strong> LLM classifies sub-action → dispatch to correct connector</p>
+                <pre>def run_workflow_agent(query):
+    action = groq_classify(query)  # → "send_email" | "approve" | "onboard" | ...
+    if action["action"] == "send_email":
+        outlook.send_email(action["to"], action["subject"], action["body"])
+    elif action["action"] == "approve":
+        teams.send_approval_card(action["title"], action["approver"])
+    elif action["action"] == "onboard":
+        outlook.initiate_onboarding(employee, role, project)  # + approval email
+    elif action["action"] == "offboard":
+        outlook.initiate_offboarding(employee, role, project) # + approval email
+    elif action["action"] == "tag_resource":
+        outlook.tag_resource(employee, from_project, to_project) # + approval email
+    # ... 8 sub-actions total (PMO admin only for onboard/offboard/tag)</pre>
+            </div>
+        </div>
+
+        <!-- STEP 5 -->
+        <h3 id="s5">Step 5 — Router (LangGraph StateGraph)</h3>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">router/graph.py</span> — the orchestrator</h4>
+                <pre># 1. Define typed state
+class ChatState(TypedDict):
+    query: str
+    session_id: str
+    agent_used: str
+    answer: str
+    sources: list
+
+# 2. Define keyword lists
+HELPDESK_KEYWORDS = ["ticket", "raise", "broken", "laptop", ...]
+WORKFLOW_KEYWORDS = ["email", "approve", "raid", "notify", ...]
+API_KEYWORDS      = ["kpi", "metric", "budget", "sprint", ...]
+RETRIEVAL_KEYWORDS= ["document", "sop", "policy", "report", ...]
+
+# 3. Define anchor sentences for Tier 2
+AGENT_ANCHORS = {
+    "retrieval": ["Find information in project documents", ...],
+    "api":       ["Show me KPI metrics and project data", ...],
+    ...
+}
+
+# 4. Pre-embed anchors at module load
+ANCHOR_EMBEDDINGS = {agent: model.encode(sents) for agent, sents in ...}
+
+# 5. Route function (3 tiers)
+def route_query(state):
+    query = state["query"].lower()
+    # Tier 1: keyword scan
+    for word in HELPDESK_KEYWORDS:
+        if word in query: return "helpdesk"
+    ...
+    # Tier 2: cosine similarity
+    q_vec = model.encode([query])
+    for agent, anchors in ANCHOR_EMBEDDINGS.items():
+        score = cosine_sim(q_vec, anchors).max()
+        if score > 0.35: return agent
+    # Tier 3: Groq LLM
+    return groq_classify(query)
+
+# 6. Build LangGraph
+def build_graph():
+    g = StateGraph(ChatState)
+    g.add_node("retrieval", retrieval_node)
+    g.add_node("api", api_node)
+    g.add_node("helpdesk", helpdesk_node)
+    g.add_node("workflow", workflow_node)
+    g.add_conditional_edges(START, route_query, {...})
+    g.add_edge("retrieval", END)
+    # ... same for other nodes
+    return g.compile()
+
+# 7. Entry point for backend
+def run_chat(query, session_id=None):
+    graph = get_graph()  # singleton
+    return graph.invoke({"query": query, "session_id": session_id, ...})</pre>
+            </div>
+        </div>
+
+        <!-- STEP 6 -->
+        <h3 id="s6">Step 6 — Backend (FastAPI REST API)</h3>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">backend/main.py</span></h4>
+                <pre>from fastapi import FastAPI, UploadFile, File, Form
+from pydantic import BaseModel
+
+app = FastAPI(title="KPMG PMO AI Chatbot", version="2.0.0")
+
+# CORS — allow Streamlit (8501) to call FastAPI (8000)
+app.add_middleware(CORSMiddleware, allow_origins=["*"], ...)
+
+class ChatRequest(BaseModel):
+    query: str
+    session_id: str = None
+
+class ChatResponse(BaseModel):
+    answer: str
+    agent_used: str
+    sources: list
+
+@app.post("/chat")
+def chat(request: ChatRequest) -> ChatResponse:
+    result = run_chat(request.query, request.session_id)
+    return ChatResponse(**result)
+
+@app.post("/upload")            # File upload
+@app.post("/upload/clear")      # Clear session uploads
+@app.get("/upload/files")       # List uploaded files
+@app.get("/health")             # Health check
+@app.get("/tickets")            # Admin: view tickets
+@app.get("/logs")               # Admin: view RAID logs
+@app.get("/approvals")          # Admin: view approvals</pre>
+                <p><strong>Run:</strong> <code>uvicorn backend.main:app --reload --port 8000</code></p>
+                <p><strong>Test:</strong> Open <code>http://localhost:8000/docs</code> → Swagger UI</p>
+            </div>
+        </div>
+
+        <!-- STEP 7 -->
+        <h3 id="s7">Step 7 — Frontend (Streamlit Chat UI)</h3>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">frontend/app.py</span></h4>
+                <pre>import streamlit as st
+import requests, uuid
+
+# Define 3 user roles with permissions
+USERS = {
+    "admin":    {"role": "PMO Admin",  "access_level": 3},  # All agents + user mgmt
+    "manager":  {"role": "Manager",    "access_level": 2},  # All 4 agents
+    "resource": {"role": "Resource",   "access_level": 1},  # Retrieval + Helpdesk
+}
+
+# Login page → Dashboard with 2-3 tabs:
+#   Tab 1: Documentation Grid (11 cards, each routes to doc viewer)
+#   Tab 2: AI Chatbot (role-filtered agents)
+#   Tab 3: User Management (PMO Admin only — grant/revoke roles)
+
+# Session state: logged_in, role, access_level, messages, session_id
+# RBAC: call_backend() blocks agents user can't access
+# Doc viewer: HTML files rendered via base64 iframe, MD natively</pre>
+                <p><strong>Run:</strong> <code>streamlit run frontend/app.py</code> → opens at
+                    <code>localhost:8501</code>
+                </p>
+            </div>
+        </div>
+
+        <!-- STEP 8 -->
+        <h3 id="s8">Step 8 — Docker</h3>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Create <span class="file">Dockerfile</span></h4>
+                <pre>FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential && rm -rf /var/lib/apt/lists/*
+
+# Install Python deps
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project files
+COPY . .
+
+# Expose ports: FastAPI (8000) + Streamlit (8501)
+EXPOSE 8000 8501
+
+# Start both services
+COPY start.sh .
+RUN chmod +x start.sh
+CMD ["./start.sh"]</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Create <span class="file">start.sh</span></h4>
+                <pre>#!/bin/bash
+# Run ingestion if index doesn't exist
+if [ ! -f data/vector_store/index.faiss ]; then
+    echo "Running ingestion..."
+    python run_ingestion.py
+fi
+
+# Start FastAPI in background
+uvicorn backend.main:app --host 0.0.0.0 --port 8000 &
+
+# Start Streamlit in foreground
+streamlit run frontend/app.py --server.port 8501 --server.address 0.0.0.0</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Build & run locally</h4>
+                <pre># Build the image
+docker build -t kpmg-chatbot .
+
+# Run the container
+docker run -p 8000:8000 -p 8501:8501 \
+  -e GROQ_API_KEY=gsk_your_key \
+  kpmg-chatbot
+
+# Open http://localhost:8501 in browser</pre>
+            </div>
+        </div>
+
+        <!-- STEP 9 -->
+        <h3 id="s9">Step 9 — Deploy to Azure App Service</h3>
+        <div class="phase">
+
+            <div class="step card">
+                <h4>Push to Azure Container Registry (ACR)</h4>
+                <pre># Login to Azure
+az login
+
+# Create Resource Group + ACR
+az group create --name kpmg-chatbot-rg --location eastus
+az acr create --name kpmgchatbotacr --resource-group kpmg-chatbot-rg --sku Basic
+
+# Login to ACR & push image
+az acr login --name kpmgchatbotacr
+docker tag kpmg-chatbot kpmgchatbotacr.azurecr.io/kpmg-chatbot:latest
+docker push kpmgchatbotacr.azurecr.io/kpmg-chatbot:latest</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Create Azure App Service</h4>
+                <pre># Create App Service Plan (Linux, B1 tier)
+az appservice plan create \
+  --name kpmg-chatbot-plan \
+  --resource-group kpmg-chatbot-rg \
+  --is-linux --sku B1
+
+# Create Web App from container
+az webapp create \
+  --name kpmg-chatbot-app \
+  --resource-group kpmg-chatbot-rg \
+  --plan kpmg-chatbot-plan \
+  --deployment-container-image-name kpmgchatbotacr.azurecr.io/kpmg-chatbot:latest
+
+# Set environment variables
+az webapp config appsettings set \
+  --name kpmg-chatbot-app \
+  --resource-group kpmg-chatbot-rg \
+  --settings \
+    GROQ_API_KEY="gsk_..." \
+    GROQ_MODEL="llama-3.1-8b-instant" \
+    WEBSITES_PORT="8501"
+
+# Enable ACR pull
+az webapp config container set \
+  --name kpmg-chatbot-app \
+  --resource-group kpmg-chatbot-rg \
+  --docker-registry-server-url https://kpmgchatbotacr.azurecr.io</pre>
+            </div>
+
+            <div class="step card">
+                <h4>CI/CD with GitHub Actions (optional)</h4>
+                <pre># .github/workflows/deploy.yml
+name: Deploy to Azure
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/docker-login@v1
+        with:
+          login-server: kpmgchatbotacr.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+      - run: |
+          docker build -t kpmgchatbotacr.azurecr.io/kpmg-chatbot:${{ github.sha }} .
+          docker push kpmgchatbotacr.azurecr.io/kpmg-chatbot:${{ github.sha }}
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: kpmg-chatbot-app
+          images: kpmgchatbotacr.azurecr.io/kpmg-chatbot:${{ github.sha }}</pre>
+            </div>
+
+            <div class="step card">
+                <h4>Post-deployment checklist</h4>
+                <table>
+                    <tr>
+                        <th>Check</th>
+                        <th>How</th>
+                    </tr>
+                    <tr>
+                        <td>App running?</td>
+                        <td>Visit https://kpmg-chatbot-app.azurewebsites.net</td>
+                    </tr>
+                    <tr>
+                        <td>Health check?</td>
+                        <td>GET /health → { status: "healthy" }</td>
+                    </tr>
+                    <tr>
+                        <td>CORS restricted?</td>
+                        <td>Change allow_origins from ["*"] to your domain</td>
+                    </tr>
+                    <tr>
+                        <td>Env vars set?</td>
+                        <td>Azure Portal → App Settings → verify GROQ_API_KEY</td>
+                    </tr>
+                    <tr>
+                        <td>Logs working?</td>
+                        <td>az webapp log tail --name kpmg-chatbot-app</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <h2>📝 Quick Summary — Build Order</h2>
+        <div class="card">
+            <table>
+                <tr>
+                    <th>Step</th>
+                    <th>What You Build</th>
+                    <th>Files</th>
+                    <th>Test With</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Environment setup</td>
+                    <td>.env, requirements.txt</td>
+                    <td>pip install -r requirements.txt</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Ingestion pipeline</td>
+                    <td>4 files in ingestion/ + run_ingestion.py</td>
+                    <td>python run_ingestion.py</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Data connectors</td>
+                    <td>7 files in connectors/</td>
+                    <td>python -c "from connectors.sql_connector import *"</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>AI agents</td>
+                    <td>4 files in agents/</td>
+                    <td>Direct function calls in Python REPL</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>LangGraph router</td>
+                    <td>router/graph.py</td>
+                    <td>python router/test_semantic_router.py</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>FastAPI backend</td>
+                    <td>backend/main.py</td>
+                    <td>uvicorn → http://localhost:8000/docs</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Streamlit frontend</td>
+                    <td>frontend/app.py</td>
+                    <td>streamlit run → http://localhost:8501</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Docker container</td>
+                    <td>Dockerfile, start.sh</td>
+                    <td>docker build && docker run</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Azure deployment</td>
+                    <td>GitHub Actions yaml</td>
+                    <td>az webapp browse</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <div
+        style="text-align:center;padding:30px;color:var(--muted);font-size:13px;border-top:1px solid var(--border);margin-top:30px">
+        Built by Papiya Mazumder · Capgemini · KPMG PMO AI Project
+    </div>
+</body>
+
+</html>

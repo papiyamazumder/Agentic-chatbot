@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPMG Chatbot — Interview Prep</title>
+    <style>
+        :root {
+            --bg: #0a0e1a;
+            --s1: #111827;
+            --s2: #1e293b;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --muted: #64748b;
+            --white: #f1f5f9;
+            --blue: #38bdf8;
+            --purple: #a78bfa;
+            --green: #34d399;
+            --amber: #fbbf24;
+            --red: #f87171;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 36px 20px 60px;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--white);
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .section {
+            background: var(--s1);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 18px;
+        }
+
+        .section h2 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        p,
+        li {
+            font-size: 12px;
+            line-height: 1.7;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        strong {
+            color: var(--white);
+        }
+
+        pre {
+            background: var(--s2);
+            padding: 12px 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 10px;
+            line-height: 1.6;
+            margin: 8px 0;
+            color: #94a3b8;
+            border: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 11px;
+        }
+
+        th {
+            padding: 8px 10px;
+            text-align: left;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: var(--s2);
+            color: #94a3b8;
+        }
+
+        td {
+            padding: 8px 10px;
+            border-top: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 8px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-right: 4px;
+        }
+
+        .b-blue {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--blue);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+
+        .b-green {
+            background: rgba(52, 211, 153, 0.1);
+            color: var(--green);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+
+        .b-amber {
+            background: rgba(251, 191, 36, 0.1);
+            color: var(--amber);
+            border: 1px solid rgba(251, 191, 36, 0.25);
+        }
+
+        .b-red {
+            background: rgba(248, 113, 113, 0.1);
+            color: var(--red);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+        }
+
+        .b-purple {
+            background: rgba(167, 139, 250, 0.1);
+            color: var(--purple);
+            border: 1px solid rgba(167, 139, 250, 0.25);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 9px;
+            color: #374151;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>Interview Preparation — KPMG PMO AI Chatbot</h1>
+        <p class="subtitle">Architecture · Agents · Connectors · Technical Concepts · Q&amp;A</p>
+
+        <div class="section">
+            <h2 style="color:var(--blue)">🎯 30-Second Elevator Pitch</h2>
+            <p>I built a <strong>multi-agent RAG chatbot</strong> for KPMG's PMO team that handles 4 types of tasks
+                through specialized AI agents: <strong>document Q&amp;A</strong> (RAG over SharePoint/Teams docs),
+                <strong>live KPI queries</strong> (SQL + Jira), <strong>IT helpdesk automation</strong> (ServiceNow
+                tickets), and <strong>workflow actions</strong> (Outlook email, Teams approvals, RAID logs,
+                onboarding/offboarding, resource tagging). The system uses a <strong>3-tier hybrid router</strong>
+                (keyword → embedding similarity → LLM) built with LangGraph, and includes <strong>RBAC with 3
+                    roles</strong> (PMO Admin, Manager, Resource), <strong>user management</strong>, and <strong>manager
+                    approval notifications</strong> via Microsoft Graph API.</p>
+            <p><span class="badge b-blue">LangGraph</span><span class="badge b-green">Groq LLaMA 3.1</span><span
+                    class="badge b-amber">FAISS</span><span class="badge b-purple">FastAPI</span><span
+                    class="badge b-red">Docker + Azure</span></p>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--green)">🏗️ Architecture Overview</h2>
+            <pre>User (Streamlit) → Login (3 roles) → Dashboard
+        ↓                                ↓
+   Doc Viewer (8 cards)          AI Chatbot Tab
+                                        ↓
+                               FastAPI /chat endpoint
+                                        ↓
+                              3-Tier Hybrid Router (LangGraph)
+                              Keyword → Embedding → LLM
+                                        ↓
+        ┌─────────────┬──────────────┬──────────────┬───────────────┐
+   🔍 Retrieval    📊 API       🎫 Helpdesk    ⚙️ Workflow
+   RAG + FAISS    SQL + Jira   ServiceNow    Email/Approve/RAID
+                                              + Onboard/Offboard/Tag</pre>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--amber)">🤖 The 4 Agents</h2>
+            <table>
+                <tr>
+                    <th>Agent</th>
+                    <th>Purpose</th>
+                    <th>Data Source</th>
+                    <th>LLM Use</th>
+                    <th>Key Tech</th>
+                </tr>
+                <tr>
+                    <td><strong>🔍 Retrieval</strong></td>
+                    <td>Answer questions from project docs</td>
+                    <td>SharePoint, Teams, uploaded files</td>
+                    <td>Grounded Q&amp;A (temp=0.2)</td>
+                    <td>FAISS, all-MiniLM-L6-v2, RAG</td>
+                </tr>
+                <tr>
+                    <td><strong>📊 API</strong></td>
+                    <td>Fetch live KPIs, metrics, sprint data</td>
+                    <td>SQL Server, Jira REST API</td>
+                    <td>Extraction (temp=0) + format (temp=0.3)</td>
+                    <td>pyodbc, Jira REST v3</td>
+                </tr>
+                <tr>
+                    <td><strong>🎫 Helpdesk</strong></td>
+                    <td>Create/check/escalate IT tickets</td>
+                    <td>ServiceNow Table API</td>
+                    <td>Intent → JSON extraction (temp=0)</td>
+                    <td>ServiceNow REST, 5 CRUD actions</td>
+                </tr>
+                <tr>
+                    <td><strong>⚙️ Workflow</strong></td>
+                    <td>Emails, approvals, RAID, onboarding, offboarding, tagging</td>
+                    <td>Outlook, Teams, SharePoint, Azure Insights</td>
+                    <td>Action classification → JSON (temp=0)</td>
+                    <td>MS Graph API, 8 sub-actions</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--purple)">🔀 3-Tier Hybrid Router</h2>
+            <table>
+                <tr>
+                    <th>Tier</th>
+                    <th>Method</th>
+                    <th>Speed</th>
+                    <th>Cost</th>
+                    <th>When Used</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Keyword Matching</td>
+                    <td>&lt;1ms</td>
+                    <td>Free</td>
+                    <td>"ticket", "KPI", "email", "document"</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Embedding Cosine Similarity</td>
+                    <td>~5ms</td>
+                    <td>Free</td>
+                    <td>Paraphrased: "How fast are milestones?"</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Groq LLM Classification</td>
+                    <td>~300ms</td>
+                    <td>Free tier</td>
+                    <td>Ambiguous: "Help me with that thing"</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--red)">🔐 Role-Based Access Control (RBAC)</h2>
+            <table>
+                <tr>
+                    <th>Role</th>
+                    <th>Level</th>
+                    <th>Agents Available</th>
+                    <th>Extra Access</th>
+                </tr>
+                <tr>
+                    <td><strong>PMO Admin</strong></td>
+                    <td>3</td>
+                    <td>All 4 agents</td>
+                    <td>User Management + Onboarding/Offboarding/Tagging</td>
+                </tr>
+                <tr>
+                    <td><strong>Manager</strong></td>
+                    <td>2</td>
+                    <td>All 4 agents</td>
+                    <td>Receives approval notifications</td>
+                </tr>
+                <tr>
+                    <td><strong>Resource</strong></td>
+                    <td>1</td>
+                    <td>Retrieval + Helpdesk</td>
+                    <td>Basic doc query &amp; ticket creation</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--blue)">🔌 7 Connectors — Mock Fallback Pattern</h2>
+            <table>
+                <tr>
+                    <th>Connector</th>
+                    <th>Real API</th>
+                    <th>Key Functions</th>
+                    <th>Mock Fallback?</th>
+                </tr>
+                <tr>
+                    <td>sql_connector</td>
+                    <td>pyodbc → SQL Server</td>
+                    <td>get_metric(), execute_query()</td>
+                    <td>✓ MOCK_KPI_DATA</td>
+                </tr>
+                <tr>
+                    <td>jira_connector</td>
+                    <td>Jira REST v3</td>
+                    <td>get_sprints(), get_issues()</td>
+                    <td>✓ MOCK_SPRINTS</td>
+                </tr>
+                <tr>
+                    <td>servicenow_connector</td>
+                    <td>Table API</td>
+                    <td>create_ticket(), get_ticket()</td>
+                    <td>✓ MOCK_TICKETS</td>
+                </tr>
+                <tr>
+                    <td>outlook_connector</td>
+                    <td>MS Graph sendMail</td>
+                    <td>send_email(), onboard(), offboard(), tag()</td>
+                    <td>✓ Mock log</td>
+                </tr>
+                <tr>
+                    <td>teams_connector</td>
+                    <td>Webhook POST</td>
+                    <td>send_approval_card()</td>
+                    <td>✓ Mock log</td>
+                </tr>
+                <tr>
+                    <td>sharepoint_connector</td>
+                    <td>MS Graph Drive</td>
+                    <td>download_docs(), add_raid_entry()</td>
+                    <td>✓ Mock data</td>
+                </tr>
+                <tr>
+                    <td>azure_insights</td>
+                    <td>KQL REST API</td>
+                    <td>query_logs(), get_performance()</td>
+                    <td>✓ Mock logs</td>
+                </tr>
+            </table>
+            <p><span class="badge b-green">Pattern: Try real API → Fallback to mock → Always works</span></p>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--amber)">💡 Key Technical Concepts</h2>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Concept</th>
+                    <th>How We Use It</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>RAG</td>
+                    <td>Embed query → FAISS top-5 → inject as context → LLM generates grounded answer</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Multi-Agent Architecture</td>
+                    <td>4 specialized agents, each with own tools/prompts, orchestrated by LangGraph</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>LangGraph StateGraph</td>
+                    <td>Typed state dict flows through conditional edges to the right agent node</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>3-Tier Hybrid Routing</td>
+                    <td>Keyword → Embedding similarity → LLM fallback (free, fast, accurate)</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Sentence Transformers</td>
+                    <td>all-MiniLM-L6-v2 for 384-dim embeddings (routing + retrieval)</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>FAISS Vector Search</td>
+                    <td>IndexFlatL2 for brute-force exact similarity search</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Temperature Control</td>
+                    <td>0 for extraction, 0.2 for factual, 0.3 for formatting</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Singleton Pattern</td>
+                    <td>LLM client, embedding model, FAISS index — loaded once, reused</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Mock Fallback</td>
+                    <td>Every connector: try real API, catch exception, return mock</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Pydantic Validation</td>
+                    <td>ChatRequest/ChatResponse enforce schema at API boundary</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>RBAC</td>
+                    <td>3 roles enforced at frontend + backend</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>Session-Scoped Storage</td>
+                    <td>Uploaded files per session_id, cleared on end</td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td>Approval Workflow</td>
+                    <td>Onboarding/offboarding trigger manager notifications via Graph API</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2 style="color:var(--green)">📋 Master Feature Table</h2>
+            <table>
+                <tr>
+                    <th>#</th>
+                    <th>Feature</th>
+                    <th>Agent</th>
+                    <th>Connector</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Document Q&amp;A</td>
+                    <td>Retrieval</td>
+                    <td>FAISS + embedder</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Upload &amp; Ask</td>
+                    <td>Retrieval</td>
+                    <td>upload_handler</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>KPI Query</td>
+                    <td>API</td>
+                    <td>sql_connector</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Sprint Data</td>
+                    <td>API</td>
+                    <td>jira_connector</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Create Ticket</td>
+                    <td>Helpdesk</td>
+                    <td>servicenow</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Check Ticket</td>
+                    <td>Helpdesk</td>
+                    <td>servicenow</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Send Email</td>
+                    <td>Workflow</td>
+                    <td>outlook</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Teams Approval</td>
+                    <td>Workflow</td>
+                    <td>teams</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>RAID Log</td>
+                    <td>Workflow</td>
+                    <td>sharepoint</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>System Logs</td>
+                    <td>Workflow</td>
+                    <td>azure_insights</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>Copilot Trigger</td>
+                    <td>Workflow</td>
+                    <td>copilot_studio</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>Login &amp; Auth</td>
+                    <td>—</td>
+                    <td>Session state</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td>User Management</td>
+                    <td>—</td>
+                    <td>Session state</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>Onboarding</td>
+                    <td>Workflow</td>
+                    <td>outlook + Graph</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>Offboarding</td>
+                    <td>Workflow</td>
+                    <td>outlook + Graph</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td>16</td>
+                    <td>Resource Tagging</td>
+                    <td>Workflow</td>
+                    <td>outlook + Graph</td>
+                    <td>✅</td>
+                </tr>
+            </table>
+        </div>
+
+        <p class="footer">KPMG PMO AI Chatbot · Interview Preparation · Built by Papiya Mazumder</p>
+    </div>
+</body>
+
+</html>

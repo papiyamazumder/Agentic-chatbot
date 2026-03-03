@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPMG AI Chatbot — Cloud Deployment Architecture</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2236;
+      --border: #1e2d45;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent3: #10b981;
+      --accent4: #f59e0b;
+      --accent5: #ef4444;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      margin-bottom: 50px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* LAYERS */
+    .layer {
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .layer-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .layer-content {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* CARDS */
+    .card {
+      border-radius: 12px;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      min-width: 160px;
+      flex: 1;
+      max-width: 220px;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.58rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* COLOR VARIANTS */
+    .blue {
+      border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .blue .card-icon,
+    .blue .card-title {
+      color: var(--accent);
+    }
+
+    .blue .badge {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    .blue:hover {
+      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.1);
+    }
+
+    .purple {
+      border-color: rgba(124, 58, 237, 0.3);
+    }
+
+    .purple .card-icon,
+    .purple .card-title {
+      color: #a78bfa;
+    }
+
+    .purple .badge {
+      background: rgba(124, 58, 237, 0.1);
+      color: #a78bfa;
+      border: 1px solid rgba(124, 58, 237, 0.3);
+    }
+
+    .purple:hover {
+      box-shadow: 0 8px 30px rgba(124, 58, 237, 0.1);
+    }
+
+    .green {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .green .card-icon,
+    .green .card-title {
+      color: var(--accent3);
+    }
+
+    .green .badge {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--accent3);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .green:hover {
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.1);
+    }
+
+    .amber {
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .amber .card-icon,
+    .amber .card-title {
+      color: var(--accent4);
+    }
+
+    .amber .badge {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent4);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .amber:hover {
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.1);
+    }
+
+    .red {
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .red .card-icon,
+    .red .card-title {
+      color: var(--accent5);
+    }
+
+    .red .badge {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--accent5);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* ARROW */
+    .arrow {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 0;
+      gap: 8px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+    }
+
+    .arrow::before,
+    .arrow::after {
+      content: '';
+      flex: 1;
+      max-width: 120px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border));
+    }
+
+    .arrow::after {
+      background: linear-gradient(to left, transparent, var(--border));
+    }
+
+    .arrow-down {
+      font-size: 1.2rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 2px 0 4px;
+      line-height: 1;
+    }
+
+    /* WIDE CARD */
+    .card-wide {
+      max-width: 100%;
+      width: 100%;
+      flex: unset;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 24px;
+    }
+
+    .card-wide .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .card-wide .card-body {
+      flex: 1;
+    }
+
+    /* AGENTS SECTION */
+    .agents-wrapper {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .agent-group {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+      background: var(--surface2);
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .agent-group-title {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .agent-item {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .agent-item strong {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--white);
+      margin-bottom: 2px;
+    }
+
+    /* STORAGE ROW */
+    .storage-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* SECTION DIVIDER */
+    .section-header {
+      text-align: center;
+      margin: 30px 0 16px;
+      position: relative;
+    }
+
+    .section-header span {
+      background: var(--bg);
+      padding: 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--accent);
+    }
+
+    .section-header::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--border);
+      z-index: -1;
+    }
+
+    /* LEGEND */
+    .legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* FLOW LINE between agents and cloud */
+    .flow-connector {
+      display: flex;
+      justify-content: space-around;
+      padding: 4px 60px;
+      position: relative;
+    }
+
+    .flow-connector::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 60px;
+      right: 60px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .connector-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>KPMG AI Chatbot</h1>
+    <p class="subtitle">Cloud Deployment Architecture · Azure · RAG · Multi-Agent</p>
+
+    <!-- LAYER 1: USER -->
+    <div class="section-header"><span>Layer 1 — User Interface</span></div>
+    <div class="layer">
+      <div class="layer-content">
+        <div class="card blue card-wide">
+          <span class="card-icon">🖥️</span>
+          <div class="card-body">
+            <div class="card-title">Streamlit Frontend</div>
+            <div class="card-sub">Azure App Service (Web App)</div>
+            <div class="card-desc">Multi-page chat UI with login (3 roles: PMO Admin/Manager/Resource), RBAC,
+              documentation grid with 11 routable cards, tabbed chatbot + user management panel. Sends user queries via
+              HTTP to the FastAPI backend.</div>
+            <span class="badge">Azure App Service</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓</div>
+    <div class="arrow">HTTP / REST API calls</div>
+    <div class="arrow-down">↓</div>
+
+    <!-- LAYER 2: BACKEND -->
+    <div class="section-header"><span>Layer 2 — Backend Orchestration</span></div>
+    <div class="layer">
+      <div class="layer-content">
+        <div class="card purple card-wide">
+          <span class="card-icon">⚙️</span>
+          <div class="card-body">
+            <div class="card-title">FastAPI + LangGraph Router</div>
+            <div class="card-sub">Azure App Service (API Backend) or Azure Container Apps</div>
+            <div class="card-desc">The brain of the system. Receives user queries, decides which agent to route to
+              (Retrieval / API / Workflow) using LangGraph. Manages session state and response assembly.</div>
+            <span class="badge">Azure App Service</span>
+            <span class="badge">Docker Container</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓</div>
+    <div class="arrow">LangGraph routes to one of 4 agents</div>
+    <div class="arrow-down">↓</div>
+
+    <!-- LAYER 3: AGENTS -->
+    <div class="section-header"><span>Layer 3 — Multi-Agent Layer</span></div>
+    <div class="agents-wrapper">
+
+      <div class="agent-group" style="border-color: rgba(0,212,255,0.25);">
+        <div class="agent-group-title" style="color: var(--accent);">🔍 Retrieval Agent</div>
+        <div class="agent-item">
+          <strong>Purpose</strong>
+          Unstructured doc queries — PDFs, SOPs, Meeting Notes, Reports
+        </div>
+        <div class="agent-item">
+          <strong>Deployed via</strong>
+          Logic inside FastAPI (same App Service)
+        </div>
+        <div class="agent-item">
+          <strong>Calls →</strong>
+          Azure AI Search (vector search) + Azure OpenAI (LLM answer)
+        </div>
+      </div>
+
+      <div class="agent-group" style="border-color: rgba(245,158,11,0.25);">
+        <div class="agent-group-title" style="color: var(--accent4);">📊 API Agent</div>
+        <div class="agent-item">
+          <strong>Purpose</strong>
+          KPI data retrieval → feeds Power BI dashboards
+        </div>
+        <div class="agent-item">
+          <strong>Deployed via</strong>
+          Logic inside FastAPI + Azure Functions (for scheduled pulls)
+        </div>
+        <div class="agent-item">
+          <strong>Calls →</strong>
+          REST APIs / internal systems + Azure OpenAI for formatting
+        </div>
+      </div>
+
+      <div class="agent-group" style="border-color: rgba(16,185,129,0.25);">
+        <div class="agent-group-title" style="color: var(--accent3);">🔄 Workflow Agent</div>
+        <div class="agent-item">
+          <strong>Purpose</strong>
+          Ticket creation, approvals, email notifications, log updates, onboarding/offboarding, resource tagging
+        </div>
+        <div class="agent-item">
+          <strong>Deployed via</strong>
+          Azure Logic Apps (no-code triggers) + Azure Functions (custom code)
+        </div>
+        <div class="agent-item">
+          <strong>Calls →</strong>
+          External systems: ITSM, Email (Graph API), RAID logs, Onboarding records, Copilot Studio
+        </div>
+      </div>
+
+    </div>
+
+    <div class="arrow-down" style="margin-top:14px;">↓</div>
+    <div class="arrow">Each agent calls its Azure service</div>
+    <div class="arrow-down">↓</div>
+
+    <!-- LAYER 4: AZURE SERVICES -->
+    <div class="section-header"><span>Layer 4 — Azure Cloud Services</span></div>
+    <div class="layer">
+      <div class="layer-content">
+        <div class="card blue">
+          <span class="card-icon">🔍</span>
+          <div class="card-title">Azure AI Search</div>
+          <div class="card-sub">Vector + Semantic Index</div>
+          <div class="card-desc">Stores embedded document chunks. Retrieval agent queries this to find relevant context
+            before calling LLM.</div>
+          <span class="badge">Retrieval Agent</span>
+        </div>
+
+        <div class="card purple">
+          <span class="card-icon">🤖</span>
+          <div class="card-title">Azure OpenAI</div>
+          <div class="card-sub">GPT-4o + Embeddings</div>
+          <div class="card-desc">LLM for generating answers and embeddings for indexing. Called by Retrieval and API
+            agents for response generation.</div>
+          <span class="badge">All Agents</span>
+        </div>
+
+        <div class="card green">
+          <span class="card-icon">⚡</span>
+          <div class="card-title">Azure Functions</div>
+          <div class="card-sub">Serverless Compute</div>
+          <div class="card-desc">Event-driven triggers — document ingestion pipeline, KPI refresh jobs, workflow hook
+            listeners. Fires only when needed.</div>
+          <span class="badge">API + Workflow Agents</span>
+        </div>
+
+        <div class="card amber">
+          <span class="card-icon">🔗</span>
+          <div class="card-title">Azure Logic Apps</div>
+          <div class="card-sub">Workflow Automation</div>
+          <div class="card-desc">Orchestrates approval flows, sends email notifications, updates RAID logs and PMO
+            status reports without custom code.</div>
+          <span class="badge">Workflow Agent</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="arrow-down">↓</div>
+
+    <!-- LAYER 5: STORAGE & SECURITY -->
+    <div class="section-header"><span>Layer 5 — Storage, Security & Monitoring</span></div>
+    <div class="storage-row">
+
+      <div class="card blue" style="max-width:200px;">
+        <span class="card-icon">🗄️</span>
+        <div class="card-title">Azure Blob Storage</div>
+        <div class="card-sub">Raw Document Store</div>
+        <div class="card-desc">Stores raw PDFs, SOPs, meeting notes before they're chunked and indexed.</div>
+        <span class="badge">Ingestion Pipeline</span>
+      </div>
+
+      <div class="card red" style="max-width:200px;">
+        <span class="card-icon">🔐</span>
+        <div class="card-title">Azure Key Vault</div>
+        <div class="card-sub">Secret Manager</div>
+        <div class="card-desc">Stores API keys, DB passwords, OpenAI keys. Apps fetch secrets at runtime — never
+          hardcoded.</div>
+        <span class="badge">All Services</span>
+      </div>
+
+      <div class="card green" style="max-width:200px;">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Copilot Studio</div>
+        <div class="card-sub">Agent Interface</div>
+        <div class="card-desc">Front-facing bot integrated with Gemini API for multi-step agentic actions and IT
+          Helpdesk routing.</div>
+        <span class="badge">Workflow Agent</span>
+      </div>
+
+      <div class="card amber" style="max-width:200px;">
+        <span class="card-icon">📊</span>
+        <div class="card-title">Power BI + Logging</div>
+        <div class="card-sub">Monitoring & Reporting</div>
+        <div class="card-desc">Tracks adoption, response quality, automation ROI. API Agent feeds KPI data here via
+          structured logs.</div>
+        <span class="badge">API Agent</span>
+      </div>
+
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent)"></div> Retrieval Agent Flow
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent4)"></div> API Agent Flow
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent3)"></div> Workflow Agent Flow
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#a78bfa"></div> Core Backend
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--accent5)"></div> Security / Infra
+      </div>
+    </div>
+
+    <p
+      style="text-align:center; margin-top:24px; font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--muted); letter-spacing:2px;">
+      KPMG CHATBOT · AZURE CLOUD DEPLOYMENT · PAPIYA MAZUMDER</p>
+
+  </div>
+</body>
+
+</html>
