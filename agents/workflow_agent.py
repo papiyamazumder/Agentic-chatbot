@@ -30,7 +30,7 @@ def _get_workflow_client():
 
 
 # ── Step 1: Extract action intent from query ─────────
-def _classify_action(query: str) -> dict:
+def _classify_action(query: str, chat_history: list = None) -> dict:
     """
     Use Groq LLM to parse natural language into structured action JSON.
     """
@@ -73,12 +73,14 @@ JSON format:
   "timeframe": "today|yesterday|last 4 hours|last 24 hours"
 }"""
 
+    messages = [{"role": "system", "content": system}]
+    if chat_history:
+        messages.extend(chat_history[-10:])
+    messages.append({"role": "user", "content": f"Query: {query}"})
+
     response = client.chat.completions.create(
         model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user",   "content": f"Query: {query}"}
-        ],
+        messages=messages,
         temperature=0,
         max_tokens=300,
     )
@@ -390,7 +392,7 @@ def _format_missing_fields_prompt(action: str, params: dict, missing: list) -> s
 
 
 # ── Main agent function ───────────────────────────────
-def run_workflow_agent(query: str) -> dict:
+def run_workflow_agent(query: str, chat_history: list = None) -> dict:
     """
     Full workflow pipeline:
     1. Groq LLM classifies action + extracts parameters as JSON
@@ -398,7 +400,7 @@ def run_workflow_agent(query: str) -> dict:
     3. Execute via appropriate connector
     4. Return confirmation with details
     """
-    params = _classify_action(query)
+    params = _classify_action(query, chat_history=chat_history)
     action = params.get("action", "send_email")
 
     # Field validation — only for actions that have required fields

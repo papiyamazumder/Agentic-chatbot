@@ -31,7 +31,7 @@ RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTr
 COPY . .
 
 # Create data dirs (in case not present)
-RUN mkdir -p data/raw_docs data/vector_store
+RUN mkdir -p data/raw_docs data/vector_store data/feedback data/KPI\ Data
 
 # Expose ports
 EXPOSE 8000 8501

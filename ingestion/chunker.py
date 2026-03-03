@@ -6,7 +6,7 @@ Target chunk size: 1000, overlap: 100.
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-def chunk_documents(documents: list, chunk_size: int = 1000, overlap: int = 100) -> list:
+def chunk_documents(documents: list, chunk_size: int = 800, overlap: int = 100) -> list:
     """
     Input:  list of {"text": str, "source": str}
     Output: list of {"chunk_id": int, "text": str, "source": str, "chunk_pos": str}

@@ -1,0 +1,44 @@
+/* ── Login Card Design ── */
+
+/* Target the stColumn which has the .login-marker */
+div[data-testid="stColumn"]:has(.login-marker), 
+div[data-testid="column"]:has(.login-marker) {
+    background: linear-gradient(165deg, rgba(13, 27, 42, 0.92) 0%, rgba(10, 15, 26, 0.95) 50%, rgba(5, 5, 15, 0.98) 100%) !important;
+    backdrop-filter: blur(24px) saturate(1.2) !important;
+    border: 2px solid rgba(217, 30, 91, 0.35) !important;
+    border-radius: 36px !important;
+    padding: 2.5rem 2rem !important;
+    text-align: center !important;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Pseudo element for outer corner glows */
+div[data-testid="stColumn"]:has(.login-marker)::before,
+div[data-testid="column"]:has(.login-marker)::before {
+    content: "";
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px; /* Stretch strictly outward */
+    border-radius: 36px;
+    box-shadow: 0 0 0 rgba(217, 30, 91, 0);
+    z-index: -1;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+/* Hover effects */
+div[data-testid="stColumn"]:has(.login-marker):hover,
+div[data-testid="column"]:has(.login-marker):hover {
+    transform: scale(1.04) translateY(-6px) !important;
+    border-color: rgba(255, 107, 157, 0.8) !important;
+}
+
+/* Glow specifically expanding from the 4 corners, no glow inside the content */
+div[data-testid="stColumn"]:has(.login-marker):hover::before,
+div[data-testid="column"]:has(.login-marker):hover::before {
+    box-shadow: 
+        -15px -15px 30px rgba(255, 107, 157, 0.4),
+        15px -15px 30px rgba(255, 107, 157, 0.4),
+        -15px 15px 30px rgba(255, 107, 157, 0.4),
+        15px 15px 30px rgba(255, 107, 157, 0.4) !important;
+}

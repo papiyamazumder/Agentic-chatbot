@@ -35,8 +35,8 @@ def _build_history_messages(chat_history: list) -> list:
     """Convert last 5 messages into LLM message format for context memory."""
     if not chat_history:
         return []
-    # Take only last 5 (user + assistant pairs)
-    recent = chat_history[-5:]
+    # Take up to 10 messages (5 user/assistant pairs)
+    recent = chat_history[-10:]
     messages = []
     for msg in recent:
         role = msg.get("role", "user")

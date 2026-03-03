@@ -1,5 +1,5 @@
 """
-Watchdog Service — monitors /local_storage for new/modified files.
+Watchdog Service — monitors document directories for new/modified files.
 Triggers incremental ingestion.
 """
 import time
@@ -13,7 +13,7 @@ from ingestion.chunker import chunk_documents
 from ingestion.embedder import embed_chunks
 from ingestion.vector_store import update_index
 
-WATCH_DIR = "local_storage"
+WATCH_DIRS = ["local_storage", "data/raw_docs", "Project_Flowchart"]
 SUPPORTED = (".pdf", ".docx", ".xlsx", ".csv", ".html", ".md")
 
 
@@ -50,7 +50,16 @@ class IngestionHandler(FileSystemEventHandler):
                 return
 
             if text.strip():
-                rel_source = os.path.relpath(filepath, WATCH_DIR)
+                # Determine which watch dir this file belongs to
+                for watch_dir in WATCH_DIRS:
+                    abs_watch = os.path.abspath(watch_dir)
+                    abs_file = os.path.abspath(filepath)
+                    if abs_file.startswith(abs_watch):
+                        rel_source = os.path.relpath(filepath, watch_dir)
+                        break
+                else:
+                    rel_source = filename
+
                 doc = [{"text": text, "source": rel_source}]
                 chunks = chunk_documents(doc)
                 embeddings, chunks = embed_chunks(chunks)
@@ -61,16 +70,14 @@ class IngestionHandler(FileSystemEventHandler):
 
 
 def start_watchdog():
-    if not os.path.exists(WATCH_DIR):
-        os.makedirs(WATCH_DIR)
-        
     event_handler = IngestionHandler()
     observer = Observer()
-    observer.schedule(event_handler, WATCH_DIR, recursive=True)
-    observer.start()
-    print(f"[WATCHDOG] Monitoring {WATCH_DIR} for changes...")
     
-    # Run in background
-    # Note: Keep the thread alive if this is the main entry point, 
-    # but for FastAPI it should be started in a separate thread.
+    for watch_dir in WATCH_DIRS:
+        if not os.path.exists(watch_dir):
+            os.makedirs(watch_dir)
+        observer.schedule(event_handler, watch_dir, recursive=True)
+        print(f"[WATCHDOG] Monitoring {watch_dir} for changes...")
+    
+    observer.start()
     return observer

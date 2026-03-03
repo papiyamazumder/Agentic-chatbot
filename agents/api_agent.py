@@ -33,8 +33,8 @@ def _get_api_client():
     return get_llm_client()
 
 
-def _extract_metric_intent(query: str) -> str:
-    """Use LLM to extract which KPI/data the user is asking about."""
+def _extract_metric_intent(query: str, chat_history: list = None) -> str:
+    """Use LLM to extract which KPI/data the user is asking about, using chat history for context."""
     client = _get_api_client()
     model  = get_model_name()
 
@@ -48,9 +48,14 @@ If no match, return 'unknown'.
 Query: {query}
 Metric key:"""
 
+    messages = [{"role": "system", "content": prompt}]
+    if chat_history:
+        messages.extend(chat_history[-10:])
+    messages.append({"role": "user", "content": f"Query: {query}\nMetric key:"})
+
     response = client.chat.completions.create(
         model=model,
-        messages=[{"role": "user", "content": prompt}],
+        messages=messages,
         temperature=0,
         max_tokens=30,
     )
@@ -121,7 +126,7 @@ Write the brief report:"""
 
 
 # ── Main agent function ──────────────────────────────
-def run_api_agent(query: str) -> dict:
+def run_api_agent(query: str, chat_history: list = None) -> dict:
     """
     Full KPI retrieval pipeline:
     1. LLM extracts which metric/data user wants
@@ -131,7 +136,7 @@ def run_api_agent(query: str) -> dict:
     """
 
     # Step 1 — Extract metric intent
-    metric_key = _extract_metric_intent(query)
+    metric_key = _extract_metric_intent(query, chat_history=chat_history)
     logger.info(f"[API Agent] Extracted metric: {metric_key}")
 
     if metric_key == "unknown":
