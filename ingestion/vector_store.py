@@ -147,6 +147,9 @@ def hybrid_search(query: str, query_vector: np.ndarray, top_k: int = 5) -> list:
     # Sort candidates by reranker score
     for i, score in enumerate(scores):
         candidates[i]["rerank_score"] = float(score)
+        # Map rerank_score to a distance-like 'score' for retrieval_agent compatibility
+        # Higher rerank_score = more relevant → lower distance score
+        candidates[i]["score"] = max(0.0, 1.0 - float(score) / 10.0)
     
     final_results = sorted(candidates, key=lambda x: x["rerank_score"], reverse=True)
     

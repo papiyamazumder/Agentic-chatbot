@@ -25,7 +25,7 @@ def _get_helpdesk_client():
 
 
 # ── Step 1: Extract helpdesk intent from query ──────
-def _classify_helpdesk_action(query: str) -> dict:
+def _classify_helpdesk_action(query: str, chat_history: list = None) -> dict:
     """
     Use Groq LLM to parse natural language into structured helpdesk JSON.
     Returns dict with: action, short_description, description, urgency, category
@@ -56,12 +56,14 @@ JSON format:
 }
 Note on urgency: ALWAYS map High to "1", Medium to "2", and Low to "3"."""
 
+    messages = [{"role": "system", "content": system}]
+    if chat_history:
+        messages.extend(chat_history[-10:])
+    messages.append({"role": "user", "content": f"Query: {query}"})
+
     response = client.chat.completions.create(
         model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user",   "content": f"Query: {query}"}
-        ],
+        messages=messages,
         temperature=0,
         max_tokens=300,
     )
@@ -199,7 +201,7 @@ def _check_helpdesk_missing(action: str, params: dict) -> list:
 
 
 # ── Main agent function ──────────────────────────────
-def run_helpdesk_agent(query: str) -> dict:
+def run_helpdesk_agent(query: str, chat_history: list = None) -> dict:
     """
     Full helpdesk pipeline:
     1. Groq LLM classifies helpdesk action + extracts parameters
@@ -207,7 +209,7 @@ def run_helpdesk_agent(query: str) -> dict:
     3. Execute ServiceNow operation via connector
     4. Return formatted confirmation
     """
-    params = _classify_helpdesk_action(query)
+    params = _classify_helpdesk_action(query, chat_history=chat_history)
     action = params.get("action", "create_ticket")
 
     # Field validation for ticket creation

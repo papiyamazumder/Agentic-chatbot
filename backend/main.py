@@ -67,8 +67,8 @@ app.add_middleware(
 def startup_event():
     """Run RAG bootstrap and start watchdog on startup."""
     logger.info("Initializing RAG Engine...")
-    # 1. Recursive bootstrap walk of /local_storage
-    run_ingestion(folder="local_storage")
+    # 1. Recursive bootstrap walk of all document directories
+    run_ingestion()
     
     # 2. Start watchdog for real-time incremental updates
     app.state.observer = start_watchdog()
@@ -345,7 +345,7 @@ from pathlib import Path
 from fastapi.responses import StreamingResponse
 from run_ingestion import run_ingestion
 
-DOC_BASE_PATH = Path(__file__).parent.parent / "local_storage" / "Project_Flowchart"
+DOC_BASE_PATH = Path(__file__).parent.parent / "Project_Flowchart"
 
 
 def _html_to_text(html_content: str) -> str:

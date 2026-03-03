@@ -54,7 +54,9 @@ HELPDESK_KEYWORDS = [
     "it issue", "it problem", "broken", "not working",
     "access denied", "locked out", "reset password",
     "hardware", "laptop", "monitor", "printer",
-    "check status", "ticket status", "inc"
+    "check status", "ticket status", "inc",
+    "vpn", "network", "software install", "permission",
+    "unable to", "can't access", "cannot access", "error message",
 ]
 
 WORKFLOW_KEYWORDS = [
@@ -67,6 +69,8 @@ WORKFLOW_KEYWORDS = [
     "onboard", "onboarding", "new joiner", "new hire", "new resource",
     "offboard", "offboarding", "release resource", "exit", "last working day",
     "tag resource", "tagging", "re-tag", "reallocate", "reassign", "move resource",
+    "employee id", "emp id", "check in", "check-in", "check out", "check-out",
+    "spr-", "spr ", "assign", "transfer", "deployment",
 ]
 
 API_KEYWORDS = [
@@ -83,7 +87,9 @@ RETRIEVAL_KEYWORDS = [
     "show me", "tell me about", "according to", "based on",
     "meeting", "notes", "policy", "procedure", "guideline",
     "ai", "ml", "rag", "architecture", "build guide", "scratch",
-    "libraries", "huggingface", "model", "roadmap", "overview"
+    "libraries", "huggingface", "model", "roadmap", "overview",
+    "process", "workflow documentation", "handbook", "standard",
+    "how to", "steps to", "describe",
 ]
 
 
@@ -261,15 +267,15 @@ def retrieval_node(state: ChatState) -> ChatState:
     return {**state, "answer": result["answer"], "sources": result["sources"], "agent_used": "Retrieval Agent"}
 
 def api_node(state: ChatState) -> ChatState:
-    result = run_api_agent(state["query"])
+    result = run_api_agent(state["query"], chat_history=state.get("chat_history", []))
     return {**state, "answer": result["answer"], "sources": result["sources"], "agent_used": "API Agent"}
 
 def helpdesk_node(state: ChatState) -> ChatState:
-    result = run_helpdesk_agent(state["query"])
+    result = run_helpdesk_agent(state["query"], chat_history=state.get("chat_history", []))
     return {**state, "answer": result["answer"], "sources": result["sources"], "agent_used": "Helpdesk Agent"}
 
 def workflow_node(state: ChatState) -> ChatState:
-    result = run_workflow_agent(state["query"])
+    result = run_workflow_agent(state["query"], chat_history=state.get("chat_history", []))
     return {**state, "answer": result["answer"], "sources": result["sources"], "agent_used": "Workflow Agent"}
 
 

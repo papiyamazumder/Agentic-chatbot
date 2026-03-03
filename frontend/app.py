@@ -1,11 +1,19 @@
 import streamlit as st
 import time
 import os
+import sys
 import uuid
 import base64
 import requests
 import pandas as pd
 from pathlib import Path
+
+# Ensure project root is on sys.path for utils imports
+_PROJECT_ROOT = str(Path(__file__).parent.parent)
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+from utils.feedback_store import log_feedback, get_positive_examples
 
 # --- INITIAL APP CONFIG ---
 st.set_page_config(
@@ -29,7 +37,7 @@ ROLE_PERMS = {
     "PMO Admin": {"color": "#00F5FF", "label": "Full Clearance", "access_level": 3,
                   "agents": ["Retrieval Agent", "API Agent", "Helpdesk Agent", "Workflow Agent"], "avatar": "👑"},
     "Manager":   {"color": "#8A2BE2", "label": "Manager Level", "access_level": 2,
-                  "agents": ["Retrieval Agent", "API Agent", "Helpdesk Agent", "Workflow Agent"], "avatar": "📋"},
+                  "agents": ["Retrieval Agent", "API Agent", "Helpdesk Agent"], "avatar": "📋"},
     "Resource":  {"color": "#D91E5B", "label": "Standard Access", "access_level": 1,
                   "agents": ["Retrieval Agent", "Helpdesk Agent"], "avatar": "👤"},
 }
@@ -37,20 +45,20 @@ ROLE_PERMS = {
 DOC_CARDS = [
     {"title": "AI Concepts",       "icon": "🧠", "file": "AI_ML_conecpts.html",                    "desc": "54 AI/ML concepts and prep.",       "min_access": 1, "cls": "vault-card-1"},
     {"title": "Architecture Flow",  "icon": "🏗️", "file": "Architechture_Flow.html",                "desc": "Cloud system design.",               "min_access": 1, "cls": "vault-card-2"},
-    {"title": "Build Guide",        "icon": "🔨", "file": "BUILD_SCRATCH_GUIDE.html",               "desc": "Step-by-step dev setup.",            "min_access": 2, "cls": "vault-card-3"},
+    {"title": "Build Guide",        "icon": "🔨", "file": "BUILD_SCRATCH_GUIDE.html",               "desc": "Step-by-step dev setup.",            "min_access": 3, "cls": "vault-card-3"},
     {"title": "Features",           "icon": "⚡", "file": "Chatbot_Features+Functionalities.html",  "desc": "Functional and technical specs.",    "min_access": 1, "cls": "vault-card-4"},
-    {"title": "Deployment",         "icon": "🔄", "file": "P1+P2_workflow+diff.html",               "desc": "Local vs Azure deployment diffs.",   "min_access": 2, "cls": "vault-card-5"},
+    {"title": "Deployment",         "icon": "🔄", "file": "P1+P2_workflow+diff.html",               "desc": "Local vs Azure deployment diffs.",   "min_access": 3, "cls": "vault-card-5"},
     {"title": "Tech Stack",         "icon": "🐍", "file": "Python Libraries & HuggingFace Models.html", "desc": "Library and API documentation.", "min_access": 1, "cls": "vault-card-6"},
 ]
 
 FEATURE_NAV = [
-    {"key": "dashboard",   "icon": "🏠", "label": "Dashboard"},
-    {"key": "doc_query",   "icon": "📄", "label": "Doc Query"},
-    {"key": "kpi_live",    "icon": "📊", "label": "KPI Live"},
-    {"key": "helpdesk",    "icon": "🎫", "label": "Helpdesk"},
-    {"key": "workflows",   "icon": "⚙️", "label": "Workflows"},
-    {"key": "logs",        "icon": "📋", "label": "RAID & Logs"},
-    {"key": "doc_upload",  "icon": "📤", "label": "Doc Upload"},
+    {"key": "dashboard",   "icon": "🏠", "label": "Dashboard",   "min_level": 1},
+    {"key": "doc_query",   "icon": "📄", "label": "Doc Query",   "min_level": 1},
+    {"key": "kpi_live",    "icon": "📊", "label": "KPI Live",    "min_level": 2},
+    {"key": "helpdesk",    "icon": "🎫", "label": "Helpdesk",    "min_level": 1},
+    {"key": "workflows",   "icon": "⚙️", "label": "Workflows",   "min_level": 3},
+    {"key": "logs",        "icon": "📋", "label": "RAID & Logs", "min_level": 3},
+    {"key": "doc_upload",  "icon": "📤", "label": "Doc Upload",  "min_level": 1},
 ]
 
 # --- SESSION STATE DEFAULTS ---
@@ -99,16 +107,13 @@ def go_back():
 def apply_custom_theme():
     # Dynamic background based on login state
     if not st.session_state.get("logged_in", False):
-        # Login Gradient: Deep Midnight / Charcoal (Serious Enterprise Feel)
-        bg_gradient = "linear-gradient(135deg, #020202 0%, #0a0a0f 40%, #1a1a2e 100%)"
+        bg_gradient = "linear-gradient(135deg, #020208 0%, #0a0f1a 35%, #0d1b2a 60%, #1b2838 100%)"
     else:
-        # Dashboard Gradient: Sleek Navy / Deep Indigo / Subtle Purple (Premium Modern Feel)
         bg_gradient = "linear-gradient(135deg, #050505 0%, #011627 45%, #1d1b4b 100%)"
 
     st.markdown(f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
-        /* High-Contrast Glass-Dark Evolution */
         .stApp {{ 
             background: {bg_gradient} !important; 
             background-attachment: fixed; 
@@ -116,24 +121,66 @@ def apply_custom_theme():
             color: #FFFFFF !important;
         }}
 
-        /* Login Card - Curved, Glowing, Popping */
-        .login-card {{
-            background: rgba(10, 10, 10, 0.8) !important;
-            backdrop-filter: blur(20px) !important;
-            border: 2px solid rgba(217, 30, 91, 0.3) !important;
-            border-radius: 40px !important; /* Deep curved corners */
-            padding: 3rem !important;
+        /* ── Login Card ── */
+        div[data-testid="column"]:has(.login-marker) {{
+            background: linear-gradient(165deg, rgba(13, 27, 42, 0.92) 0%, rgba(10, 15, 26, 0.95) 50%, rgba(5, 5, 15, 0.98) 100%) !important;
+            backdrop-filter: blur(24px) saturate(1.2) !important;
+            border: 2px solid rgba(217, 30, 91, 0.35) !important;
+            border-radius: 36px !important;
+            padding: 2.5rem 2rem !important;
             text-align: center !important;
-            box-shadow: 0 0 20px rgba(217, 30, 91, 0.2), 0 10px 40px rgba(0,0,0,0.8) !important;
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            margin: 2rem auto !important;
-            max-width: 500px !important;
+            position: relative;
         }}
 
-        .login-card:hover {{
-            transform: scale(1.05) translateY(-5px) !important; /* Popping effect */
-            box-shadow: 0 0 40px rgba(217, 30, 91, 0.6), 0 20px 60px rgba(0,0,0,0.9) !important;
-            border-color: rgba(217, 30, 91, 0.8) !important;
+        /* Create a pseudo-element for the outer-corner glow to match dashboard */
+        div[data-testid="column"]:has(.login-marker)::before {{
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 36px;
+            box-shadow: 0 0 0 rgba(217, 30, 91, 0);
+            z-index: -1;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }}
+
+        /* Hover effect applied on hover */
+        div[data-testid="column"]:has(.login-marker):hover {{
+            transform: scale(1.04) translateY(-6px) !important;
+            border-color: rgba(255, 107, 157, 0.8) !important;
+        }}
+
+        /* Outer box corners glow, similar to vault cards but specifically on corners */
+        div[data-testid="column"]:has(.login-marker):hover::before {{
+            box-shadow: 
+                -15px -15px 30px rgba(255, 107, 157, 0.4),
+                15px -15px 30px rgba(255, 107, 157, 0.4),
+                -15px 15px 30px rgba(255, 107, 157, 0.4),
+                15px 15px 30px rgba(255, 107, 157, 0.4) !important;
+        }}
+
+        /* Top-bar back button */
+        .top-back-btn {{
+            margin-top: -0.5rem !important;
+            margin-bottom: 0.8rem !important;
+        }}
+        .top-back-btn div.stButton > button {{
+            background: rgba(255,255,255,0.04) !important;
+            border: 1px solid rgba(255,255,255,0.1) !important;
+            border-radius: 12px !important;
+            color: rgba(255,255,255,0.7) !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            padding: 0.35rem 1rem !important;
+            transition: all 0.25s ease !important;
+            letter-spacing: 0.5px !important;
+        }}
+        .top-back-btn div.stButton > button:hover {{
+            background: rgba(217,30,91,0.12) !important;
+            border-color: rgba(217,30,91,0.5) !important;
+            color: #FF6B9D !important;
+            transform: translateX(-3px) !important;
+            box-shadow: 0 0 12px rgba(217,30,91,0.2) !important;
         }}
 
         /* Pulsating Glow Animation */
@@ -474,10 +521,26 @@ apply_custom_theme()
 # ================================================
 
 def _get_recent_history(n=5) -> list:
-    """Get the last N messages for context memory."""
+    """Get the last N messages for context memory, enriched with positive feedback examples."""
     msgs = st.session_state.get("messages", [])
     recent = msgs[-(n*2):]  # Get last N pairs (user+assistant)
-    return [{"role": m["role"], "content": m["content"][:500]} for m in recent if m.get("content")]
+    history = [{"role": m["role"], "content": m["content"][:500]} for m in recent if m.get("content")]
+    
+    # Inject positive feedback examples as system-level hints
+    try:
+        positives = get_positive_examples(limit=3)
+        if positives:
+            examples_text = "\n".join(
+                f"- Q: {ex['query'][:150]}\n  A: {ex['response'][:200]}" for ex in positives
+            )
+            history.insert(0, {
+                "role": "system",
+                "content": f"The following are examples of responses the user found particularly helpful. Use a similar style and level of detail:\n{examples_text}"
+            })
+    except Exception:
+        pass  # Feedback injection is best-effort, never block normal flow
+    
+    return history
 
 
 def call_backend(query: str, agent_override: str = "auto") -> dict:
@@ -591,6 +654,8 @@ def handle_query(query: str, agent_override: str = "auto"):
 # ================================================
 def render_dynamic_background():
     st.components.v1.html("""
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/login.css">
     <style> body { margin:0; overflow:hidden; background:#050505; } canvas { position:fixed; top:0; left:0; z-index:-1; }
     .cursor-glow { position:fixed; width:400px; height:400px; background:radial-gradient(circle, rgba(217,30,91,0.15) 0%, transparent 70%); border-radius:50%; pointer-events:none; z-index:0; transform:translate(-50%,-50%); }
     .grid-bg { position:fixed; top:0; left:0; width:100vw; height:100vh; background-image: linear-gradient(rgba(217,30,91,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(217,30,91,0.05) 1px, transparent 1px); background-size:50px 50px; z-index:-2; transform:rotateX(45deg); opacity:0.3; }
@@ -606,27 +671,46 @@ def render_dynamic_background():
     """, height=0, width=0)
 
 def render_login():
-    st.markdown('<div class="login-card">', unsafe_allow_html=True)
-    st.markdown("""
-            <h1 style="margin:0; letter-spacing:-3px; font-weight:800; font-size:3.5rem;">KPMG <span style="color:#D91E5B;">AI</span></h1>
-            <p style="margin-bottom:2.5rem; opacity:0.5; font-size:0.8rem; letter-spacing:2px;">SECURE ACCESS PORTAL</p>
-    """, unsafe_allow_html=True)
-    
-    u = st.selectbox("Profile", options=["Select Identity", "admin", "manager", "resource"], label_visibility="collapsed", key="login_u")
-    p = st.text_input("Password", type="password", placeholder="••••••••", label_visibility="collapsed", key="login_p")
-    
-    if st.button("Submit  →", width='stretch', key="login_submit"):
-        if u != "Select Identity" and USERS.get(u, {}).get("password") == p:
-            st.session_state.logged_in = True
-            st.session_state.username = u
-            st.rerun()
-        else:
-            st.error("Authentication Denied")
-            
-    if st.button("Forgot Password?", type="secondary", width='stretch', key="login_forgot"):
-        st.toast("Redirecting to helpdesk...")
-        
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Vertical spacer
+    st.markdown("<div style='height: 10vh;'></div>", unsafe_allow_html=True)
+
+    _, card_col, _ = st.columns([1.2, 1.6, 1.2])
+    with card_col:
+        # Inject CSS specifically styling this container
+        try:
+            with open("frontend/login.css", "r") as f:
+                login_css = f.read()
+            st.markdown(f'<style>{login_css}</style>', unsafe_allow_html=True)
+        except FileNotFoundError:
+            pass
+
+        st.markdown('<div class="login-marker" style="display:none;"></div>', unsafe_allow_html=True)
+
+        # Title block
+        st.markdown("""
+            <div style="text-align:center; margin-bottom: 0.3rem;">
+                <span style="font-size: 2rem; filter: drop-shadow(0 0 12px rgba(217,30,91,0.4));">🤖</span>
+            </div>
+            <h1 style="margin:0; letter-spacing:-2px; font-weight:800; font-size:2.8rem; line-height:1.1; text-align:center;">
+                KPMG <span style="background: linear-gradient(135deg, #D91E5B, #FF6B9D); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AI</span>
+            </h1>
+            <div style="width:50px; height:3px; background: linear-gradient(90deg, #D91E5B, #FF6B9D); margin: 0.8rem auto; border-radius: 3px;"></div>
+            <p style="margin-bottom:1.5rem; opacity:0.4; font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; text-align:center;">Secure Access Portal</p>
+        """, unsafe_allow_html=True)
+
+        u = st.selectbox("Profile", options=["Select Identity", "admin", "manager", "resource"], label_visibility="collapsed", key="login_u")
+        p = st.text_input("Password", type="password", placeholder="••••••••", label_visibility="collapsed", key="login_p")
+
+        if st.button("Submit  →", width='stretch', key="login_submit"):
+            if u != "Select Identity" and USERS.get(u, {}).get("password") == p:
+                st.session_state.logged_in = True
+                st.session_state.username = u
+                st.rerun()
+            else:
+                st.error("Authentication Denied")
+
+        if st.button("Forgot Password?", type="secondary", width='stretch', key="login_forgot"):
+            st.toast("Redirecting to helpdesk...")
 
 
 # ================================================
@@ -636,10 +720,6 @@ def render_sidebar():
     user = USERS[st.session_state.username]
     perms = ROLE_PERMS[user["role"]]
     with st.sidebar:
-        # Back button at the very top for non-dashboard pages
-        if st.session_state.current_page != "dashboard" or len(st.session_state.page_stack) > 1:
-            if st.button("←", key="sidebar_back_circle"):
-                go_back()
 
         st.markdown(f"""
             <div style="text-align:center; padding:1.5rem; border:1px solid rgba(255,255,255,0.1); border-radius:24px; margin-bottom:1.5rem; background:rgba(0,0,0,0.4)">
@@ -651,11 +731,23 @@ def render_sidebar():
 
         st.markdown("### 🧭 Navigation")
         for nav in FEATURE_NAV:
+            # RBAC: Show pages, locked items redirect Managers to Request Access
+            has_access = perms["access_level"] >= nav.get("min_level", 1)
+            is_manager = perms["access_level"] == 2
+                
             is_active = st.session_state.current_page == nav["key"]
-            label = f"{nav['icon']} {nav['label']}"
-            if st.button(label, key=f"nav_{nav['key']}", width='stretch',
-                         type="primary" if is_active else "secondary"):
-                navigate_to(nav["key"])
+            label = f"{nav['icon']} {nav['label']}{'' if has_access else ' 🔒'}"
+            
+            if not has_access and not is_manager:
+                # Resource: show locked item as disabled button
+                st.button(label, key=f"nav_{nav['key']}", width='stretch', disabled=True)
+            else:
+                target_key = nav.get("key") if has_access else "request_access"
+                if st.button(label, key=f"nav_{nav['key']}", width='stretch',
+                             type="primary" if is_active else "secondary"):
+                    if not has_access:
+                        st.session_state.request_access_item = nav["label"]
+                    navigate_to(target_key)
 
         st.markdown("---")
         st.markdown("### ⚙️ Controls")
@@ -724,12 +816,13 @@ def render_meow():
     accessible_docs = [c for c in DOC_CARDS if user_perms["access_level"] >= c["min_access"]]
     doc_options = ["— Select a Vault Doc —"] + [f"{c['icon']} {c['title']}" for c in accessible_docs]
     
+    user_agents = user_perms["agents"]
     routing_options = {
         "🧠 Smart Auto": "auto",
         "📚 Doc Intelligence": "docs",
-        "📊 KPI Dashboard": "kpis",
-        "🎫 IT Helpdesk": "helpdesk",
-        "⚙️ Automation": "automation"
+        f"📊 KPI Dashboard{' 🔒' if 'API Agent' not in user_agents else ''}": "kpis",
+        f"🎫 IT Helpdesk{' 🔒' if 'Helpdesk Agent' not in user_agents else ''}": "helpdesk",
+        f"⚙️ Automation{' 🔒' if 'Workflow Agent' not in user_agents else ''}": "automation"
     }
 
     c_over1, c_over2 = st.columns(2)
@@ -770,7 +863,7 @@ def render_meow():
     with msg_box:
         if not st.session_state.messages:
             st.markdown("""<div style="text-align:center; padding:40px 20px; opacity:0.4;"><div style="font-size:3.5rem; margin-bottom:15px; filter: drop-shadow(0 0 10px rgba(217,30,91,0.3));">🐱</div><p style="font-size:0.95rem; font-weight:600;">System Ready.<br>Interactive Meow awaiting commands.</p></div>""", unsafe_allow_html=True)
-        for msg in reversed(st.session_state.messages):
+        for i, msg in enumerate(reversed(st.session_state.messages)):
             cls = "msg-user" if msg["role"] == "user" else "msg-system"
             icon = "👤" if msg["role"] == "user" else "🐾"
             st.markdown(f"""
@@ -779,6 +872,37 @@ def render_meow():
                     <div style="font-size:0.9rem;">{msg['content']}</div>
                 </div>
             """, unsafe_allow_html=True)
+            
+            # Optional feedback mechanism on the latest assistant response
+            if i == 0 and msg["role"] == "assistant":
+                f_col1, f_col2, _ = st.columns([1.2, 1.5, 4])
+                # Find the user query that preceded this response
+                msg_list = st.session_state.messages
+                last_user_q = ""
+                for m in reversed(msg_list):
+                    if m["role"] == "user":
+                        last_user_q = m["content"]
+                        break
+                with f_col1:
+                    if st.button("👍 Helpful", key=f"fb_up_{len(msg_list)}"):
+                        log_feedback(
+                            query=last_user_q,
+                            response=msg["content"],
+                            rating="positive",
+                            username=st.session_state.username,
+                            agent_used=msg.get("agent_used", "unknown")
+                        )
+                        st.toast("✅ Thanks! This response style will be reinforced. 🐾")
+                with f_col2:
+                    if st.button("👎 Needs Work", key=f"fb_dn_{len(msg_list)}"):
+                        log_feedback(
+                            query=last_user_q,
+                            response=msg["content"],
+                            rating="negative",
+                            username=st.session_state.username,
+                            agent_used=msg.get("agent_used", "unknown")
+                        )
+                        st.toast("Noted. We'll adjust future responses. 🐾")
 
     # Input Bar Alignment: [Input] [Submit] [Trash]
     with st.container():
@@ -787,8 +911,9 @@ def render_meow():
         with c_in1:
             prompt = st.text_input("Ask Meow...", label_visibility="collapsed", placeholder="Enterprise command line...")
         with c_in2:
-            if st.button("Submit →", key="meow_submit", width="stretch"):
-                if prompt:
+            is_locked_agent = selected_routing_label.endswith("🔒")
+            if st.button("Submit →", key="meow_submit", width="stretch", disabled=is_locked_agent):
+                if prompt and not is_locked_agent:
                     handle_query(prompt, agent_override=agent_override)
                     st.rerun()
         with c_in3:
@@ -848,7 +973,16 @@ def render_dashboard():
                     st.session_state.viewing_doc = card["file"]
                     navigate_to("doc_viewer")
             else:
-                st.button("Access Denied 🔒", key=f"lock_{idx}", disabled=True, width='stretch')
+                user_role = USERS[st.session_state.username]["role"]
+                is_manager = ROLE_PERMS[user_role]["access_level"] == 2
+                if is_manager:
+                    # Managers can request access
+                    if st.button("Access Denied 🔒", key=f"lock_{idx}", width='stretch'):
+                        st.session_state.request_access_item = f"Vault Document: {card['title']}"
+                        navigate_to("request_access")
+                else:
+                    # Resources see a disabled lock
+                    st.button("Access Denied 🔒", key=f"lock_{idx}", disabled=True, width='stretch')
 
     # --- 2. CONNECTED AGENTS ---
     st.markdown("<br><h3 style='font-weight:700; margin-bottom:1rem;'>🧠 Connected Agents</h3>", unsafe_allow_html=True)
@@ -875,11 +1009,11 @@ def render_dashboard():
     # --- 3. YOUR CAPABILITIES ---
     st.markdown("<br><h3 style='font-weight:700; margin-bottom:1rem;'>🎯 Your Capabilities</h3>", unsafe_allow_html=True)
     all_caps = [
-        ("�", "Doc Query", user_perms["access_level"] >= 1),
+        ("📄", "Doc Query", user_perms["access_level"] >= 1),
         ("📊", "KPI Live", user_perms["access_level"] >= 2 or "API Agent" in user_perms["agents"]),
         ("🎫", "Helpdesk", True),
         ("⚙️", "Workflows", "Workflow Agent" in user_perms["agents"]),
-        ("📋", "RAID Logs", user_perms["access_level"] >= 2),
+        ("📋", "RAID Logs", user_perms["access_level"] >= 3),
         ("📤", "Doc Upload", True),
         ("🧠", "Vault Read", True),
         ("📧", "Email/Approval", "Workflow Agent" in user_perms["agents"]),
@@ -1135,6 +1269,12 @@ def render_helpdesk():
 # PAGE: WORKFLOWS
 # ================================================
 def render_workflows():
+    # RBAC Guard
+    user_role = USERS[st.session_state.username]["role"]
+    if ROLE_PERMS[user_role]["access_level"] < 3:
+        st.error("🛑 Access Denied: Administrator clearance required for Workflow Automation.")
+        st.stop()
+
     st.markdown("<h2>⚙️ Workflow Automation</h2><p style='opacity:0.6;'>Execute automated workflows via the Workflow Agent.</p>", unsafe_allow_html=True)
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["🟢 Onboarding", "🔴 Offboarding", "🏷️ Tagging", "✅ Approval", "❌ Cancel Request"])
@@ -1279,6 +1419,12 @@ def render_workflows():
 # PAGE: RAID & LOGS
 # ================================================
 def render_logs():
+    # RBAC Guard
+    user_role = USERS[st.session_state.username]["role"]
+    if ROLE_PERMS[user_role]["access_level"] < 3:
+        st.error("🛑 Access Denied: Administrator clearance required for RAID & System Logs.")
+        st.stop()
+
     st.markdown("<h2>📋 RAID & System Logs</h2><p style='opacity:0.6;'>View RAID log entries and query system logs.</p>", unsafe_allow_html=True)
 
     tab1, tab2 = st.tabs(["📋 RAID Logs", "🖥️ System Logs"])
@@ -1424,6 +1570,33 @@ def render_doc_upload():
 
 
 # ================================================
+# PAGE: REQUEST ACCESS
+# ================================================
+def render_request_access():
+    st.markdown("<h2>🔒 Request Access</h2><p style='opacity:0.6;'>You are attempting to access a locked feature or document.</p>", unsafe_allow_html=True)
+    
+    item_name = st.session_state.get("request_access_item", "Unknown Item")
+    st.info(f"**Target Item:** {item_name}")
+    
+    st.markdown("Please upload your manager's approval email to request access to this resource from the Administrator team.")
+    
+    with st.form("request_access_form"):
+        justification = st.text_area("Justification (optional):", placeholder="Briefly explain why you need access...")
+        approval_file = st.file_uploader("Upload Approval Email:", type=["msg", "eml", "pdf", "png", "jpg", "jpeg"])
+        
+        submitted = st.form_submit_button("Submit Request", type="primary")
+        if submitted:
+            if not approval_file:
+                st.error("Please attach an approval file (e.g., PDF, MSG, PNG) to submit the request.")
+            else:
+                with st.spinner("Submitting request to Administrator queue..."):
+                    import time; time.sleep(1.5) # Simulate processing
+                st.success("✅ Request submitted successfully. The Admin team will review your attachment and grant access shortly.")
+                st.session_state.request_access_item = None
+
+
+
+# ================================================
 # MAIN ROUTER
 # ================================================
 if not st.session_state.logged_in:
@@ -1431,6 +1604,13 @@ if not st.session_state.logged_in:
     render_login()
 else:
     render_sidebar()
+
+    # Top-bar back button — single back button for the entire app
+    if st.session_state.current_page != "dashboard":
+        st.markdown('<div class="top-back-btn">', unsafe_allow_html=True)
+        if st.button("← Back", key="main_back_btn"):
+            go_back()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     # Meow toggle in top-right
     render_meow()
@@ -1453,5 +1633,7 @@ else:
         render_logs()
     elif page == "doc_upload":
         render_doc_upload()
+    elif page == "request_access":
+        render_request_access()
     else:
         render_dashboard()
