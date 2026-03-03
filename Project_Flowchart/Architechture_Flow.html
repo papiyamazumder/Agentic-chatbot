@@ -456,9 +456,10 @@
           <div class="card-body">
             <div class="card-title">Streamlit Frontend</div>
             <div class="card-sub">Azure App Service (Web App)</div>
-            <div class="card-desc">Multi-page chat UI with login (3 roles: PMO Admin/Manager/Resource), RBAC,
-              documentation grid with 11 routable cards, tabbed chatbot + user management panel. Sends user queries via
-              HTTP to the FastAPI backend.</div>
+            <div class="card-desc">7-page UI: Dashboard, Doc Query, KPI Live, Helpdesk, Workflows, RAID &amp; Logs, Doc
+              Upload.
+              Login with 3 roles (PMO Admin / Manager / Resource). Encrypted Data Vault with 6 HTML doc cards.
+              Floating Meow chatbot with 5-mode routing selector. All nav pages open to all roles.</div>
             <span class="badge">Azure App Service</span>
           </div>
         </div>
@@ -478,8 +479,10 @@
           <div class="card-body">
             <div class="card-title">FastAPI + LangGraph Router</div>
             <div class="card-sub">Azure App Service (API Backend) or Azure Container Apps</div>
-            <div class="card-desc">The brain of the system. Receives user queries, decides which agent to route to
-              (Retrieval / API / Workflow) using LangGraph. Manages session state and response assembly.</div>
+            <div class="card-desc">3-tier hybrid router: Tier 1 keyword scan → Tier 2 sentence embedding cosine
+              similarity
+              (all-MiniLM-L6-v2) → Tier 3 Groq LLM fallback classifier. Routes to 4 agents: Retrieval, API, Helpdesk,
+              Workflow. 20+ REST endpoints. Session-scoped uploads. Document conversion (PDF/Word/Excel).</div>
             <span class="badge">Azure App Service</span>
             <span class="badge">Docker Container</span>
           </div>
@@ -499,15 +502,15 @@
         <div class="agent-group-title" style="color: var(--accent);">🔍 Retrieval Agent</div>
         <div class="agent-item">
           <strong>Purpose</strong>
-          Unstructured doc queries — PDFs, SOPs, Meeting Notes, Reports
+          Document Q&amp;A — PDFs, SOPs, meeting notes via hybrid RAG
         </div>
         <div class="agent-item">
-          <strong>Deployed via</strong>
-          Logic inside FastAPI (same App Service)
+          <strong>Pipeline</strong>
+          FAISS (cosine) + BM25 (keyword) → RRF fusion → Cross-Encoder rerank
         </div>
         <div class="agent-item">
           <strong>Calls →</strong>
-          Azure AI Search (vector search) + Azure OpenAI (LLM answer)
+          Local FAISS index + Groq LLaMA 3.1 for answer generation
         </div>
       </div>
 
@@ -515,31 +518,47 @@
         <div class="agent-group-title" style="color: var(--accent4);">📊 API Agent</div>
         <div class="agent-item">
           <strong>Purpose</strong>
-          KPI data retrieval → feeds Power BI dashboards
+          KPI data retrieval from Excel trackers and REST APIs
         </div>
         <div class="agent-item">
-          <strong>Deployed via</strong>
-          Logic inside FastAPI + Azure Functions (for scheduled pulls)
+          <strong>Pipeline</strong>
+          LLM extracts metric intent → kpi_file_connector reads data → LLM formats
         </div>
         <div class="agent-item">
           <strong>Calls →</strong>
-          REST APIs / internal systems + Azure OpenAI for formatting
+          kpi_file_connector + sql_connector + jira_connector + Groq LLM
+        </div>
+      </div>
+
+      <div class="agent-group" style="border-color: rgba(239,68,68,0.25);">
+        <div class="agent-group-title" style="color: var(--accent5);">🎫 Helpdesk Agent</div>
+        <div class="agent-item">
+          <strong>Purpose</strong>
+          IT ticket creation, status checks, incident management
+        </div>
+        <div class="agent-item">
+          <strong>Pipeline</strong>
+          LLM classifies action → ServiceNow connector creates/queries tickets
+        </div>
+        <div class="agent-item">
+          <strong>Calls →</strong>
+          servicenow_connector + Groq LLM for field extraction
         </div>
       </div>
 
       <div class="agent-group" style="border-color: rgba(16,185,129,0.25);">
-        <div class="agent-group-title" style="color: var(--accent3);">🔄 Workflow Agent</div>
+        <div class="agent-group-title" style="color: var(--accent3);">⚙️ Workflow Agent</div>
         <div class="agent-item">
           <strong>Purpose</strong>
-          Ticket creation, approvals, email notifications, log updates, onboarding/offboarding, resource tagging
+          Emails, approvals, RAID logs, onboard/offboard/tag resources
         </div>
         <div class="agent-item">
-          <strong>Deployed via</strong>
-          Azure Logic Apps (no-code triggers) + Azure Functions (custom code)
+          <strong>Pipeline</strong>
+          LLM classifies 8 sub-actions → routes to appropriate connector
         </div>
         <div class="agent-item">
           <strong>Calls →</strong>
-          External systems: ITSM, Email (Graph API), RAID logs, Onboarding records, Copilot Studio
+          outlook + teams + sharepoint + azure_insights connectors
         </div>
       </div>
 
@@ -555,38 +574,39 @@
       <div class="layer-content">
         <div class="card blue">
           <span class="card-icon">🔍</span>
-          <div class="card-title">Azure AI Search</div>
-          <div class="card-sub">Vector + Semantic Index</div>
-          <div class="card-desc">Stores embedded document chunks. Retrieval agent queries this to find relevant context
-            before calling LLM.</div>
+          <div class="card-title">FAISS + BM25</div>
+          <div class="card-sub">Hybrid Vector + Keyword Index</div>
+          <div class="card-desc">FAISS IndexFlatIP (384-dim, cosine) for semantic search + BM25Okapi for keyword
+            matching.
+            Results fused via Reciprocal Rank Fusion, re-ranked by Cross-Encoder.</div>
           <span class="badge">Retrieval Agent</span>
         </div>
 
         <div class="card purple">
           <span class="card-icon">🤖</span>
-          <div class="card-title">Azure OpenAI</div>
-          <div class="card-sub">GPT-4o + Embeddings</div>
-          <div class="card-desc">LLM for generating answers and embeddings for indexing. Called by Retrieval and API
-            agents for response generation.</div>
+          <div class="card-title">Groq LLaMA 3.1</div>
+          <div class="card-sub">Free-Tier LLM (8B Instant)</div>
+          <div class="card-desc">All generation, classification, and intent extraction. Called by every agent.
+            Swappable to Azure OpenAI GPT-4o for production deployment.</div>
           <span class="badge">All Agents</span>
         </div>
 
         <div class="card green">
-          <span class="card-icon">⚡</span>
-          <div class="card-title">Azure Functions</div>
-          <div class="card-sub">Serverless Compute</div>
-          <div class="card-desc">Event-driven triggers — document ingestion pipeline, KPI refresh jobs, workflow hook
-            listeners. Fires only when needed.</div>
-          <span class="badge">API + Workflow Agents</span>
+          <span class="card-icon">🧬</span>
+          <div class="card-title">HuggingFace Models</div>
+          <div class="card-sub">Embeddings + Reranking</div>
+          <div class="card-desc">all-MiniLM-L6-v2 (22M params, 384-dim) for embeddings.
+            cross-encoder/ms-marco-MiniLM-L-6-v2 for reranking search results.</div>
+          <span class="badge">Retrieval + Router</span>
         </div>
 
         <div class="card amber">
-          <span class="card-icon">🔗</span>
-          <div class="card-title">Azure Logic Apps</div>
-          <div class="card-sub">Workflow Automation</div>
-          <div class="card-desc">Orchestrates approval flows, sends email notifications, updates RAID logs and PMO
-            status reports without custom code.</div>
-          <span class="badge">Workflow Agent</span>
+          <span class="card-icon">👁️</span>
+          <div class="card-title">Watchdog Service</div>
+          <div class="card-sub">Real-Time File Monitor</div>
+          <div class="card-desc">Monitors local_storage/ for new document uploads. Auto-ingests, chunks (800 char,
+            100 overlap), embeds, and updates the FAISS+BM25 index incrementally.</div>
+          <span class="badge">Ingestion Pipeline</span>
         </div>
 
       </div>
@@ -600,37 +620,34 @@
 
       <div class="card blue" style="max-width:200px;">
         <span class="card-icon">🗄️</span>
-        <div class="card-title">Azure Blob Storage</div>
-        <div class="card-sub">Raw Document Store</div>
-        <div class="card-desc">Stores raw PDFs, SOPs, meeting notes before they're chunked and indexed.</div>
+        <div class="card-title">local_storage/</div>
+        <div class="card-sub">9 Enterprise Documents</div>
+        <div class="card-desc">PDFs, DOCX, XLSX, CSV files ingested on startup. Source for RAG knowledge base.</div>
         <span class="badge">Ingestion Pipeline</span>
       </div>
 
       <div class="card red" style="max-width:200px;">
-        <span class="card-icon">🔐</span>
-        <div class="card-title">Azure Key Vault</div>
-        <div class="card-sub">Secret Manager</div>
-        <div class="card-desc">Stores API keys, DB passwords, OpenAI keys. Apps fetch secrets at runtime — never
-          hardcoded.</div>
-        <span class="badge">All Services</span>
+        <span class="card-icon">📁</span>
+        <div class="card-title">data/</div>
+        <div class="card-sub">Indices + KPI Data</div>
+        <div class="card-desc">vector_store/ (FAISS + BM25 + metadata), KPI Data/ (12 trackers), raw_docs/ (uploads).</div>
+        <span class="badge">All Agents</span>
       </div>
 
       <div class="card green" style="max-width:200px;">
-        <span class="card-icon">🤝</span>
-        <div class="card-title">Copilot Studio</div>
-        <div class="card-sub">Agent Interface</div>
-        <div class="card-desc">Front-facing bot integrated with Gemini API for multi-step agentic actions and IT
-          Helpdesk routing.</div>
-        <span class="badge">Workflow Agent</span>
+        <span class="card-icon">🔌</span>
+        <div class="card-title">8 Connectors</div>
+        <div class="card-sub">External + Mock Systems</div>
+        <div class="card-desc">ServiceNow, Outlook, Teams, SharePoint, Jira, SQL, Azure Insights, KPI File. Each uses mock fallback.</div>
+        <span class="badge">All Agents</span>
       </div>
 
       <div class="card amber" style="max-width:200px;">
-        <span class="card-icon">📊</span>
-        <div class="card-title">Power BI + Logging</div>
-        <div class="card-sub">Monitoring & Reporting</div>
-        <div class="card-desc">Tracks adoption, response quality, automation ROI. API Agent feeds KPI data here via
-          structured logs.</div>
-        <span class="badge">API Agent</span>
+        <span class="card-icon">🐳</span>
+        <div class="card-title">Docker + start.sh</div>
+        <div class="card-sub">Single Container Deploy</div>
+        <div class="card-desc">Python 3.11-slim. start.sh launches uvicorn (8000) + Streamlit (8501). Pre-downloads HuggingFace model.</div>
+        <span class="badge">Deployment</span>
       </div>
 
     </div>

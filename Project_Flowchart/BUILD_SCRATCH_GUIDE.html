@@ -504,10 +504,10 @@ def _load_csv(filepath)    # → pd.read_csv() → df.to_string()</pre>
             <div class="step card">
                 <h4>Create <span class="file">ingestion/chunker.py</span></h4>
                 <p><strong>Purpose:</strong> Split long documents into smaller pieces that fit in LLM context.</p>
-                <pre>def chunk_documents(documents, chunk_size=500, overlap=100) -> list:
-    # For each doc, slide a window of 500 chars with 100-char overlap
+                <pre>def chunk_documents(documents, chunk_size=800, overlap=100) -> list:
+    # For each doc, slide a window of 800 chars with 100-char overlap
     # Returns [{"chunk_id": 0, "text": "...", "source": "file.pdf"}, ...]</pre>
-                <p><strong>Why 500/100?</strong> 500 chars ≈ 100 words — enough semantic meaning per chunk. 100-char
+                <p><strong>Why 500/100?</strong> 800 chars ≈ 100 words — enough semantic meaning per chunk. 100-char
                     overlap prevents cutting sentences at boundaries.</p>
             </div>
 
@@ -542,7 +542,7 @@ def embed_query(query) -> np.ndarray:
 DIMENSION = 384  # matches all-MiniLM-L6-v2 output
 
 def save_index(embeddings, chunks):
-    index = faiss.IndexFlatL2(DIMENSION)  # Brute-force L2 distance
+    index = faiss.IndexFlatIP(DIMENSION)  # Brute-force L2 distance
     index.add(embeddings)
     faiss.write_index(index, "data/vector_store/index.faiss")
     pickle.dump(chunks, open("data/vector_store/metadata.pkl", "wb"))
@@ -554,7 +554,7 @@ def search(query_vector, top_k=5):
     index, chunks = load_index()
     distances, indices = index.search(query_vector, top_k)
     # Return matching chunks with scores</pre>
-                <p><strong>Why IndexFlatL2?</strong> Exact search (no approximation). For &lt;100K vectors, it's faster
+                <p><strong>Why IndexFlatIP?</strong> Exact search (no approximation). For &lt;100K vectors, it's faster
                     than approximate methods and gives perfect results.</p>
             </div>
 

@@ -144,9 +144,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   <div class="lc pu">
     <div class="lc-top"><div class="lc-left"><div class="lc-emo">🤖</div><div><div class="lc-name">openai</div><div class="lc-role">LLM + Embeddings API client</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
     <div class="lc-used">OpenAI() → P1 &nbsp;·&nbsp; AzureOpenAI(endpoint, api_version) → P2</div>
-    <div class="lc-why">Core LLM client. Used for two things: (1) generating 1536-dim embeddings via text-embedding-3-small for every document chunk, (2) GPT-4o chat completions for all three agent responses. AzureOpenAI() is the same library — different constructor for enterprise Azure deployment. Data stays inside Azure tenant in P2.</div>
+    <div class="lc-why">Core LLM client. Used for two things: (1) generating 1536-dim embeddings via text-embedding-3-small for every document chunk, (2) LLaMA 3.1 8B chat completions for all three agent responses. AzureOpenAI() is the same library — different constructor for enterprise Azure deployment. Data stays inside Azure tenant in P2.</div>
     <div class="lc-where"><strong>Used in:</strong> ingestion/embedder.py + all 3 agent files.</div>
-    <span class="tag tpu">GPT-4o</span><span class="tag tpu">text-embedding-3-small</span><span class="tag tpu">All agents</span>
+    <span class="tag tpu">LLaMA 3.1 8B</span><span class="tag tpu">text-embedding-3-small</span><span class="tag tpu">All agents</span>
   </div>
   <div class="lc pi">
     <div class="lc-top"><div class="lc-left"><div class="lc-emo">🕸️</div><div><div class="lc-name">langgraph</div><div class="lc-role">Multi-agent orchestration</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
@@ -157,7 +157,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   </div>
   <div class="lc bl">
     <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔗</div><div><div class="lc-name">langchain</div><div class="lc-role">RAG framework + text splitting</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
-    <div class="lc-used">RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)</div>
+    <div class="lc-used">RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=100)</div>
     <div class="lc-why">Used specifically for RecursiveCharacterTextSplitter — the best chunking strategy for PMO documents because it tries paragraph breaks first, then sentences, then words. Keeps semantic units intact unlike simple character splitting. Also provides prompt template utilities used across agents.</div>
     <div class="lc-where"><strong>Used in:</strong> ingestion/chunker.py (text splitting) + agent prompt templates.</div>
     <span class="tag tbl">Text chunking</span><span class="tag tbl">RAG backbone</span><span class="tag tbl">Prompt templates</span>
@@ -170,9 +170,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
     <span class="tag tgr">LangChain bridge</span><span class="tag tgr">ChatOpenAI</span>
   </div>
   <div class="lc am">
-    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔢</div><div><div class="lc-name">tiktoken</div><div class="lc-role">Token counter for GPT-4o</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
-    <div class="lc-used">tiktoken.encoding_for_model("gpt-4o") &nbsp;·&nbsp; len(enc.encode(text))</div>
-    <div class="lc-why">Counts tokens before sending to GPT-4o to prevent context window overflow errors. Critical for PMO reports — retrieved chunks + query can easily exceed limits. If over limit, prompt is truncated intelligently before API call rather than throwing a hard error mid-conversation.</div>
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔢</div><div><div class="lc-name">tiktoken</div><div class="lc-role">Token counter for LLaMA 3.1 8B</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
+    <div class="lc-used">tiktoken.encoding_for_model("llama-3.1-8b-instant") &nbsp;·&nbsp; len(enc.encode(text))</div>
+    <div class="lc-why">Counts tokens before sending to LLaMA 3.1 8B to prevent context window overflow errors. Critical for PMO reports — retrieved chunks + query can easily exceed limits. If over limit, prompt is truncated intelligently before API call rather than throwing a hard error mid-conversation.</div>
     <div class="lc-where"><strong>Used in:</strong> agents/retrieval_agent.py — validates prompt length before LLM call.</div>
     <span class="tag tam">Token counting</span><span class="tag tam">Context safety</span><span class="tag tam">Overflow prevention</span>
   </div>
@@ -181,16 +181,18 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 <div class="sec-div"><div class="sd-l"></div><div class="sd-t" style="background:rgba(52,211,153,.1);color:var(--green);border:1px solid rgba(52,211,153,.2);">🗄️ Vector Store (Phase 1)</div><div class="sd-l"></div></div>
 <div class="lib-grid">
   <div class="lc gr">
-    <div class="lc-top"><div class="lc-left"><div class="lc-emo">⚡</div><div><div class="lc-name">faiss-cpu</div><div class="lc-role">Local vector similarity search</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
-    <div class="lc-used">faiss.IndexFlatL2(1536) &nbsp;·&nbsp; index.add(vectors) &nbsp;·&nbsp; index.search(query, k=5)</div>
-    <div class="lc-why">Facebook AI's vector search library. Chosen for Phase 1 because it runs entirely locally with zero cloud cost, handles millions of vectors efficiently, and is extremely fast for similarity search. IndexFlatL2 does exact L2 distance search on 1536-dim OpenAI embedding vectors. Replaced by Azure AI Search in Phase 2.</div>
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">⚡</div><div><div class="lc-name">faiss-cpu</td>
+<!-- BM25 -->
+<td>rank-bm25</div><div class="lc-role">Local vector similarity search</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
+    <div class="lc-used">faiss.IndexFlatIP(1536) &nbsp;·&nbsp; index.add(vectors) &nbsp;·&nbsp; index.search(query, k=5)</div>
+    <div class="lc-why">Facebook AI's vector search library. Chosen for Phase 1 because it runs entirely locally with zero cloud cost, handles millions of vectors efficiently, and is extremely fast for similarity search. IndexFlatIP does exact L2 distance search on 1536-dim OpenAI embedding vectors. Replaced by FAISS + BM25 in Phase 2.</div>
     <div class="lc-where"><strong>Used in:</strong> ingestion/vector_store.py (save) + agents/retrieval_agent.py (search).</div>
     <span class="tag tgr">Vector index</span><span class="tag tgr">Local — no cloud</span><span class="tag tgr">Phase 1 only</span>
   </div>
   <div class="lc bl">
     <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔢</div><div><div class="lc-name">numpy</div><div class="lc-role">Array formatting for FAISS</div></div></div><div class="lc-phase ph-p1">P1 Only</div></div>
     <div class="lc-used">np.array(embeddings).astype("float32") &nbsp;·&nbsp; np.array([query_vec])</div>
-    <div class="lc-why">FAISS requires numpy float32 arrays — cannot work with plain Python lists. numpy converts OpenAI embedding lists into the correct matrix format for FAISS indexing and searching. Minimal direct use but essential dependency. Not needed in Phase 2 since Azure AI Search handles its own data format.</div>
+    <div class="lc-why">FAISS requires numpy float32 arrays — cannot work with plain Python lists. numpy converts OpenAI embedding lists into the correct matrix format for FAISS indexing and searching. Minimal direct use but essential dependency. Not needed in Phase 2 since FAISS + BM25 handles its own data format.</div>
     <div class="lc-where"><strong>Used in:</strong> ingestion/vector_store.py + agents/retrieval_agent.py.</div>
     <span class="tag tbl">FAISS dependency</span><span class="tag tbl">Float32 arrays</span>
   </div>
@@ -208,14 +210,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
   <div class="lc pi">
     <div class="lc-top"><div class="lc-left"><div class="lc-emo">⚡</div><div><div class="lc-name">fastapi</div><div class="lc-role">REST API framework</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
     <div class="lc-used">@app.post("/chat") &nbsp;·&nbsp; async def chat(request: ChatRequest)</div>
-    <div class="lc-why">Chosen over Flask because it is async-native (handles concurrent requests without blocking), auto-generates Swagger UI at /docs, and has native Pydantic integration. Perfect for an AI API where GPT-4o responses take 2-5 seconds — async prevents one slow request blocking others.</div>
+    <div class="lc-why">Chosen over Flask because it is async-native (handles concurrent requests without blocking), auto-generates Swagger UI at /docs, and has native Pydantic integration. Perfect for an AI API where LLaMA 3.1 8B responses take 2-5 seconds — async prevents one slow request blocking others.</div>
     <div class="lc-where"><strong>Used in:</strong> backend/main.py — the entire API server layer.</div>
     <span class="tag tpi">REST API</span><span class="tag tpi">Async</span><span class="tag tpi">Swagger auto-docs</span>
   </div>
   <div class="lc re">
     <div class="lc-top"><div class="lc-left"><div class="lc-emo">🌐</div><div><div class="lc-name">uvicorn</div><div class="lc-role">ASGI server for FastAPI</div></div></div><div class="lc-phase ph-both">P1 + P2</div></div>
     <div class="lc-used">uvicorn backend.main:app --reload --port 8000</div>
-    <div class="lc-why">The server that runs FastAPI. ASGI handles many simultaneous requests without blocking — important when multiple KPMG users query the chatbot simultaneously and GPT-4o takes several seconds per response. Also specified in Dockerfile CMD for Azure deployment.</div>
+    <div class="lc-why">The server that runs FastAPI. ASGI handles many simultaneous requests without blocking — important when multiple KPMG users query the chatbot simultaneously and LLaMA 3.1 8B takes several seconds per response. Also specified in Dockerfile CMD for Azure deployment.</div>
     <div class="lc-where"><strong>Used in:</strong> Terminal startup + Dockerfile CMD for production.</div>
     <span class="tag tre">ASGI server</span><span class="tag tre">Concurrent requests</span>
   </div>
@@ -276,7 +278,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;bac
 <div class="slabel">HuggingFace models — open-source alternatives and add-ons specific to this RAG project</div>
 <div class="vs-note">
   <div class="vs-note-title">Context — Why HuggingFace alongside OpenAI</div>
-  <div class="vs-note-text">This project uses <strong>OpenAI API models</strong> (GPT-4o, text-embedding-3-small) as the primary LLM and embedding solution for enterprise KPMG deployment. HuggingFace models serve two purposes here: (1) <strong>free local alternatives</strong> for development and testing without API costs, and (2) <strong>specialised models</strong> like cross-encoder re-rankers that HuggingFace excels at and which directly improve RAG quality.</div>
+  <div class="vs-note-text">This project uses <strong>OpenAI API models</strong> (LLaMA 3.1 8B, text-embedding-3-small) as the primary LLM and embedding solution for enterprise KPMG deployment. HuggingFace models serve two purposes here: (1) <strong>free local alternatives</strong> for development and testing without API costs, and (2) <strong>specialised models</strong> like cross-encoder re-rankers that HuggingFace excels at and which directly improve RAG quality.</div>
 </div>
 <div class="hf-grid">
   <div class="hfc bl">
@@ -294,7 +296,7 @@ model = SentenceTransformer(<span class="cs">'all-MiniLM-L6-v2'</span>)<br>
 <span class="cc"># Drop-in replacement for OpenAI embeddings:</span><br>
 embeddings = model.<span class="cf">encode</span>(chunks, batch_size=<span class="cs">32</span>, show_progress_bar=True)<br>
 <span class="cc"># Update FAISS dim from 1536 to 384</span><br>
-index = faiss.IndexFlatL2(<span class="cs">384</span>)
+index = faiss.IndexFlatIP(<span class="cs">384</span>)
     </div>
     <div class="hfc-stats">
       <div class="stat"><div class="stat-val">384</div><div class="stat-key">Dimensions</div></div>
@@ -343,7 +345,7 @@ top_chunk = faiss_results[best_idx]
 model = SentenceTransformer(<span class="cs">'all-mpnet-base-v2'</span>)<br>
 embeddings = model.<span class="cf">encode</span>(chunks)<br>
 <span class="cc"># Update FAISS from 384 to 768 dimensions:</span><br>
-index = faiss.IndexFlatL2(<span class="cs">768</span>)
+index = faiss.IndexFlatIP(<span class="cs">768</span>)
     </div>
     <div class="hfc-stats">
       <div class="stat"><div class="stat-val">768</div><div class="stat-key">Dimensions</div></div>
@@ -353,20 +355,20 @@ index = faiss.IndexFlatL2(<span class="cs">768</span>)
   </div>
 
   <div class="hfc pi">
-    <div class="hfc-type">Local LLM — Full offline alternative to GPT-4o</div>
+    <div class="hfc-type">Local LLM — Full offline alternative to LLaMA 3.1 8B</div>
     <div class="hfc-name">Phi-3-mini-4k-instruct</div>
     <div class="hfc-org">Microsoft · HuggingFace Hub</div>
     <span class="lc-phase ph-p1" style="display:inline-block;margin-bottom:4px;">Phase 1 Local Dev Only</span>
     <div class="hfc-slabel">What it does</div>
-    <div class="hfc-text">Small but capable instruction-tuned LLM from Microsoft. Can replace GPT-4o for local testing of all three agents — document Q&A in the Retrieval Agent, KPI formatting in the API Agent, and workflow action classification in the Workflow Agent. Runs on a laptop CPU without any API key.</div>
+    <div class="hfc-text">Small but capable instruction-tuned LLM from Microsoft. Can replace LLaMA 3.1 8B for local testing of all three agents — document Q&A in the Retrieval Agent, KPI formatting in the API Agent, and workflow action classification in the Workflow Agent. Runs on a laptop CPU without any API key.</div>
     <div class="hfc-slabel">Why relevant to your project specifically</div>
-    <div class="hfc-text">During development, calling GPT-4o for every agent test costs money and requires internet. Phi-3-mini lets you test all LangGraph routing logic, agent prompts, and JSON extraction patterns completely offline. When satisfied, swap back the client to GPT-4o for production quality. Same prompt format — easy swap.</div>
+    <div class="hfc-text">During development, calling LLaMA 3.1 8B for every agent test costs money and requires internet. Phi-3-mini lets you test all LangGraph routing logic, agent prompts, and JSON extraction patterns completely offline. When satisfied, swap back the client to LLaMA 3.1 8B for production quality. Same prompt format — easy swap.</div>
     <div class="hfc-code">
 <span class="ci">from</span> transformers <span class="ci">import</span> pipeline<br>
 pipe = <span class="cf">pipeline</span>(<span class="cs">"text-generation"</span>,<br>
 &nbsp;&nbsp;model=<span class="cs">"microsoft/Phi-3-mini-4k-instruct"</span>,<br>
 &nbsp;&nbsp;trust_remote_code=True)<br>
-<span class="cc"># Same prompt format as GPT-4o:</span><br>
+<span class="cc"># Same prompt format as LLaMA 3.1 8B:</span><br>
 response = <span class="cf">pipe</span>(prompt, max_new_tokens=<span class="cs">500</span>)[0][<span class="cs">'generated_text'</span>]
     </div>
     <div class="hfc-stats">
@@ -397,10 +399,12 @@ response = <span class="cf">pipe</span>(prompt, max_new_tokens=<span class="cs">
 <tr><td class="lib-n" style="color:var(--blue);">pandas</td><td class="lib-p">Doc Loading + KPI</td><td class="lib-p">ingestion + api_agent.py</td><td class="lib-p">Excel ingestion + tabular KPI data formatting</td><td><span class="tag tgr">Both</span></td></tr>
 <tr><td class="lib-n" style="color:var(--purple);">langchain</td><td class="lib-p">Text Chunking</td><td class="lib-p">ingestion/chunker.py</td><td class="lib-p">RecursiveCharacterTextSplitter — best for PMO docs</td><td><span class="tag tgr">Both</span></td></tr>
 <tr><td class="lib-n" style="color:var(--purple);">langgraph</td><td class="lib-p">Agent Orchestration</td><td class="lib-p">router/graph.py</td><td class="lib-p">Stateful multi-agent graph — the entire agentic system</td><td><span class="tag tgr">Both</span></td></tr>
-<tr><td class="lib-n" style="color:var(--purple);">openai</td><td class="lib-p">LLM + Embeddings</td><td class="lib-p">embedder.py + all agents</td><td class="lib-p">GPT-4o responses + text-embedding-3-small vectors</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">openai</td><td class="lib-p">LLM + Embeddings</td><td class="lib-p">embedder.py + all agents</td><td class="lib-p">LLaMA 3.1 8B responses + text-embedding-3-small vectors</td><td><span class="tag tgr">Both</span></td></tr>
 <tr><td class="lib-n" style="color:var(--purple);">langchain-openai</td><td class="lib-p">LangChain bridge</td><td class="lib-p">All agent files</td><td class="lib-p">ChatOpenAI / AzureChatOpenAI inside LangChain</td><td><span class="tag tgr">Both</span></td></tr>
-<tr><td class="lib-n" style="color:var(--purple);">tiktoken</td><td class="lib-p">Token Management</td><td class="lib-p">retrieval_agent.py</td><td class="lib-p">Prevents GPT-4o context overflow on long PMO docs</td><td><span class="tag tgr">Both</span></td></tr>
-<tr><td class="lib-n" style="color:var(--green);">faiss-cpu</td><td class="lib-p">Vector Store</td><td class="lib-p">vector_store.py + retrieval_agent.py</td><td class="lib-p">Local, fast, free — no cloud cost in Phase 1</td><td><span class="tag tbl">P1 only</span></td></tr>
+<tr><td class="lib-n" style="color:var(--purple);">tiktoken</td><td class="lib-p">Token Management</td><td class="lib-p">retrieval_agent.py</td><td class="lib-p">Prevents LLaMA 3.1 8B context overflow on long PMO docs</td><td><span class="tag tgr">Both</span></td></tr>
+<tr><td class="lib-n" style="color:var(--green);">faiss-cpu</td>
+<!-- BM25 -->
+<td>rank-bm25</td><td class="lib-p">Vector Store</td><td class="lib-p">vector_store.py + retrieval_agent.py</td><td class="lib-p">Local, fast, free — no cloud cost in Phase 1</td><td><span class="tag tbl">P1 only</span></td></tr>
 <tr><td class="lib-n" style="color:var(--green);">numpy</td><td class="lib-p">Array ops</td><td class="lib-p">vector_store.py</td><td class="lib-p">FAISS requires float32 numpy arrays specifically</td><td><span class="tag tbl">P1 only</span></td></tr>
 <tr><td class="lib-n" style="color:var(--green);">pickle</td><td class="lib-p">Metadata save/load</td><td class="lib-p">vector_store.py</td><td class="lib-p">Saves chunk text alongside FAISS index file</td><td><span class="tag tbl">P1 only</span></td></tr>
 <tr><td class="lib-n" style="color:var(--pink);">fastapi</td><td class="lib-p">Backend API</td><td class="lib-p">backend/main.py</td><td class="lib-p">Async + Swagger auto-docs + Pydantic native</td><td><span class="tag tgr">Both</span></td></tr>
@@ -422,10 +426,14 @@ response = <span class="cf">pipe</span>(prompt, max_new_tokens=<span class="cs">
 <div class="slabel">Azure SDK libraries — Phase 2 only. Each one replaces a Phase 1 Python tool.</div>
 <div class="lib-grid">
   <div class="lc te">
-    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔍</div><div><div class="lc-name">azure-search-documents</div><div class="lc-role">Replaces: faiss-cpu + numpy + pickle</div></div></div><div class="lc-phase ph-p2">P2 Only</div></div>
+    <div class="lc-top"><div class="lc-left"><div class="lc-emo">🔍</div><div><div class="lc-name">azure-search-documents</div><div class="lc-role">Replaces: faiss-cpu</td>
+<!-- BM25 -->
+<td>rank-bm25 + numpy + pickle</div></div></div><div class="lc-phase ph-p2">P2 Only</div></div>
     <div class="lc-used">SearchClient(endpoint, index_name, credential) &nbsp;·&nbsp; VectorizedQuery(vector, k, fields)</div>
-    <div class="lc-why">Replaces the entire FAISS + pickle local vector store. SearchClient connects to Azure AI Search managed index. VectorizedQuery runs semantic vector search with optional semantic re-ranking. Scales to millions of documents without managing local .index files or metadata pickle files. Enterprise security built-in.</div>
-    <div class="lc-where"><strong>Replaces:</strong> faiss-cpu + numpy + pickle in vector_store.py and retrieval_agent.py.</div>
+    <div class="lc-why">Replaces the entire FAISS + pickle local vector store. SearchClient connects to FAISS + BM25 managed index. VectorizedQuery runs semantic vector search with optional semantic re-ranking. Scales to millions of documents without managing local .index files or metadata pickle files. Enterprise security built-in.</div>
+    <div class="lc-where"><strong>Replaces:</strong> faiss-cpu</td>
+<!-- BM25 -->
+<td>rank-bm25 + numpy + pickle in vector_store.py and retrieval_agent.py.</div>
     <span class="tag tte">Replaces FAISS</span><span class="tag tte">Managed index</span><span class="tag tte">Semantic ranking</span>
   </div>
   <div class="lc pu">
@@ -453,7 +461,9 @@ response = <span class="cf">pipe</span>(prompt, max_new_tokens=<span class="cs">
 <div style="background:linear-gradient(135deg,rgba(45,212,191,.04),rgba(167,139,250,.04));border:1px solid rgba(45,212,191,.2);border-radius:12px;padding:18px 22px;margin-top:20px;">
   <div style="font-size:10px;font-weight:700;color:var(--white);margin-bottom:14px;letter-spacing:1px;">Phase 1 → Phase 2 · Complete Library Swap</div>
   <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;font-size:9px;">
-    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">faiss-cpu + numpy + pickle</span>Local vector store + metadata files</div>
+    <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">faiss-cpu</td>
+<!-- BM25 -->
+<td>rank-bm25 + numpy + pickle</span>Local vector store + metadata files</div>
     <div style="color:var(--purple);font-size:20px;text-align:center;">→</div>
     <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--teal);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">azure-search-documents</span>Managed cloud vector index</div>
     <div style="color:#64748b;padding:8px;background:var(--s2);border-radius:8px;border:1px solid var(--border);"><span style="color:var(--blue);font-family:'Courier New',monospace;display:block;margin-bottom:3px;">os.listdir() + open()</span>Local file system reads</div>

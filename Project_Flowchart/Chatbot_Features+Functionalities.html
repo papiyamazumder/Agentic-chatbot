@@ -832,9 +832,9 @@
               <div class="fc-sub">Retrieval-Augmented Generation</div>
             </div>
           </div>
-          <div class="fc-desc">Documents chunked at 500 chars with 100-char overlap using
+          <div class="fc-desc">Documents chunked at 800 chars with 100-char overlap using
             RecursiveCharacterTextSplitter. Each chunk embedded via text-embedding-3-small into 1536-dim vectors. Stored
-            in FAISS (P1) or Azure AI Search (P2). Top-5 chunks injected as LLM context.</div>
+            in FAISS (P1) or FAISS + BM25 (P2). Top-5 chunks injected as LLM context.</div>
           <span class="tag tb">LangChain</span><span class="tag tb">FAISS / AI Search</span><span class="tag tb">Top-k
             retrieval</span>
         </div>
@@ -849,7 +849,7 @@
             </div>
           </div>
           <div class="fc-desc">Query embedded at runtime → cosine similarity finds semantically relevant chunks even
-            when exact keywords don't match. Phase 2 upgrades this with Azure AI Search semantic re-ranking layer on top
+            when exact keywords don't match. Phase 2 upgrades this with FAISS + BM25 semantic re-ranking layer on top
             of vector similarity.</div>
           <span class="tag tg">1536-dim vectors</span><span class="tag tg">Cosine similarity</span><span
             class="tag tg">Semantic re-rank (P2)</span>
@@ -868,7 +868,7 @@
             extracting action type (create_ticket / send_email / approve / update_log) and all parameters. No rigid
             command syntax required from the user.</div>
           <span class="tag ta">Prompt engineering</span><span class="tag ta">JSON extraction</span><span
-            class="tag ta">GPT-4o</span>
+            class="tag ta">LLaMA 3.1 8B</span>
         </div>
 
         <div class="fc or">
@@ -1042,10 +1042,10 @@
         </div>
         <div class="br-tech">
           <div class="br-feature">
-            <div class="feat-num-badge">01</div>RAG · FAISS / Azure AI Search
+            <div class="feat-num-badge">01</div>RAG · FAISS / FAISS + BM25
           </div>
           <div class="br-desc">Query → text-embedding-3-small → 1536-dim vector → FAISS cosine search (P1) or AI Search
-            VectorizedQuery (P2) → top-5 chunks → GPT-4o prompt with context → grounded answer.
+            VectorizedQuery (P2) → top-5 chunks → LLaMA 3.1 8B prompt with context → grounded answer.
             RecursiveCharacterTextSplitter 500/100.</div>
           <span class="br-label">LangChain · OpenAI · FAISS</span>
         </div>
@@ -1071,7 +1071,7 @@
           </div>
           <div class="br-desc">LLM extracts metric name → requests.get(internal_api, headers=auth) → JSON response → LLM
             formats to readable summary → SQLAlchemy MySQL fallback if API fails. Azure Function triggers in P2.</div>
-          <span class="br-label">requests · SQLAlchemy · GPT-4o</span>
+          <span class="br-label">requests · SQLAlchemy · LLaMA 3.1 8B</span>
         </div>
       </div>
 

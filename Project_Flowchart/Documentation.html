@@ -503,7 +503,7 @@
                 </tr>
                 <tr>
                     <td>chunk_size</td>
-                    <td>500 chars</td>
+                    <td>800 chars</td>
                     <td>Balance: too small = no context, too large = noise</td>
                 </tr>
                 <tr>
@@ -760,13 +760,13 @@
             <span style="color:#3b82f6">Step 1: pdf_loader.py</span> — Parse each file format to plain text
             PDF → PyMuPDF (fitz) | DOCX → python-docx | XLSX → pandas
             ↓
-            <span style="color:#10b981">Step 2: chunker.py</span> — Split into 500-char chunks with 100-char overlap
+            <span style="color:#10b981">Step 2: chunker.py</span> — Split into 800-char chunks with 100-char overlap
             "The vendor onboarding process requires..." → chunk_0, chunk_1, ...
             ↓
             <span style="color:#f59e0b">Step 3: embedder.py</span> — Encode each chunk → 384-dim float vector
             all-MiniLM-L6-v2 (HuggingFace, runs locally, free)
             ↓
-            <span style="color:#8b5cf6">Step 4: vector_store.py</span> — Save to FAISS IndexFlatL2
+            <span style="color:#8b5cf6">Step 4: vector_store.py</span> — Save to FAISS IndexFlatIP (cosine)
             data/vector_store/index.faiss + metadata.pkl
         </div>
 
@@ -794,7 +794,7 @@
             <tr>
                 <td>Vector Store</td>
                 <td>vector_store.py</td>
-                <td>FAISS IndexFlatL2 — brute-force L2 distance, exact results</td>
+                <td>FAISS IndexFlatIP (cosine) — brute-force L2 distance, exact results</td>
             </tr>
         </table>
 
@@ -814,7 +814,7 @@
             Backend: upload_handler.py
             1. Save file → /tmp/kpmg_uploads/abc123.../Q4_Report.pdf
             2. Parse → pdf_loader._load_pdf()
-            3. Chunk → 500-char chunks with source "📎 Q4_Report.pdf (uploaded)"
+            3. Chunk → 800-char chunks with source "📎 Q4_Report.pdf (uploaded)"
             4. Embed → all-MiniLM-L6-v2
             5. Add to session FAISS index (separate from main)
             ↓
@@ -1095,10 +1095,10 @@
 
         <div class="card">
             <h4>FAISS (Facebook AI Similarity Search)</h4>
-            <p><strong>What:</strong> A library for fast nearest-neighbor search on vector data. We use IndexFlatL2
+            <p><strong>What:</strong> A library for fast nearest-neighbor search on vector data. We use IndexFlatIP
                 (brute-force L2 distance — exact results, good for &lt;100K vectors).</p>
             <p><strong>Where:</strong> vector_store.py (main index) + upload_handler.py (session temp index).</p>
-            <p><strong>Why not a cloud DB?</strong> Zero cost, zero latency, zero setup. Swappable to Azure AI Search
+            <p><strong>Why not a cloud DB?</strong> Zero cost, zero latency, zero setup. Swappable to FAISS + BM25
                 later.</p>
         </div>
 
@@ -1214,16 +1214,16 @@
 
         <div class="card">
             <h4>Q: What is FAISS and why not use a cloud vector database?</h4>
-            <p>"FAISS is Facebook's library for fast similarity search. We use IndexFlatL2, which does exact brute-force
+            <p>"FAISS is Facebook's library for fast similarity search. We use IndexFlatIP, which does exact brute-force
                 search. For our scale (~few thousand chunks), it's faster than any cloud DB, costs nothing, and needs
-                zero setup. The architecture is designed so we can swap to Azure AI Search later by only changing
+                zero setup. The architecture is designed so we can swap to FAISS + BM25 later by only changing
                 vector_store.py — no agent code changes needed."</p>
         </div>
 
         <div class="card">
             <h4>Q: How does file upload work?</h4>
             <p>"Each browser tab gets a UUID session_id. When a user uploads a file, it's saved to /tmp, parsed (PyMuPDF
-                for PDF, python-docx for Word, pandas for Excel), chunked into 500-char pieces, embedded with
+                for PDF, python-docx for Word, pandas for Excel), chunked into 800-char pieces, embedded with
                 all-MiniLM-L6-v2, and stored in a session-scoped FAISS index — separate from the main index. The
                 retrieval agent searches both indexes and merges results. On 'Clear Chat', the temp files and index are
                 deleted. This means uploaded docs are never persisted — they exist only for the session."</p>
@@ -1231,7 +1231,7 @@
 
         <div class="card">
             <h4>Q: What would you change for production?</h4>
-            <p>"Three things: (1) Replace FAISS with Azure AI Search for scalability and persistence. (2) Add Azure AD
+            <p>"Three things: (1) Replace FAISS with FAISS + BM25 for scalability and persistence. (2) Add Azure AD
                 JWT authentication to protect the endpoints. (3) Set up scheduled re-ingestion via Azure Functions timer
                 trigger to keep the docs index fresh. The architecture already supports all of this — it's just config
                 changes, no agent rewrites."</p>
